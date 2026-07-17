@@ -1,3 +1,9 @@
+
+
 export default function AccountPage() {
-  return <h1 className="text-2xl font-bold">Account</h1>
+  return <h1 className="text-2xl font-bold"> 
+      Account 
+      </h1>
 }
+
+
