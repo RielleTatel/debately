@@ -1,0 +1,3 @@
+'use client'
+
+// Announcements hooks
