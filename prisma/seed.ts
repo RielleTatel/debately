@@ -3,21 +3,14 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log('Seeding database...')
-
-  const org = await prisma.organization.upsert({
-    where: { slug: 'demo-org' },
+  await prisma.profile.upsert({
+    where: { userId: 'seed-user-1' },
     update: {},
     create: {
-      name: 'Demo Organization',
-      slug: 'demo-org',
+      userId: 'seed-user-1',
+      displayName: 'Seed Admin',
     },
   })
-
-  console.log('Created organization:', org.name)
-  console.log('Seed complete.')
 }
 
-main()
-  .catch(console.error)
-  .finally(() => prisma.$disconnect())
+main().finally(() => prisma.$disconnect())
