@@ -1,34 +1,43 @@
 import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
-import type { LoginInput, RegisterInput } from '@/features/auth/types'
+import { env } from '@/lib/env'
 
 export const authService = {
-  async signIn({ email, password }: LoginInput) {
+  async signUp(input: { email: string; password: string; displayName: string }) {
     const supabase = await createClient()
-    return supabase.auth.signInWithPassword({ email, password })
+    return await supabase.auth.signUp({
+      email: input.email,
+      password: input.password,
+      options: {
+        data: { display_name: input.displayName },
+        emailRedirectTo: `${env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/dashboard`,
+      },
+    })
   },
 
-  async signUp({ email, password, displayName }: RegisterInput) {
+  async signIn(input: { email: string; password: string }) {
     const supabase = await createClient()
-    return supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { display_name: displayName } },
-    })
+    return await supabase.auth.signInWithPassword(input)
   },
 
   async signOut() {
     const supabase = await createClient()
-    return supabase.auth.signOut()
+    return await supabase.auth.signOut()
   },
 
   async sendPasswordReset(email: string) {
     const supabase = await createClient()
-    return supabase.auth.resetPasswordForEmail(email)
+    return await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/reset-password`,
+    })
   },
 
-  async deleteUser(userId: string) {
-    const admin = createAdminClient()
-    return admin.auth.admin.deleteUser(userId)
+  async resendVerification(email: string) {
+    const supabase = await createClient()
+    return await supabase.auth.resend({ type: 'signup', email })
+  },
+
+  async getUser() {
+    const supabase = await createClient()
+    return await supabase.auth.getUser()
   },
 }
