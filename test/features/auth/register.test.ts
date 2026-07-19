@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 const signUp = vi.fn()
 const insert = vi.fn()
+const sendWelcome = vi.fn()
+const sendVerification = vi.fn()
 
 vi.mock('@/lib/supabase/server', () => ({
   createClient: async () => ({
@@ -12,11 +14,19 @@ vi.mock('@/lib/prisma', () => ({
   prisma: { profile: { create: insert } },
 }))
 vi.mock('@/services/email', () => ({
-  emailService: { sendVerification: vi.fn(), sendPasswordReset: vi.fn(), sendWelcome: vi.fn() },
+  emailService: { sendVerification, sendPasswordReset: vi.fn(), sendWelcome },
+}))
+vi.mock('@/services/logger', () => ({
+  logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn() },
 }))
 vi.mock('next/navigation', () => ({ redirect: (u: string) => { throw new Error('REDIRECT:' + u) } }))
 
-beforeEach(() => { signUp.mockReset(); insert.mockReset() })
+beforeEach(() => {
+  signUp.mockReset()
+  insert.mockReset()
+  sendWelcome.mockReset()
+  sendVerification.mockReset()
+})
 
 describe('registerAction', () => {
   it('rejects invalid input', async () => {
@@ -30,12 +40,20 @@ describe('registerAction', () => {
   it('creates auth user, profile row, sends verification, and redirects', async () => {
     signUp.mockResolvedValue({ data: { user: { id: 'u1' } }, error: null })
     insert.mockResolvedValue({ id: 'p1' })
+    sendWelcome.mockResolvedValue(undefined)
+    sendVerification.mockResolvedValue(undefined)
     const { registerAction } = await import('@/features/auth/actions/register')
     const fd = new FormData()
     fd.set('email', 'a@b.com'); fd.set('password', 'Valid1Password'); fd.set('displayName', 'Test User')
     await expect(registerAction(fd)).rejects.toThrow('REDIRECT:/verify-email')
     expect(signUp).toHaveBeenCalledOnce()
     expect(insert).toHaveBeenCalledWith({ data: { userId: 'u1', displayName: 'Test User' } })
+    expect(sendWelcome).toHaveBeenCalledOnce()
+    expect(sendWelcome).toHaveBeenCalledWith({ to: 'a@b.com', displayName: 'Test User' })
+    expect(sendVerification).toHaveBeenCalledOnce()
+    expect(sendVerification).toHaveBeenCalledWith(
+      expect.objectContaining({ to: 'a@b.com', displayName: 'Test User' })
+    )
   })
 
   it('bubbles up Supabase errors as ActionResult err', async () => {

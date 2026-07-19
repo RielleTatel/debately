@@ -31,7 +31,7 @@ export const authService = {
     })
   },
 
-  async resendVerification(email: string) {
+  async sendVerificationEmail(email: string) {
     const supabase = await createClient()
     return await supabase.auth.resend({ type: 'signup', email })
   },
