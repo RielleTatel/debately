@@ -1,32 +1,34 @@
+// server-only: do NOT import this file in client components
+import { getResend } from './client'
+import { env } from '@/lib/env'
 import { logger } from '@/services/logger'
+import { Errors } from '@/lib/errors'
+import { verificationTemplate } from './templates/verification'
+import { passwordResetTemplate } from './templates/password-reset'
+import { welcomeTemplate } from './templates/welcome'
 
-type EmailPayload = {
-  to: string | string[]
-  subject: string
-  html: string
-  text?: string
+async function send(to: string, tmpl: { subject: string; html: string; text: string }) {
+  const { error } = await getResend().emails.send({
+    from: env.RESEND_FROM_EMAIL,
+    to,
+    subject: tmpl.subject,
+    html: tmpl.html,
+    text: tmpl.text,
+  })
+  if (error) {
+    logger.error('email send failed', { to, subject: tmpl.subject, error })
+    throw Errors.internal()
+  }
 }
 
 export const emailService = {
-  async send(payload: EmailPayload): Promise<void> {
-    // TODO: integrate with email provider (Resend, SendGrid, etc.)
-    logger.info('Email queued', { to: payload.to, subject: payload.subject })
+  async sendVerification(opts: { to: string; verifyUrl: string; displayName: string }) {
+    await send(opts.to, verificationTemplate(opts))
   },
-
-  async sendWelcome(to: string, name: string): Promise<void> {
-    await emailService.send({
-      to,
-      subject: 'Welcome to Debately',
-      html: `<p>Hi ${name}, welcome!</p>`,
-      text: `Hi ${name}, welcome!`,
-    })
+  async sendPasswordReset(opts: { to: string; resetUrl: string; displayName: string }) {
+    await send(opts.to, passwordResetTemplate(opts))
   },
-
-  async sendInvitation(to: string, tournamentName: string, inviteUrl: string): Promise<void> {
-    await emailService.send({
-      to,
-      subject: `You're invited to ${tournamentName}`,
-      html: `<p>You have been invited. <a href="${inviteUrl}">Accept invitation</a></p>`,
-    })
+  async sendWelcome(opts: { to: string; displayName: string }) {
+    await send(opts.to, welcomeTemplate(opts))
   },
 }
