@@ -1,1 +1,1 @@
-'use server'
+export { createOrganizationAction } from './create'
