@@ -8,6 +8,13 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum OrganizationRole {
+  OWNER
+  MEMBER
+
+  @@map("organization_role")
+}
+
 model Profile {
   id                 String   @id @default(cuid())
   userId             String   @unique @map("user_id")
@@ -17,5 +24,73 @@ model Profile {
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")
 
+  ownedOrganizations Organization[]         @relation("OrganizationOwner")
+  memberships        OrganizationMember[]
+
   @@map("profiles")
+}
+
+model Organization {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  logoUrl     String?  @map("logo_url")
+  description String?
+  ownerId     String   @map("owner_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  owner       Profile                    @relation("OrganizationOwner", fields: [ownerId], references: [id])
+  members     OrganizationMember[]
+  aliases     OrganizationSlugAlias[]
+  invitations OrganizationInvitation[]
+
+  @@index([ownerId])
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id        String           @id @default(cuid())
+  orgId     String           @map("org_id")
+  profileId String           @map("profile_id")
+  role      OrganizationRole
+  joinedAt  DateTime         @default(now()) @map("joined_at")
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  profile      Profile      @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([orgId, profileId])
+  @@index([profileId])
+  @@map("organization_members")
+}
+
+model OrganizationSlugAlias {
+  oldSlug   String   @id @map("old_slug")
+  orgId     String   @map("org_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+  @@index([expiresAt])
+  @@map("organization_slug_aliases")
+}
+
+model OrganizationInvitation {
+  id         String           @id @default(cuid())
+  orgId      String           @map("org_id")
+  email      String
+  token      String           @unique
+  role       OrganizationRole
+  expiresAt  DateTime         @map("expires_at")
+  acceptedAt DateTime?        @map("accepted_at")
+  revokedAt  DateTime?        @map("revoked_at")
+  createdAt  DateTime         @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+  @@index([email])
+  @@map("organization_invitations")
 }
