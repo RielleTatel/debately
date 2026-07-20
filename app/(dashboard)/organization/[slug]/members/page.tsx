@@ -8,17 +8,17 @@ import { InviteMemberForm } from '@/features/organizations/components/invite-mem
 export default async function OrgMembersPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const org = await getOrganizationBySlug(slug); if (!org) notFound()
-  const { role } = await requireOrgMember(org.id)
+  const { role, me } = await requireOrgMember(org.id)
   const [members, invitations] = await Promise.all([
     getOrgMembers(org.id),
     role === 'OWNER' ? getPendingInvitations(org.id) : Promise.resolve([]),
   ])
   return (
     <section className="space-y-8">
-      <div><h2 className="mb-2 text-lg font-medium">Members</h2><MembersTable members={members} /></div>
+      <div><h2 className="mb-2 text-lg font-medium">Members</h2><MembersTable members={members} isOwner={role === 'OWNER'} currentProfileId={me.profile.id} orgId={org.id} /></div>
       {role === 'OWNER' && <>
         <div><h2 className="mb-2 text-lg font-medium">Invite a member</h2><InviteMemberForm orgId={org.id} /></div>
-        <div><h2 className="mb-2 text-lg font-medium">Pending invitations</h2><PendingInvitationsTable invitations={invitations} /></div>
+        <div><h2 className="mb-2 text-lg font-medium">Pending invitations</h2><PendingInvitationsTable invitations={invitations} isOwner={role === 'OWNER'} /></div>
       </>}
     </section>
   )

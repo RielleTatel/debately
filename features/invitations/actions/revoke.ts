@@ -12,9 +12,9 @@ export async function revokeInvitationAction(fd: FormData): Promise<ActionResult
   try {
     const invitation = await prisma.organizationInvitation.findUnique({ where: { id: parsed.data.invitationId } })
     if (!invitation) return err('Invitation not found', 'NOT_FOUND')
+    const { org } = await requireOrgOwner(invitation.orgId)
     if (invitation.acceptedAt) return err('Invitation was already accepted', 'CONFLICT')
     if (invitation.revokedAt) return ok(undefined)
-    const { org } = await requireOrgOwner(invitation.orgId)
     await prisma.organizationInvitation.update({ where: { id: invitation.id }, data: { revokedAt: new Date() } })
     revalidatePath(`/organization/${org.slug}/members`)
     return ok(undefined)

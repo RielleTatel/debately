@@ -6,7 +6,7 @@ vi.mock('@/lib/prisma', () => ({
   },
 }))
 vi.mock('@/features/auth/queries', () => ({
-  requireUser: vi.fn(async () => ({ user: { id: 'u1', email: 'a@b.com' }, profile: { id: 'p1', displayName: 'A', avatarUrl: null }, isVerified: true })),
+  requireVerifiedUser: vi.fn(async () => ({ user: { id: 'u1', email: 'a@b.com' }, profile: { id: 'p1', displayName: 'A', avatarUrl: null }, isVerified: true })),
 }))
 
 describe('requireOrgOwner', () => {

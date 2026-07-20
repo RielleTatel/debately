@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { requireUser } from '@/features/auth/queries'
+import { requireVerifiedUser as requireUser } from '@/features/auth/queries'
 import { getUserRoleInOrg } from '@/features/organizations/queries'
 import { AppError, Errors } from '@/lib/errors'
 import type { Organization, OrganizationRole } from '@prisma/client'

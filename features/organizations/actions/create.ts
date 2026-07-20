@@ -16,13 +16,13 @@ export async function createOrganizationAction(fd: FormData): Promise<ActionResu
 
   try { assertSlugAllowed(slug) } catch (e) { if (isAppError(e)) return err(e.message, e.code); throw e }
 
+  const me = await requireVerifiedUser()
+
   const [existingOrg, existingAlias] = await Promise.all([
     prisma.organization.findUnique({ where: { slug } }),
     prisma.organizationSlugAlias.findUnique({ where: { oldSlug: slug } }),
   ])
   if (existingOrg || existingAlias) return err('This slug is already taken.', 'CONFLICT')
-
-  const me = await requireVerifiedUser()
   await prisma.$transaction(async (tx) => {
     const org = await tx.organization.create({
       data: { name, slug, description: description || null, ownerId: me.profile.id },
