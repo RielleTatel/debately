@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { requireUser, requireVerifiedUser } from '@/features/auth/queries'
+import { requireUser } from '@/features/auth/queries'
 import type { Organization, OrganizationRole } from '@prisma/client'
 import type { MemberWithProfile, OrganizationWithRole, PendingInvitation } from '@/features/organizations/types'
 
@@ -47,5 +47,3 @@ export async function getPendingInvitations(orgId: string): Promise<PendingInvit
     orderBy: { createdAt: 'desc' },
   })
 }
-
-export { requireVerifiedUser }
