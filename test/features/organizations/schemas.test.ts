@@ -10,7 +10,7 @@ describe('createOrganizationSchema', () => {
   it('rejects invalid slug', () => { expect(createOrganizationSchema.safeParse({ name: 'My Org', slug: 'My Org' }).success).toBe(false) })
 })
 describe('updateOrganizationSchema', () => {
-  it('accepts', () => { expect(updateOrganizationSchema.safeParse({ name: 'X', slug: 'x-y' }).success).toBe(true) })
+  it('accepts', () => { expect(updateOrganizationSchema.safeParse({ name: 'My Org', slug: 'x-y' }).success).toBe(true) })
 })
 describe('transferOwnershipSchema', () => {
   it('requires toProfileId', () => { expect(transferOwnershipSchema.safeParse({}).success).toBe(false) })
