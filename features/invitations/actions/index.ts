@@ -1,1 +1,1 @@
-'use server'
+export { inviteMemberAction } from './invite'

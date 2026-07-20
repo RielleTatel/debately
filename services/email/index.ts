@@ -6,6 +6,7 @@ import { Errors } from '@/lib/errors'
 import { verificationTemplate } from './templates/verification'
 import { passwordResetTemplate } from './templates/password-reset'
 import { welcomeTemplate } from './templates/welcome'
+import { organizationInviteTemplate } from './templates/organization-invite'
 
 async function send(to: string, tmpl: { subject: string; html: string; text: string }) {
   const { error } = await getResend().emails.send({
@@ -30,5 +31,8 @@ export const emailService = {
   },
   async sendWelcome(opts: { to: string; displayName: string }) {
     await send(opts.to, welcomeTemplate(opts))
+  },
+  async sendOrganizationInvite(opts: { to: string; inviterName: string; orgName: string; acceptUrl: string }) {
+    await send(opts.to, organizationInviteTemplate(opts))
   },
 }
