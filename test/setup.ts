@@ -11,6 +11,5 @@ process.env.RESEND_FROM_EMAIL = 'noreply@test.local'
 process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3000'
 
 vi.mock('next/navigation', () => ({
-  redirect: vi.fn(),
   useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }),
 }))

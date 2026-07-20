@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 const resolveOrgBySlug = vi.fn(); const requireOrgMember = vi.fn()
 vi.mock('@/features/organizations/queries', () => ({ resolveOrgBySlug }))
 vi.mock('@/features/organizations/permissions', () => ({ requireOrgMember }))
@@ -6,6 +6,10 @@ vi.mock('next/navigation', () => ({
   redirect: (u: string) => { throw new Error('REDIRECT:' + u) },
   notFound: () => { throw new Error('NOT_FOUND') },
 }))
+
+beforeEach(() => {
+  requireOrgMember.mockResolvedValue({ role: 'OWNER', me: {} as any, org: {} as any })
+})
 
 describe('org slug alias resolution (layout)', () => {
   it('redirects on alias', async () => {
