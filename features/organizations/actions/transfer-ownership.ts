@@ -14,11 +14,11 @@ export async function transferOwnershipAction(fd: FormData): Promise<ActionResul
   try {
     const { me, org } = await requireOrgOwner(orgId)
     if (parsed.data.toProfileId === me.profile.id) return err('You are already the owner.', 'VALIDATION_ERROR')
-    const target = await prisma.organizationMember.findUnique({
-      where: { orgId_profileId: { orgId: org.id, profileId: parsed.data.toProfileId } },
-    })
-    if (!target) return err('Target user is not a member of this organization.', 'NOT_FOUND')
     await prisma.$transaction(async (tx) => {
+      const target = await tx.organizationMember.findUnique({
+        where: { orgId_profileId: { orgId: org.id, profileId: parsed.data.toProfileId } },
+      })
+      if (!target) throw new Error('NOT_MEMBER')
       await tx.organizationMember.update({
         where: { orgId_profileId: { orgId: org.id, profileId: me.profile.id } }, data: { role: 'MEMBER' },
       })
@@ -29,5 +29,9 @@ export async function transferOwnershipAction(fd: FormData): Promise<ActionResul
     })
     revalidatePath(`/organization/${org.slug}`)
     return ok(undefined)
-  } catch (e) { if (isAppError(e)) return err(e.message, e.code); throw e }
+  } catch (e) {
+    if (e instanceof Error && e.message === 'NOT_MEMBER') return err('Target user is not a member of this organization.', 'NOT_FOUND')
+    if (isAppError(e)) return err(e.message, e.code)
+    throw e
+  }
 }

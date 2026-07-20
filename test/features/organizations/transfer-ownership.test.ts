@@ -4,9 +4,8 @@ const requireOrgOwner = vi.fn(); const targetFind = vi.fn(); const memberUpdate 
 vi.mock('@/lib/prisma', () => ({
   prisma: {
     $transaction: (fn: any) => fn({
-      organizationMember: { update: memberUpdate }, organization: { update: orgUpdate },
+      organizationMember: { findUnique: targetFind, update: memberUpdate }, organization: { update: orgUpdate },
     }),
-    organizationMember: { findUnique: targetFind },
   },
 }))
 vi.mock('@/features/organizations/permissions', () => ({ requireOrgOwner }))
