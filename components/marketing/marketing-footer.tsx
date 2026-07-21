@@ -1,44 +1,50 @@
 import Link from 'next/link'
 import { Logo } from './logo'
 
+// TODO: replace with the real GitHub URL once the repo is public.
+const GITHUB_URL = '#'
+
 const columns = [
   {
     title: 'Product',
     links: [
       { href: '/features', label: 'Features' },
-      { href: '/pricing', label: 'Pricing' },
+      { href: '/#open-source', label: 'Open source' },
       { href: '/#how-it-works', label: 'How it works' },
       { href: '/#tabbycat', label: 'Works with Tabbycat' },
     ],
   },
   {
-    title: 'Company',
+    title: 'Community',
     links: [
+      { href: GITHUB_URL, label: 'GitHub', external: true },
+      { href: `${GITHUB_URL}/issues`, label: 'Issues', external: true },
+      { href: `${GITHUB_URL}/discussions`, label: 'Discussions', external: true },
       { href: '/about', label: 'About' },
-      { href: '/contact', label: 'Contact' },
-      { href: '/#careers', label: 'Careers' },
-      { href: '/#changelog', label: 'Changelog' },
     ],
   },
   {
     title: 'Resources',
     links: [
       { href: '/#docs', label: 'Documentation' },
-      { href: '/#import-guide', label: 'Import guide' },
+      { href: '/#import-guide', label: 'Self-hosting guide' },
       { href: '/#audit', label: 'Activity log' },
-      { href: '/#status', label: 'Status' },
+      { href: '/contact', label: 'Contact' },
     ],
   },
   {
     title: 'Legal',
     links: [
+      { href: `${GITHUB_URL}/blob/main/LICENSE`, label: 'License (MIT)', external: true },
       { href: '/#privacy', label: 'Privacy' },
       { href: '/#terms', label: 'Terms' },
-      { href: '/#dpa', label: 'DPA' },
       { href: '/#security', label: 'Security' },
     ],
   },
-]
+] satisfies ReadonlyArray<{
+  title: string
+  links: ReadonlyArray<{ href: string; label: string; external?: boolean }>
+}>
 
 export function MarketingFooter() {
   return (
@@ -53,7 +59,7 @@ export function MarketingFooter() {
               </span>
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-600">
-              The administrative backbone for debate tournaments — registration,
+              Free, open source, and built for the debate community — registration,
               finance, and communication in one place.
             </p>
           </div>
@@ -65,9 +71,10 @@ export function MarketingFooter() {
               </div>
               <ul className="mt-4 space-y-3">
                 {col.links.map((link) => (
-                  <li key={link.href}>
+                  <li key={`${col.title}:${link.label}`}>
                     <Link
                       href={link.href}
+                      {...(link.external ? { target: '_blank', rel: 'noreferrer' } : {})}
                       className="text-sm text-slate-600 transition-colors hover:text-slate-900"
                     >
                       {link.label}
@@ -81,7 +88,7 @@ export function MarketingFooter() {
 
         <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-slate-200 pt-8 sm:flex-row sm:items-center">
           <p className="text-xs text-slate-500">
-            &copy; {new Date().getFullYear()} Debately, Inc. All rights reserved.
+            &copy; {new Date().getFullYear()} Debately &middot; MIT licensed &middot; Free forever.
           </p>
           <p className="text-xs text-slate-500">
             Built for the coaches and organizers who make Saturdays happen.

@@ -5,14 +5,20 @@ import {
   CheckCircle2,
   ClipboardCheck,
   FileSpreadsheet,
+  Github,
+  Heart,
   History,
   Link2,
   MessageSquareText,
   Receipt,
+  Server,
   Sparkles,
   Wallet,
   XCircle,
 } from 'lucide-react'
+
+// TODO: replace with the real GitHub URL once the repo is public.
+const GITHUB_URL = '#'
 import { Button } from '@/components/ui/button'
 import { DashboardPreview } from '@/components/marketing/bracket-preview'
 import { MappingPreview } from '@/components/marketing/logo-marks'
@@ -29,7 +35,7 @@ export default function MarketingHomePage() {
       <TabbycatBand />
       <HowItWorks />
       <Testimonial />
-      <PricingPreview />
+      <OpenSource />
       <FinalCTA />
     </>
   )
@@ -62,7 +68,7 @@ function Hero() {
         <div className="lg:col-span-6">
           <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-800">
             <Sparkles className="h-3.5 w-3.5" strokeWidth={2} />
-            New: CSV column mapping with templates
+            Free and open source · MIT licensed
           </div>
 
           <h1 className="mt-6 text-4xl font-semibold tracking-tight text-slate-900 md:text-5xl lg:text-6xl lg:leading-[1.05]">
@@ -71,8 +77,8 @@ function Hero() {
 
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
             Registration, institution portals, finance, and audit trails in one
-            place — so your team stops living in spreadsheets, forms, and group
-            chats.
+            place — free to use, free to self-host, built in the open so the
+            debate community owns it.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -81,17 +87,18 @@ function Hero() {
                 size="lg"
                 className="h-12 bg-blue-700 px-6 text-[15px] text-white hover:bg-blue-800"
               >
-                Start free trial
+                Get started free
                 <ArrowRight className="ml-2 h-4 w-4" strokeWidth={2.25} />
               </Button>
             </Link>
-            <Link href="#how-it-works">
+            <Link href={GITHUB_URL} target="_blank" rel="noreferrer">
               <Button
                 variant="ghost"
                 size="lg"
                 className="h-12 px-5 text-[15px] text-slate-700 hover:bg-slate-100 hover:text-slate-900"
               >
-                See how it works
+                <Github className="mr-2 h-4 w-4" strokeWidth={2} />
+                Star on GitHub
               </Button>
             </Link>
           </div>
@@ -512,98 +519,73 @@ function Testimonial() {
   )
 }
 
-function PricingPreview() {
-  const tiers = [
+function OpenSource() {
+  const options = [
     {
-      name: 'Solo Organizer',
-      price: 'Free',
-      cadence: 'forever',
-      description: 'For a first tournament, or a small internal event.',
+      icon: <Heart className="h-5 w-5" strokeWidth={2} />,
+      name: 'Hosted, free forever',
+      description:
+        'The fastest path. We run the servers, you run tournaments. No card, no seat limits, no upgrade prompts.',
       features: [
-        '1 organization',
-        '1 active tournament',
-        'Up to 20 institutions',
-        'Community support',
+        'Unlimited tournaments & institutions',
+        'CSV import with saved mapping templates',
+        'Institution portals, finance, and activity log',
+        'Community support on GitHub Discussions',
       ],
-      cta: 'Start free',
-      featured: false,
+      cta: { label: 'Get started free', href: '/register', primary: true, external: false },
     },
     {
-      name: 'Organization',
-      price: '$79',
-      cadence: 'per month',
-      description: 'For programs and organizations running competitive tournaments.',
+      icon: <Server className="h-5 w-5" strokeWidth={2} />,
+      name: 'Self-host',
+      description:
+        'Fork the repo and run Debately on your own infrastructure. MIT licensed — use it, modify it, ship it.',
       features: [
-        'Unlimited tournaments',
-        'Unlimited institutions',
-        'Column mapping templates',
-        'Analytics & CSV exports',
-        'Priority email support',
+        'Full source on GitHub, MIT licensed',
+        'Docker Compose for one-command local runs',
+        'Bring your own Supabase / Postgres',
+        'PRs, issues, and roadmap discussion welcome',
       ],
-      cta: 'Start free trial',
-      featured: true,
-    },
-    {
-      name: 'Circuit',
-      price: 'Custom',
-      cadence: 'annual',
-      description: 'For national circuits, leagues, and multi-organization operators.',
-      features: [
-        'Multiple organizations',
-        'SSO & role-based access',
-        'Sandbox environments',
-        'Dedicated success manager',
-      ],
-      cta: 'Talk to us',
-      featured: false,
+      cta: { label: 'View on GitHub', href: GITHUB_URL, primary: false, external: true },
     },
   ]
 
   return (
-    <section id="pricing" className="border-b border-slate-200 bg-white">
+    <section id="open-source" className="border-b border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-medium uppercase tracking-widest text-blue-700">
-            Pricing
+            Open source
           </p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-            Priced for programs, not procurement.
+            Free to use. Free to fork.
           </h2>
           <p className="mt-4 text-slate-600">
-            Start free. Upgrade when your program runs enough tournaments to
-            justify it.
+            Debately is built in the open under the MIT license. Use the hosted
+            version at no cost, or run your own copy on your own infrastructure.
           </p>
         </div>
 
-        <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3">
-          {tiers.map((tier) => (
+        <div className="mx-auto mt-16 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2">
+          {options.map((opt) => (
             <div
-              key={tier.name}
+              key={opt.name}
               className={`relative flex flex-col rounded-2xl border p-6 ${
-                tier.featured
+                opt.cta.primary
                   ? 'border-blue-700 bg-gradient-to-b from-blue-50/60 to-white shadow-lg shadow-blue-950/10'
                   : 'border-slate-200 bg-white'
               }`}
             >
-              {tier.featured && (
-                <span className="absolute -top-3 left-6 inline-flex items-center rounded-full bg-blue-700 px-3 py-1 text-[11px] font-medium text-white">
-                  Most popular
-                </span>
-              )}
-              <h3 className="text-sm font-semibold tracking-wide text-slate-700">
-                {tier.name}
-              </h3>
-              <div className="mt-4 flex items-baseline gap-1.5">
-                <span className="text-4xl font-semibold tracking-tight text-slate-900">
-                  {tier.price}
-                </span>
-                <span className="text-sm text-slate-500">{tier.cadence}</span>
+              <div className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+                {opt.icon}
               </div>
-              <p className="mt-4 text-sm leading-relaxed text-slate-600">
-                {tier.description}
+              <h3 className="text-lg font-semibold tracking-tight text-slate-900">
+                {opt.name}
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                {opt.description}
               </p>
               <ul className="mt-6 space-y-2.5">
-                {tier.features.map((f) => (
+                {opt.features.map((f) => (
                   <li key={f} className="flex items-start gap-2.5">
                     <CheckCircle2
                       className="mt-0.5 h-4 w-4 shrink-0 text-blue-700"
@@ -614,21 +596,32 @@ function PricingPreview() {
                 ))}
               </ul>
               <div className="mt-8">
-                <Link href={tier.name === 'Circuit' ? '/contact' : '/register'}>
+                <Link
+                  href={opt.cta.href}
+                  {...(opt.cta.external ? { target: '_blank', rel: 'noreferrer' } : {})}
+                >
                   <Button
                     className={`w-full ${
-                      tier.featured
+                      opt.cta.primary
                         ? 'bg-blue-700 text-white hover:bg-blue-800'
                         : 'bg-slate-900 text-white hover:bg-slate-800'
                     }`}
                   >
-                    {tier.cta}
+                    {opt.cta.external && (
+                      <Github className="mr-2 h-4 w-4" strokeWidth={2} />
+                    )}
+                    {opt.cta.label}
                   </Button>
                 </Link>
               </div>
             </div>
           ))}
         </div>
+
+        <p className="mx-auto mt-12 max-w-xl text-center text-sm text-slate-500">
+          Built by the debate community, for the debate community. Every
+          approval, override, and mapping template is code you can read.
+        </p>
       </div>
     </section>
   )
@@ -650,7 +643,8 @@ function FinalCTA() {
           Give your tab room its week back.
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-slate-600">
-          Set up your first tournament in under ten minutes. No card required.
+          Free, open source, and set up in under ten minutes. No card, no seat
+          limits — just software the debate community owns.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link href="/register">
@@ -658,17 +652,18 @@ function FinalCTA() {
               size="lg"
               className="h-12 bg-blue-700 px-6 text-[15px] text-white hover:bg-blue-800"
             >
-              Start free trial
+              Get started free
               <ArrowRight className="ml-2 h-4 w-4" strokeWidth={2.25} />
             </Button>
           </Link>
-          <Link href="/contact">
+          <Link href={GITHUB_URL} target="_blank" rel="noreferrer">
             <Button
               variant="ghost"
               size="lg"
               className="h-12 px-5 text-[15px] text-slate-700 hover:bg-white hover:text-slate-900"
             >
-              Talk to us
+              <Github className="mr-2 h-4 w-4" strokeWidth={2} />
+              Star on GitHub
             </Button>
           </Link>
         </div>

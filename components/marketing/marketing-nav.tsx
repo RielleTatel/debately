@@ -1,10 +1,14 @@
 import Link from 'next/link'
+import { Github } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Logo } from './logo'
 
+// TODO: replace with the real GitHub URL once the repo is public.
+const GITHUB_URL = '#'
+
 const navLinks = [
   { href: '/features', label: 'Features' },
-  { href: '/pricing', label: 'Pricing' },
+  { href: '/#open-source', label: 'Open source' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
 ]
@@ -34,6 +38,16 @@ export function MarketingNav() {
 
         <div className="flex items-center gap-2">
           <Link
+            href={GITHUB_URL}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Debately on GitHub"
+            className="hidden items-center gap-1.5 rounded-md px-2.5 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 sm:inline-flex"
+          >
+            <Github className="h-4 w-4" strokeWidth={2} />
+            <span>GitHub</span>
+          </Link>
+          <Link
             href="/login"
             className="hidden text-sm text-slate-600 transition-colors hover:text-slate-900 sm:inline-flex px-3 py-2"
           >
@@ -44,7 +58,7 @@ export function MarketingNav() {
               size="sm"
               className="bg-blue-700 text-white hover:bg-blue-800"
             >
-              Start free trial
+              Get started free
             </Button>
           </Link>
         </div>
