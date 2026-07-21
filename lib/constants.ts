@@ -17,4 +17,9 @@ export const ROUTES = {
   settings: '/settings',
   tournamentSettings: (id: string) => `/tournaments/${id}/settings`,
   tournamentDashboard: (id: string) => `/tournaments/${id}`,
+  imports: (tournamentId: string) => `/tournaments/${tournamentId}/imports`,
+  importMapping: (tournamentId: string, importId: string) => `/tournaments/${tournamentId}/imports/${importId}/mapping`,
+  importReview: (tournamentId: string, importId: string) => `/tournaments/${tournamentId}/imports/${importId}/review`,
+  importSummary: (tournamentId: string, importId: string) => `/tournaments/${tournamentId}/imports/${importId}/summary`,
+  expectations: (tournamentId: string) => `/tournaments/${tournamentId}/expectations`,
 } as const

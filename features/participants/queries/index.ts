@@ -1,1 +1,1 @@
-'use client'
+export * from './participants'

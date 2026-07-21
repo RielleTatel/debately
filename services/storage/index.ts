@@ -26,3 +26,7 @@ export const storageService = {
 
 export { tournamentLogoStorage } from './tournament-logos'
 export { tournamentRulesStorage } from './tournament-rules'
+export { tournamentImportsStorage } from './tournament-imports'
+export { institutionLogoStorage } from './institution-logos'
+export { announcementAttachmentsStorage } from './announcement-attachments'
+export { paymentReceiptsStorage } from './payment-receipts'

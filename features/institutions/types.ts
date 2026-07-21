@@ -1,7 +1,2 @@
-export type InstitutionId = string
-
-export type CreateInstitutionInput = {
-  name: string
-  shortName?: string
-  country?: string
-}
+import type { TournamentInstitution, InstitutionAlias } from '@prisma/client'
+export type { TournamentInstitution, InstitutionAlias }

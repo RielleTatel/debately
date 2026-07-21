@@ -1,9 +1,2 @@
-import type { Team } from '@/types/database'
-
+import type { Team } from '@prisma/client'
 export type { Team }
-
-export type CreateTeamInput = {
-  name: string
-  tournamentId: string
-  institutionId?: string
-}

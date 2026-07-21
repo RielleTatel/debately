@@ -1,7 +1,2 @@
-export type AdjudicatorId = string
-
-export type RegisterAdjudicatorInput = {
-  userId: string
-  tournamentId: string
-  score?: number
-}
+import type { Adjudicator, AdjudicatorStatus } from '@prisma/client'
+export type { Adjudicator, AdjudicatorStatus }

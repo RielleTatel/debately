@@ -1,1 +1,1 @@
-export const announcementService = {}
+export * from './notify'

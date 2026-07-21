@@ -1,1 +1,2 @@
-'use client'
+export * from './announcements'
+export * from './unread'

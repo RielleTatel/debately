@@ -23,6 +23,23 @@ export class AppError extends Error {
 
 export function isAppError(e: unknown): e is AppError { return e instanceof AppError }
 
+import { ZodError } from 'zod'
+import type { ApiResponse } from '@/types/api'
+
+export function toApi(e: unknown): ApiResponse<never> {
+  if (e instanceof AppError) {
+    return { ok: false, error: e.message, code: e.code }
+  }
+  if (e instanceof ZodError) {
+    const msg = e.issues.map((i) => i.message).join('; ')
+    return { ok: false, error: msg, code: 'VALIDATION_ERROR' }
+  }
+  if (e instanceof Error) {
+    return { ok: false, error: e.message, code: 'INTERNAL_ERROR' }
+  }
+  return { ok: false, error: 'An unexpected error occurred', code: 'INTERNAL_ERROR' }
+}
+
 export const Errors = {
   unauthorized: () => new AppError('UNAUTHORIZED', 'Not authenticated', 401),
   forbidden: () => new AppError('FORBIDDEN', 'Access denied', 403),

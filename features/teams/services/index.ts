@@ -1,1 +1,1 @@
-export const teamService = {}
+export * from './validation'

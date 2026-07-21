@@ -1,9 +1,2 @@
-export type RequestType = 'team_registration' | 'participant_registration' | 'adjudicator_registration' | 'custom'
-export type RequestStatus = 'pending' | 'approved' | 'rejected' | 'waitlisted'
-
-export type CreateRequestInput = {
-  tournamentId: string
-  requesterEmail: string
-  type: RequestType
-  notes?: string
-}
+import type { Request as PrismaRequest, RequestActivity, RequestType, RequestStatus, RequestActivityKind } from '@prisma/client'
+export type { PrismaRequest as Request, RequestActivity, RequestType, RequestStatus, RequestActivityKind }

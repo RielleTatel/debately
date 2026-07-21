@@ -27,6 +27,17 @@ model Profile {
   ownedOrganizations      Organization[]         @relation("OrganizationOwner")
   memberships             OrganizationMember[]
   tournamentDirectorships TournamentDirector[]
+  csvImportsUploaded      CsvImport[]
+  institutionClaims       InstitutionClaim[]
+  uploadedReceipts        PaymentReceipt[]       @relation("ReceiptUploader")
+  verifiedReceipts        PaymentReceipt[]       @relation("ReceiptVerifier")
+  invoiceOverrides        Invoice[]              @relation("InvoiceOverrideBy")
+  sentReminders           PaymentReminderLog[]   @relation("ReminderSender")
+  announcementsAuthored   Announcement[]         @relation("AnnouncementAuthor")
+  announcementsRead       AnnouncementRead[]     @relation("AnnouncementReader")
+  requestsSubmitted       Request[]              @relation("RequestSubmitter")
+  requestsResolved        Request[]              @relation("RequestResolver")
+  requestActivities       RequestActivity[]      @relation("RequestActor")
 
   @@map("profiles")
 }
@@ -41,11 +52,12 @@ model Organization {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  owner       Profile                    @relation("OrganizationOwner", fields: [ownerId], references: [id])
-  members     OrganizationMember[]
-  aliases     OrganizationSlugAlias[]
-  invitations OrganizationInvitation[]
-  tournaments Tournament[]
+  owner           Profile                    @relation("OrganizationOwner", fields: [ownerId], references: [id])
+  members         OrganizationMember[]
+  aliases         OrganizationSlugAlias[]
+  invitations     OrganizationInvitation[]
+  tournaments     Tournament[]
+  columnMappings  ColumnMapping[]
 
   @@index([ownerId])
   @@map("organizations")
@@ -155,9 +167,15 @@ model Tournament {
   createdAt                    DateTime         @default(now()) @map("created_at")
   updatedAt                    DateTime         @updatedAt @map("updated_at")
 
-  organization Organization              @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  directors    TournamentDirector[]
-  schedule     TournamentScheduleEntry[]
+  organization        Organization              @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  directors           TournamentDirector[]
+  schedule            TournamentScheduleEntry[]
+  institutions        TournamentInstitution[]
+  institutionAliases  InstitutionAlias[]
+  adjudicators        Adjudicator[]
+  csvImports          CsvImport[]
+  announcements       Announcement[]
+  requests            Request[]
 
   @@unique([orgId, slug])
   @@index([orgId])
@@ -194,4 +212,493 @@ model TournamentScheduleEntry {
 
   @@index([tournamentId, startAt])
   @@map("tournament_schedule_entries")
+}
+
+enum CsvImportStatus {
+  STAGING
+  PROCESSED
+  FINALIZED
+  ROLLED_BACK
+
+  @@map("csv_import_status")
+}
+
+enum CsvImportRowStatus {
+  PENDING
+  ERROR
+  WARNING
+  IMPORTED
+  SKIPPED
+  RESUBMISSION
+
+  @@map("csv_import_row_status")
+}
+
+enum AdjudicatorStatus {
+  ACTIVE
+  WITHDRAWN
+
+  @@map("adjudicator_status")
+}
+
+enum ParticipantEligibility {
+  ELIGIBLE
+  INELIGIBLE
+
+  @@map("participant_eligibility")
+}
+
+model TournamentInstitution {
+  id                    String   @id @default(cuid())
+  tournamentId          String   @map("tournament_id")
+  name                  String
+  aliases               String[] @default([])
+  logoUrl               String?  @map("logo_url")
+  contactName           String?  @map("contact_name")
+  contactEmail          String?  @map("contact_email")
+  contactPhone          String?  @map("contact_phone")
+  teamsIntended         Int?     @map("teams_intended")
+  adjudicatorsIntended  Int?     @map("adjudicators_intended")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  tournament       Tournament               @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  teams            Team[]
+  participants     Participant[]
+  adjudicators     Adjudicator[]
+  portalTokens     InstitutionPortalToken[]
+  aliasRecords     InstitutionAlias[]
+  claim            InstitutionClaim?
+  invoice          Invoice?
+  requests         Request[]
+  announcementTargets AnnouncementTarget[]
+
+  @@unique([tournamentId, name])
+  @@index([tournamentId])
+  @@map("tournament_institutions")
+}
+
+model InstitutionAlias {
+  id                       String   @id @default(cuid())
+  tournamentId             String   @map("tournament_id")
+  alias                    String
+  resolvedInstitutionId    String   @map("resolved_institution_id")
+  createdAt                DateTime @default(now()) @map("created_at")
+
+  tournament            Tournament            @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  resolvedInstitution   TournamentInstitution @relation(fields: [resolvedInstitutionId], references: [id], onDelete: Cascade)
+
+  @@unique([tournamentId, alias])
+  @@index([resolvedInstitutionId])
+  @@map("institution_aliases")
+}
+
+model Team {
+  id                       String   @id @default(cuid())
+  tournamentInstitutionId  String   @map("tournament_institution_id")
+  name                     String
+  isNovice                 Boolean  @default(false) @map("is_novice")
+  importPhase              String   @map("import_phase")
+  warningFlags             String[] @default([]) @map("warning_flags")
+  createdAt                DateTime @default(now()) @map("created_at")
+  updatedAt                DateTime @updatedAt @map("updated_at")
+
+  institution     TournamentInstitution @relation(fields: [tournamentInstitutionId], references: [id], onDelete: Cascade)
+  participants    Participant[]
+  validationFlags TeamValidationFlag[]
+
+  @@unique([tournamentInstitutionId, name])
+  @@index([tournamentInstitutionId])
+  @@map("teams")
+}
+
+model Participant {
+  id                       String   @id @default(cuid())
+  tournamentInstitutionId  String   @map("tournament_institution_id")
+  teamId                   String?  @map("team_id")
+  displayName              String   @map("display_name")
+  email                    String?
+  phone                    String?
+  eligibility              ParticipantEligibility @default(ELIGIBLE)
+  ineligibilityReason      String?  @map("ineligibility_reason")
+  importPhase              String   @map("import_phase")
+  createdAt                DateTime @default(now()) @map("created_at")
+  updatedAt                DateTime @updatedAt @map("updated_at")
+
+  institution   TournamentInstitution @relation(fields: [tournamentInstitutionId], references: [id], onDelete: Cascade)
+  team          Team?                 @relation(fields: [teamId], references: [id], onDelete: SetNull)
+
+  @@index([tournamentInstitutionId])
+  @@index([teamId])
+  @@index([email])
+  @@map("participants")
+}
+
+model Adjudicator {
+  id                       String            @id @default(cuid())
+  tournamentId             String            @map("tournament_id")
+  tournamentInstitutionId  String?           @map("tournament_institution_id")
+  displayName              String            @map("display_name")
+  email                    String?
+  phone                    String?
+  experienceLevel          String?           @map("experience_level")
+  availabilityNotes        String?           @map("availability_notes")
+  directorNotes            String?           @map("director_notes")
+  status                   AdjudicatorStatus @default(ACTIVE)
+  importPhase              String            @map("import_phase")
+  createdAt                DateTime          @default(now()) @map("created_at")
+  updatedAt                DateTime          @updatedAt @map("updated_at")
+
+  tournament   Tournament             @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  institution  TournamentInstitution? @relation(fields: [tournamentInstitutionId], references: [id], onDelete: SetNull)
+
+  @@index([tournamentId])
+  @@index([tournamentInstitutionId])
+  @@index([email])
+  @@map("adjudicators")
+}
+
+model CsvImport {
+  id            String          @id @default(cuid())
+  tournamentId  String          @map("tournament_id")
+  phaseLabel    String          @map("phase_label")
+  uploaderId    String          @map("uploader_id")
+  storagePath   String          @map("storage_path")
+  status        CsvImportStatus @default(STAGING)
+  mappingJson   Json?           @map("mapping_json")
+  summaryJson   Json?           @map("summary_json")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  finalizedAt   DateTime?       @map("finalized_at")
+
+  tournament  Tournament       @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  uploader    Profile          @relation(fields: [uploaderId], references: [id])
+  rows        CsvImportRow[]
+
+  @@index([tournamentId])
+  @@index([status])
+  @@map("csv_imports")
+}
+
+model CsvImportRow {
+  id         String             @id @default(cuid())
+  importId   String             @map("import_id")
+  rowIndex   Int                @map("row_index")
+  rawJson    Json               @map("raw_json")
+  status     CsvImportRowStatus @default(PENDING)
+  messages   String[]           @default([])
+  createdAt  DateTime           @default(now()) @map("created_at")
+
+  import CsvImport @relation(fields: [importId], references: [id], onDelete: Cascade)
+
+  @@unique([importId, rowIndex])
+  @@index([importId])
+  @@map("csv_import_rows")
+}
+
+model ColumnMapping {
+  id           String   @id @default(cuid())
+  orgId        String   @map("org_id")
+  name         String
+  mappingJson  Json     @map("mapping_json")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@unique([orgId, name])
+  @@index([orgId])
+  @@map("column_mappings")
+}
+
+model InstitutionPortalToken {
+  id                       String    @id @default(cuid())
+  tournamentInstitutionId  String    @map("tournament_institution_id")
+  token                    String    @unique
+  active                   Boolean   @default(true)
+  regeneratedAt            DateTime? @map("regenerated_at")
+  disabledAt               DateTime? @map("disabled_at")
+  createdAt                DateTime  @default(now()) @map("created_at")
+
+  institution TournamentInstitution @relation(fields: [tournamentInstitutionId], references: [id], onDelete: Cascade)
+
+  @@index([tournamentInstitutionId])
+  @@index([active])
+  @@map("institution_portal_tokens")
+}
+
+enum TeamValidationKind {
+  INCOMPLETE
+  INELIGIBLE_SPEAKER
+  MISSING_JUDGE
+
+  @@map("team_validation_kind")
+}
+
+model InstitutionClaim {
+  tournamentInstitutionId String   @id @map("tournament_institution_id")
+  profileId               String   @map("profile_id")
+  claimedAt               DateTime @default(now()) @map("claimed_at")
+
+  institution TournamentInstitution @relation(fields: [tournamentInstitutionId], references: [id], onDelete: Cascade)
+  profile     Profile               @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@map("institution_claims")
+}
+
+model TeamValidationFlag {
+  id       String             @id @default(cuid())
+  teamId   String             @map("team_id")
+  kind     TeamValidationKind
+  note     String
+  createdAt DateTime          @default(now()) @map("created_at")
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, kind])
+  @@index([teamId])
+  @@map("team_validation_flags")
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  GCASH
+  CHECK
+  CASH
+  OTHER
+
+  @@map("payment_method")
+}
+
+enum ReceiptStatus {
+  SUBMITTED
+  APPROVED
+  REJECTED
+
+  @@map("receipt_status")
+}
+
+enum InvoiceLineKind {
+  TEAM_FEE
+  ADJUDICATOR_FEE
+  FLAT_FEE
+
+  @@map("invoice_line_kind")
+}
+
+model Invoice {
+  id                       String   @id @default(cuid())
+  tournamentInstitutionId  String   @unique @map("tournament_institution_id")
+  invoiceNumber            String   @unique @map("invoice_number")
+  subtotalMinor            Int      @default(0) @map("subtotal_minor")
+  discountMinor            Int      @default(0) @map("discount_minor")
+  discountReason           String?  @map("discount_reason")
+  totalMinor               Int      @default(0) @map("total_minor")
+  currency                 String   @db.Char(3)
+  overrideMinor            Int?     @map("override_minor")
+  overrideReason           String?  @map("override_reason")
+  overrideById             String?  @map("override_by_id")
+  overrideAt               DateTime? @map("override_at")
+  createdAt                DateTime @default(now()) @map("created_at")
+  updatedAt                DateTime @updatedAt @map("updated_at")
+
+  institution              TournamentInstitution @relation(fields: [tournamentInstitutionId], references: [id], onDelete: Cascade)
+  overrideBy               Profile? @relation("InvoiceOverrideBy", fields: [overrideById], references: [id], onDelete: SetNull)
+  lineItems                InvoiceLineItem[]
+  receipts                 PaymentReceipt[]
+  reminderLogs             PaymentReminderLog[]
+
+  @@map("invoices")
+}
+
+model InvoiceLineItem {
+  id             String          @id @default(cuid())
+  invoiceId      String          @map("invoice_id")
+  kind           InvoiceLineKind
+  label          String
+  quantity       Int             @default(1)
+  unitPriceMinor Int             @map("unit_price_minor")
+  subtotalMinor  Int             @map("subtotal_minor")
+  createdAt      DateTime        @default(now()) @map("created_at")
+
+  invoice        Invoice         @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@map("invoice_line_items")
+}
+
+model PaymentReceipt {
+  id                String        @id @default(cuid())
+  invoiceId         String        @map("invoice_id")
+  uploaderId        String        @map("uploader_id")
+  amountMinor       Int           @map("amount_minor")
+  paymentDate       DateTime      @map("payment_date")
+  referenceNumber   String        @map("reference_number")
+  method            PaymentMethod
+  storagePath       String        @map("storage_path")
+  status            ReceiptStatus @default(SUBMITTED)
+  verifiedById      String?       @map("verified_by_id")
+  verifiedAt        DateTime?     @map("verified_at")
+  rejectionReason   String?       @map("rejection_reason")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+
+  invoice           Invoice       @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  uploader          Profile       @relation("ReceiptUploader", fields: [uploaderId], references: [id], onDelete: Restrict)
+  verifiedBy        Profile?      @relation("ReceiptVerifier", fields: [verifiedById], references: [id], onDelete: SetNull)
+
+  @@index([invoiceId, status])
+  @@index([status, createdAt])
+  @@map("payment_receipts")
+}
+
+model PaymentReminderLog {
+  id                String   @id @default(cuid())
+  invoiceId         String   @map("invoice_id")
+  sentById          String   @map("sent_by_id")
+  sentAt            DateTime @default(now()) @map("sent_at")
+
+  invoice           Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  sentBy            Profile  @relation("ReminderSender", fields: [sentById], references: [id], onDelete: Restrict)
+
+  @@index([invoiceId, sentAt(sort: Desc)])
+  @@map("payment_reminder_logs")
+}
+
+enum AnnouncementStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  RETRACTED
+  @@map("announcement_status")
+}
+
+enum RequestType {
+  TEAM_ADDITION
+  TEAM_WITHDRAWAL
+  SPEAKER_REPLACEMENT
+  ADJUDICATOR_ADD
+  ADJUDICATOR_REMOVE
+  INSTITUTION_INFO_UPDATE
+  BILLING_QUESTION
+  DEADLINE_EXTENSION
+  ACCESSIBILITY_ACCOMMODATION
+  DIETARY_ACCOMMODATION
+  EQUIPMENT_REQUEST
+  RULES_CLARIFICATION
+  OTHER
+  @@map("request_type")
+}
+
+enum RequestStatus {
+  PENDING
+  MORE_INFO
+  APPROVED
+  REJECTED
+  @@map("request_status")
+}
+
+enum RequestActivityKind {
+  SUBMITTED
+  COMMENT
+  MORE_INFO_REQUESTED
+  MORE_INFO_PROVIDED
+  APPROVED
+  REJECTED
+  APPROVAL_ATTEMPT_FAILED
+  @@map("request_activity_kind")
+}
+
+model Announcement {
+  id               String              @id @default(cuid())
+  tournamentId     String              @map("tournament_id")
+  authorId         String              @map("author_id")
+  title            String
+  bodyHtml         String              @map("body_html")
+  attachmentPath   String?             @map("attachment_path")
+  status           AnnouncementStatus  @default(DRAFT)
+  isAllInstitutions Boolean            @default(false) @map("is_all_institutions")
+  isPublic         Boolean             @default(false) @map("is_public")
+  scheduledFor     DateTime?           @map("scheduled_for")
+  publishedAt      DateTime?           @map("published_at")
+  editedAt         DateTime?           @map("edited_at")
+  retractionNote   String?             @map("retraction_note")
+  createdAt        DateTime            @default(now()) @map("created_at")
+  updatedAt        DateTime            @updatedAt @map("updated_at")
+
+  tournament       Tournament          @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  author           Profile             @relation("AnnouncementAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+  targets          AnnouncementTarget[]
+  reads            AnnouncementRead[]
+
+  @@index([tournamentId, status, publishedAt(sort: Desc)])
+  @@map("announcements")
+}
+
+model AnnouncementTarget {
+  announcementId          String                 @map("announcement_id")
+  tournamentInstitutionId String                 @map("tournament_institution_id")
+
+  announcement            Announcement           @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  institution             TournamentInstitution  @relation(fields: [tournamentInstitutionId], references: [id], onDelete: Cascade)
+
+  @@id([announcementId, tournamentInstitutionId])
+  @@index([tournamentInstitutionId])
+  @@map("announcement_targets")
+}
+
+model AnnouncementRead {
+  announcementId String       @map("announcement_id")
+  profileId      String       @map("profile_id")
+  readAt         DateTime     @default(now()) @map("read_at")
+
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  profile        Profile      @relation("AnnouncementReader", fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@id([announcementId, profileId])
+  @@index([profileId, readAt(sort: Desc)])
+  @@map("announcement_reads")
+}
+
+model Request {
+  id                       String                @id @default(cuid())
+  tournamentId             String                @map("tournament_id")
+  tournamentInstitutionId  String                @map("tournament_institution_id")
+  submitterId              String                @map("submitter_id")
+  sequenceNumber           Int                   @map("sequence_number")
+  type                     RequestType
+  status                   RequestStatus         @default(PENDING)
+  description              String
+  payload                  Json
+  attachmentPath           String?               @map("attachment_path")
+  resolvedById             String?               @map("resolved_by_id")
+  resolvedAt               DateTime?             @map("resolved_at")
+  createdAt                DateTime              @default(now()) @map("created_at")
+  updatedAt                DateTime              @updatedAt @map("updated_at")
+
+  tournament    Tournament            @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  institution   TournamentInstitution @relation(fields: [tournamentInstitutionId], references: [id], onDelete: Cascade)
+  submitter     Profile               @relation("RequestSubmitter", fields: [submitterId], references: [id], onDelete: Restrict)
+  resolvedBy    Profile?              @relation("RequestResolver", fields: [resolvedById], references: [id], onDelete: SetNull)
+  activities    RequestActivity[]
+
+  @@unique([tournamentId, sequenceNumber])
+  @@index([tournamentId, status, createdAt(sort: Desc)])
+  @@index([tournamentInstitutionId, status])
+  @@map("requests")
+}
+
+model RequestActivity {
+  id         String                @id @default(cuid())
+  requestId  String                @map("request_id")
+  actorId    String                @map("actor_id")
+  kind       RequestActivityKind
+  note       String?
+  createdAt  DateTime              @default(now()) @map("created_at")
+
+  request    Request               @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  actor      Profile               @relation("RequestActor", fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([requestId, createdAt])
+  @@map("request_activities")
 }

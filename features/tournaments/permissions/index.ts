@@ -54,3 +54,13 @@ export function assertTournamentEditable(tournament: Pick<Tournament, 'status'>)
     throw new AppError('CONFLICT', `Tournament is ${tournament.status.toLowerCase()} and cannot be edited`, 409)
   }
 }
+
+
+export async function isBeforeRegistrationDeadline(tournamentId: string): Promise<boolean> {
+  const t = await prisma.tournament.findUnique({
+    where: { id: tournamentId },
+    select: { registrationDeadline: true },
+  })
+  if (!t) return false
+  return Date.now() < new Date(t.registrationDeadline).getTime()
+}
