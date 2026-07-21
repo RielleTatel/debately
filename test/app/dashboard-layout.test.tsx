@@ -1,6 +1,12 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 
+vi.mock('next/navigation', () => ({
+  usePathname: vi.fn().mockReturnValue('/dashboard'),
+  useRouter: vi.fn().mockReturnValue({ push: vi.fn(), replace: vi.fn() }),
+  redirect: vi.fn(),
+}))
+
 vi.mock('@/features/auth/queries', () => ({
   getCurrentUser: vi.fn().mockResolvedValue({
     user: { id: 'u1', email: 'a@b.com' },

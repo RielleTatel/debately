@@ -16,6 +16,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
   return {
     user: { id: data.user.id, email: data.user.email },
     profile: { id: profile.id, displayName: profile.displayName, avatarUrl: profile.avatarUrl },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     isVerified: Boolean((data.user as any).email_confirmed_at),
   }
 }

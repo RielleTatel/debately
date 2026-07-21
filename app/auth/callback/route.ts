@@ -20,6 +20,7 @@ export async function GET(request: Request) {
 
   try {
     const { data } = await supabase.auth.getUser()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (data?.user?.email && (data.user as any).email_confirmed_at) {
       const profile = await prisma.profile.findUnique({ where: { userId: data.user.id } })
       if (profile) await emailService.sendWelcome({ to: data.user.email, displayName: profile.displayName })
