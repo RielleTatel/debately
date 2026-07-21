@@ -1,3 +1,6 @@
 export { Button } from './button'
 export { Input } from './input'
 export { Badge } from './badge'
+export { Label } from './label'
+export { Textarea } from './textarea'
+export { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './select'
