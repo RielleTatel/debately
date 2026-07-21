@@ -1,28 +1,52 @@
-import type { Tournament } from '@/types/database'
-import { TOURNAMENT_STATUS, DEBATE_FORMATS } from '@/lib/constants'
+import type {
+  Tournament,
+  TournamentDirector,
+  TournamentScheduleEntry,
+  TournamentStatus,
+  DebateFormat,
+  ScheduleEntryKind,
+  Organization,
+} from '@prisma/client'
 
-export type { Tournament }
-
-export type TournamentStatus = (typeof TOURNAMENT_STATUS)[keyof typeof TOURNAMENT_STATUS]
-
-export type DebateFormat = (typeof DEBATE_FORMATS)[number]
-
-export type CreateTournamentInput = {
-  name: string
-  format: DebateFormat
-  startDate: Date
-  endDate: Date
-  organizationId: string
-  maxTeams?: number
-  description?: string
+export type {
+  Tournament,
+  TournamentDirector,
+  TournamentScheduleEntry,
+  TournamentStatus,
+  DebateFormat,
+  ScheduleEntryKind,
 }
 
-export type UpdateTournamentInput = Partial<CreateTournamentInput> & { id: string }
+export type TournamentId = string
 
-export type TournamentWithCounts = Tournament & {
-  _count: {
-    teams: number
-    participants: number
-    adjudicators: number
-  }
+export type FeeLine = {
+  label: string
+  amount: number
+  unit: 'per_team' | 'per_adjudicator' | 'flat'
 }
+
+export type FeeStructure = {
+  kind: 'none' | 'itemized'
+  lines: FeeLine[]
+}
+
+export type FormatConfig = {
+  speakerCount: number
+  customEligibility: string
+}
+
+export type TournamentContext = {
+  tournament: Tournament
+  org: Organization
+  role: 'OWNER' | 'MEMBER'
+  isDirector: boolean
+}
+
+export type DirectorWithProfile = TournamentDirector & {
+  profile: { id: string; displayName: string; avatarUrl: string | null }
+}
+
+export type TournamentListItem = Pick<
+  Tournament,
+  'id' | 'name' | 'slug' | 'status' | 'startDate' | 'endDate' | 'logoUrl'
+> & { orgSlug: string; orgName: string }

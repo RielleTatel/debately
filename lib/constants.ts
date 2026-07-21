@@ -6,18 +6,6 @@ export const PAGINATION = {
   MAX_PAGE_SIZE: 100,
 } as const
 
-export const TOURNAMENT_STATUS = {
-  DRAFT: 'draft',
-  PUBLISHED: 'published',
-  REGISTRATION_OPEN: 'registration_open',
-  REGISTRATION_CLOSED: 'registration_closed',
-  ACTIVE: 'active',
-  COMPLETED: 'completed',
-  CANCELLED: 'cancelled',
-} as const
-
-export const DEBATE_FORMATS = ['BP', 'AP', 'WSDC', 'CP', 'CUSTOM'] as const
-
 export const ROUTES = {
   home: '/',
   login: '/login',
@@ -27,4 +15,6 @@ export const ROUTES = {
   organization: '/organization',
   account: '/account',
   settings: '/settings',
+  tournamentSettings: (id: string) => `/tournaments/${id}/settings`,
+  tournamentDashboard: (id: string) => `/tournaments/${id}`,
 } as const

@@ -24,8 +24,9 @@ model Profile {
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")
 
-  ownedOrganizations Organization[]         @relation("OrganizationOwner")
-  memberships        OrganizationMember[]
+  ownedOrganizations      Organization[]         @relation("OrganizationOwner")
+  memberships             OrganizationMember[]
+  tournamentDirectorships TournamentDirector[]
 
   @@map("profiles")
 }
@@ -44,6 +45,7 @@ model Organization {
   members     OrganizationMember[]
   aliases     OrganizationSlugAlias[]
   invitations OrganizationInvitation[]
+  tournaments Tournament[]
 
   @@index([ownerId])
   @@map("organizations")
@@ -93,4 +95,103 @@ model OrganizationInvitation {
   @@index([orgId])
   @@index([email])
   @@map("organization_invitations")
+}
+
+enum TournamentStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+
+  @@map("tournament_status")
+}
+
+enum DebateFormat {
+  BP
+  AP
+  WSDC
+  CP
+  CUSTOM
+
+  @@map("debate_format")
+}
+
+enum ScheduleEntryKind {
+  DEADLINE
+  ROUND
+  CEREMONY
+  BREAK
+  OTHER
+
+  @@map("schedule_entry_kind")
+}
+
+model Tournament {
+  id                           String           @id @default(cuid())
+  orgId                        String           @map("org_id")
+  name                         String
+  slug                         String
+  format                       DebateFormat
+  status                       TournamentStatus @default(DRAFT)
+  startDate                    DateTime         @map("start_date")
+  endDate                      DateTime         @map("end_date")
+  registrationDeadline         DateTime         @map("registration_deadline")
+  paymentDeadline              DateTime?        @map("payment_deadline")
+  venue                        String
+  address                      String
+  maxTeamSlots                 Int              @map("max_team_slots")
+  description                  String?
+  logoUrl                      String?          @map("logo_url")
+  rulesUrl                     String?          @map("rules_url")
+  feeStructure                 Json             @default("{\"kind\":\"none\",\"lines\":[]}") @map("fee_structure")
+  currency                     String           @default("USD")
+  formatConfig                 Json             @default("{\"speakerCount\":3,\"customEligibility\":\"\"}") @map("format_config")
+  registrationOpen             Boolean          @default(false) @map("registration_open")
+  maxTeamsPerInstitution       Int?             @map("max_teams_per_institution")
+  maxAdjudicatorsPerInstitution Int?            @map("max_adjudicators_per_institution")
+  portalActive                 Boolean          @default(false) @map("portal_active")
+  publicPageEnabled            Boolean          @default(false) @map("public_page_enabled")
+  archivedAt                   DateTime?        @map("archived_at")
+  createdAt                    DateTime         @default(now()) @map("created_at")
+  updatedAt                    DateTime         @updatedAt @map("updated_at")
+
+  organization Organization              @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  directors    TournamentDirector[]
+  schedule     TournamentScheduleEntry[]
+
+  @@unique([orgId, slug])
+  @@index([orgId])
+  @@index([status])
+  @@map("tournaments")
+}
+
+model TournamentDirector {
+  id           String   @id @default(cuid())
+  tournamentId String   @map("tournament_id")
+  profileId    String   @map("profile_id")
+  assignedAt   DateTime @default(now()) @map("assigned_at")
+
+  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  profile    Profile    @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([tournamentId, profileId])
+  @@index([profileId])
+  @@map("tournament_directors")
+}
+
+model TournamentScheduleEntry {
+  id           String            @id @default(cuid())
+  tournamentId String            @map("tournament_id")
+  label        String
+  kind         ScheduleEntryKind
+  startAt      DateTime          @map("start_at")
+  endAt        DateTime?         @map("end_at")
+  description  String?
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+
+  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  @@index([tournamentId, startAt])
+  @@map("tournament_schedule_entries")
 }
