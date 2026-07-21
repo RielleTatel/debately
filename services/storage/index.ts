@@ -23,3 +23,6 @@ export const storageService = {
     return data.publicUrl
   },
 }
+
+export { tournamentLogoStorage } from './tournament-logos'
+export { tournamentRulesStorage } from './tournament-rules'
