@@ -14,7 +14,7 @@ export default async function CreateTournamentPage({ searchParams }: Props) {
     : (orgs.find((o) => o.role === 'OWNER') ?? orgs[0]).id
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold">Create tournament</h1>
       <TournamentCreateForm
         orgOptions={orgs.map((o) => ({ id: o.id, name: o.name }))}

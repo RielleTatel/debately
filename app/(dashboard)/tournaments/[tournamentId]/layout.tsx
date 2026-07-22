@@ -1,5 +1,3 @@
-import Link from 'next/link'
-import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { getTournamentContext } from '@/features/tournaments/queries'
 import { isAppError } from '@/lib/errors'
@@ -16,20 +14,18 @@ export default async function TournamentLayout({ params, children }: Props) {
     if (isAppError(e) && (e.code === 'NOT_FOUND' || e.code === 'FORBIDDEN')) notFound()
     throw e
   }
-  const { tournament } = ctx
+  const { tournament, role, isDirector } = ctx
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center gap-3 border-b px-6 py-3">
-        {tournament.logoUrl && (
-          <Image src={tournament.logoUrl} alt="" width={32} height={32} className="rounded" />
-        )}
-        <Link href={`/tournaments/${tournamentId}`} className="text-lg font-semibold hover:text-primary">
-          {tournament.name}
-        </Link>
-      </div>
-      <TournamentSubNav tournamentId={tournamentId} />
-      <div className="flex-1 overflow-y-auto">{children}</div>
+    <div className="flex h-full">
+      <TournamentSubNav
+        tournamentId={tournamentId}
+        tournamentName={tournament.name}
+        logoUrl={tournament.logoUrl}
+        role={role}
+        isDirector={isDirector}
+      />
+      <div className="flex-1 overflow-y-auto p-6">{children}</div>
     </div>
   )
 }

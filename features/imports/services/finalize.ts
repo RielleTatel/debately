@@ -24,7 +24,8 @@ function inferPhaseFromLabel(label: string): 'phase-1' | 'phase-2' | 'phase-3' {
 }
 
 export async function finalizeImport(importId: string): Promise<FinalizeResult> {
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(
+    async (tx) => {
     const importRec = await tx.csvImport.update({
       where: { id: importId },
       data: { status: 'FINALIZED', finalizedAt: new Date() },
@@ -165,5 +166,7 @@ export async function finalizeImport(importId: string): Promise<FinalizeResult> 
     })
 
     return { institutionsCreated, teamsCreated, participantsCreated, adjudicatorsCreated, recordsUpdatedViaReimport, rowsImported, rowsSkipped }
-  })
+    },
+    { maxWait: 10_000, timeout: 120_000 },
+  )
 }

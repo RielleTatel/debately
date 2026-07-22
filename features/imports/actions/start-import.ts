@@ -39,7 +39,13 @@ export async function startCsvImportAction(
         status: 'STAGING',
       },
     })
-    const path = await tournamentImportsStorage.upload(tournament.id, importRecord.id, file)
+    let path: string
+    try {
+      path = await tournamentImportsStorage.upload(tournament.id, importRecord.id, file)
+    } catch (uploadError) {
+      await prisma.csvImport.delete({ where: { id: importRecord.id } }).catch(() => {})
+      throw uploadError
+    }
     await prisma.csvImport.update({ where: { id: importRecord.id }, data: { storagePath: path } })
 
     logger.info('CSV import started', { importId: importRecord.id, tournamentId: tournament.id })

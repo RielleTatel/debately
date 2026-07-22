@@ -2,9 +2,9 @@ import Link from 'next/link'
 import { requireImportEditor } from '@/features/imports/permissions'
 import { buildImportPreview } from '@/features/imports/services/build-preview'
 import { getInstitutionsForTournament } from '@/features/institutions/queries'
-import { Button } from '@/components/ui/button'
 import { NormalizationPromptCard } from '@/features/imports/components/normalization-prompt'
 import { DiffReviewPanel } from '@/features/imports/components/diff-review-panel'
+import { FinalizeImportButton } from '@/features/imports/components/finalize-button'
 import { ROUTES } from '@/lib/constants'
 
 export default async function ReviewPage({
@@ -55,14 +55,7 @@ export default async function ReviewPage({
           href={ROUTES.imports(tournamentId) + '/' + importId + '/mapping'}
           className="inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
         >Back to mapping</Link>
-        <form action={async () => {
-          'use server'
-          const { finalizeImportAction } = await import('@/features/imports/actions')
-          const fd = new FormData(); fd.append('importId', importId)
-          await finalizeImportAction(fd)
-        }}>
-          <Button type="submit">Finalize import</Button>
-        </form>
+        <FinalizeImportButton tournamentId={tournamentId} importId={importId} />
       </div>
     </div>
   )

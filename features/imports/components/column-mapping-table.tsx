@@ -10,6 +10,7 @@ import { MappingTemplatePicker } from './mapping-template-picker'
 import {
   saveMappingAction, processImportAction, saveMappingTemplateAction,
 } from '@/features/imports/actions'
+import { autoMapHeaders } from '@/features/imports/services/auto-mapper'
 import { ROUTES } from '@/lib/constants'
 import type { ColumnMapping } from '@prisma/client'
 import type { SystemField, MappingSpec, ColumnMappingEntry } from '@/features/imports/types'
@@ -47,7 +48,7 @@ export function ColumnMappingTable({
 }) {
   const router = useRouter()
   const [entries, setEntries] = useState<ColumnMappingEntry[]>(
-    initialMapping?.entries ?? headers.map((h) => ({ header: h, field: 'ignore' as const })),
+    initialMapping?.entries ?? autoMapHeaders(headers),
   )
   const [groups, setGroups] = useState<RepeatGroupState[]>(initialMapping?.repeatGroups ?? [])
   const [templateName, setTemplateName] = useState('')
@@ -96,8 +97,28 @@ export function ColumnMappingTable({
     if (!r.ok) setError(r.error)
   }
 
+  const missingCritical = (['registration_type', 'institution_name'] as SystemField[]).filter(
+    (f) => !entries.some((e) => e.field === f),
+  )
+
   return (
     <div className="space-y-6">
+      <div className="flex items-center justify-between gap-3 rounded-md border bg-muted/30 px-3 py-2">
+        <p className="text-sm text-muted-foreground">
+          Guess mappings from column names, then adjust as needed.
+        </p>
+        <Button type="button" variant="outline" onClick={() => setEntries(autoMapHeaders(headers))}>
+          Auto-map columns
+        </Button>
+      </div>
+
+      {missingCritical.length > 0 && (
+        <div role="alert" className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+          Missing required fields: <strong>{missingCritical.join(', ')}</strong>. Rows will fail on
+          processing unless every row is an independent adjudicator.
+        </div>
+      )}
+
       <MappingTemplatePicker templates={templates} onApply={applyTemplate} />
       <RepeatingGroupControls groups={groups} onChange={setGroups} />
 
@@ -112,7 +133,7 @@ export function ColumnMappingTable({
         </thead>
         <tbody>
           {entries.map((entry, idx) => (
-            <tr key={entry.header} className="rounded-md border">
+            <tr key={idx} className="rounded-md border">
               <td className="p-2 font-medium">{entry.header}</td>
               <td className="p-2">
                 <select

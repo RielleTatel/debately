@@ -13,7 +13,7 @@ const SYSTEM_FIELDS: readonly SystemField[] = [
 export const phaseLabelSchema = z.string().trim().min(1, 'Phase label is required').max(200)
 
 export const columnMappingEntrySchema = z.object({
-  header: z.string().min(1),
+  header: z.string().max(500),
   field: z.enum(SYSTEM_FIELDS as unknown as [SystemField, ...SystemField[]]),
   slotIndex: z.number().int().min(1).max(20).optional(),
   repeatGroup: z.string().min(1).max(64).optional(),
