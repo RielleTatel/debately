@@ -1,0 +1,6 @@
+export { InfoBlock } from './info-block'
+export { OrganizerBlock } from './organizer-block'
+export { ScheduleTable } from './schedule-table'
+export { InstitutionsList } from './institutions-list'
+export { DocsList } from './docs-list'
+export { ContactCard } from './contact-card'

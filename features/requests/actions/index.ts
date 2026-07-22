@@ -1,3 +1,5 @@
 export { submitRequestAction } from './submit'
 export { approveRequestAction } from './approve'
 export { rejectRequestAction } from './reject'
+export { requestMoreInfoAction } from './request-more-info'
+export { provideMoreInfoAction } from './provide-more-info'

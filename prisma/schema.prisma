@@ -38,6 +38,8 @@ model Profile {
   requestsSubmitted       Request[]              @relation("RequestSubmitter")
   requestsResolved        Request[]              @relation("RequestResolver")
   requestActivities       RequestActivity[]      @relation("RequestActor")
+  activityLogEntries      ActivityLog[]          @relation("ActivityActor")
+  emailPreferences        UserEmailPreference?
 
   @@map("profiles")
 }
@@ -58,6 +60,7 @@ model Organization {
   invitations     OrganizationInvitation[]
   tournaments     Tournament[]
   columnMappings  ColumnMapping[]
+  activityLog     ActivityLog[]
 
   @@index([ownerId])
   @@map("organizations")
@@ -168,14 +171,18 @@ model Tournament {
   updatedAt                    DateTime         @updatedAt @map("updated_at")
 
   organization        Organization              @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  directors           TournamentDirector[]
-  schedule            TournamentScheduleEntry[]
-  institutions        TournamentInstitution[]
-  institutionAliases  InstitutionAlias[]
-  adjudicators        Adjudicator[]
-  csvImports          CsvImport[]
-  announcements       Announcement[]
-  requests            Request[]
+  directors              TournamentDirector[]
+  schedule               TournamentScheduleEntry[]
+  institutions           TournamentInstitution[]
+  institutionAliases     InstitutionAlias[]
+  adjudicators           Adjudicator[]
+  csvImports             CsvImport[]
+  announcements          Announcement[]
+  requests               Request[]
+  activityLog            ActivityLog[]
+  publicAssets           TournamentPublicAsset[]
+  contacts               TournamentContact[]
+  publicContactMessages  PublicContactMessage[]
 
   @@unique([orgId, slug])
   @@index([orgId])
@@ -701,4 +708,155 @@ model RequestActivity {
 
   @@index([requestId, createdAt])
   @@map("request_activities")
+}
+
+enum ActivityAction {
+  ORG_CREATED
+  ORG_UPDATED
+  ORG_DELETED
+  ORG_MEMBER_INVITED
+  ORG_MEMBER_INVITE_ACCEPTED
+  ORG_MEMBER_INVITE_DECLINED
+  ORG_MEMBER_REMOVED
+  ORG_OWNERSHIP_TRANSFERRED
+  TOURNAMENT_CREATED
+  TOURNAMENT_UPDATED
+  TOURNAMENT_ARCHIVED
+  TOURNAMENT_UNARCHIVED
+  TOURNAMENT_DIRECTOR_ADDED
+  TOURNAMENT_DIRECTOR_REMOVED
+  CSV_IMPORT_STARTED
+  CSV_IMPORT_MAPPED
+  CSV_IMPORT_PROCESSED
+  CSV_IMPORT_NORMALIZATION_CONFIRMED
+  CSV_IMPORT_DIFF_APPLIED
+  CSV_IMPORT_FINALIZED
+  CSV_IMPORT_ROLLED_BACK
+  PORTAL_CLAIMED
+  PORTAL_TOKEN_REGENERATED
+  PORTAL_DISABLED
+  INSTITUTION_UPDATED
+  TEAM_CREATED
+  TEAM_UPDATED
+  TEAM_WITHDRAWN
+  PARTICIPANT_UPDATED
+  ADJUDICATOR_UPDATED
+  INVOICE_GENERATED
+  INVOICE_DISCOUNT_APPLIED
+  INVOICE_OVERRIDE_APPLIED
+  INVOICE_OVERRIDE_CLEARED
+  RECEIPT_SUBMITTED
+  RECEIPT_APPROVED
+  RECEIPT_REJECTED
+  REMINDER_SENT
+  ANNOUNCEMENT_CREATED
+  ANNOUNCEMENT_UPDATED
+  ANNOUNCEMENT_PUBLISHED
+  ANNOUNCEMENT_SCHEDULED
+  ANNOUNCEMENT_RETRACTED
+  REQUEST_SUBMITTED
+  REQUEST_MORE_INFO_REQUESTED
+  REQUEST_MORE_INFO_PROVIDED
+  REQUEST_APPROVED
+  REQUEST_REJECTED
+
+  @@map("activity_action")
+}
+
+model ActivityLog {
+  id                String         @id @default(cuid())
+  tournamentId      String?        @map("tournament_id")
+  orgId             String?        @map("org_id")
+  actorId           String?        @map("actor_id")
+  actorRoleAtTime   String         @map("actor_role_at_time")
+  action            ActivityAction
+  resourceType      String         @map("resource_type")
+  resourceId        String?        @map("resource_id")
+  description       String
+  beforeSnapshot    Json?          @map("before_snapshot")
+  afterSnapshot     Json?          @map("after_snapshot")
+  createdAt         DateTime       @default(now()) @map("created_at")
+
+  tournament        Tournament?    @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  organization      Organization?  @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  actor             Profile?       @relation("ActivityActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([tournamentId, createdAt(sort: Desc)])
+  @@index([orgId, createdAt(sort: Desc)])
+  @@index([action, createdAt(sort: Desc)])
+  @@index([actorId, createdAt(sort: Desc)])
+  @@map("activity_log")
+}
+
+enum PublicAssetKind {
+  RULES
+  INFO_PACK
+  TAB_GUIDE
+  CODE_OF_CONDUCT
+  @@map("public_asset_kind")
+}
+
+enum NotificationCategory {
+  ANNOUNCEMENTS
+  PAYMENT_UPDATES
+  REQUEST_UPDATES
+  CALENDAR_NUDGES
+  TRANSACTIONAL
+  @@map("notification_category")
+}
+
+model TournamentPublicAsset {
+  id            String          @id @default(cuid())
+  tournamentId  String          @map("tournament_id")
+  kind          PublicAssetKind
+  storagePath   String          @map("storage_path")
+  label         String
+  createdAt     DateTime        @default(now()) @map("created_at")
+
+  tournament    Tournament      @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  @@index([tournamentId, kind])
+  @@map("tournament_public_assets")
+}
+
+model TournamentContact {
+  id           String     @id @default(cuid())
+  tournamentId String     @map("tournament_id")
+  name         String
+  email        String
+  socialLinks  Json?      @map("social_links")
+
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  @@index([tournamentId])
+  @@map("tournament_contacts")
+}
+
+model PublicContactMessage {
+  id           String     @id @default(cuid())
+  tournamentId String     @map("tournament_id")
+  senderName   String     @map("sender_name")
+  senderEmail  String     @map("sender_email")
+  body         String
+  senderIp     String?    @map("sender_ip")
+  createdAt    DateTime   @default(now()) @map("created_at")
+
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  @@index([tournamentId, createdAt(sort: Desc)])
+  @@map("public_contact_messages")
+}
+
+model UserEmailPreference {
+  id              String   @id @default(cuid())
+  profileId       String   @unique @map("profile_id")
+  announcements   Boolean  @default(true)
+  paymentUpdates  Boolean  @default(true) @map("payment_updates")
+  requestUpdates  Boolean  @default(true) @map("request_updates")
+  calendarNudges  Boolean  @default(true) @map("calendar_nudges")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  profile         Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@map("user_email_preferences")
 }

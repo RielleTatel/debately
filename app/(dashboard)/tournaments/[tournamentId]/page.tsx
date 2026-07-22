@@ -1,76 +1,47 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { notFound } from 'next/navigation'
-import { getTournamentContext } from '@/features/tournaments/queries'
-import { isAppError } from '@/lib/errors'
+import { requireTournamentReadable } from '@/features/tournaments/permissions'
+import { getInstitutionsForTournament } from '@/features/institutions/queries'
+import { getFinancialAnalytics } from '@/features/analytics/services/financial'
+import { getRegistrationAnalytics } from '@/features/analytics/services/registration'
+import { listRecentActivityForTournament } from '@/features/activity/queries/activity'
+import { prisma } from '@/lib/prisma'
+import { SummaryCard } from '@/features/dashboards/components/summary-card'
+import { RecentActivityFeed } from '@/features/dashboards/components/recent-activity-feed'
+import { QuickActions } from '@/features/dashboards/components/quick-actions'
+import { StatusIndicators } from '@/features/dashboards/components/status-indicators'
+import { formatAmount } from '@/lib/money'
 
-const STATUS_STYLES: Record<string, string> = {
-  DRAFT: 'bg-muted text-muted-foreground',
-  ACTIVE: 'bg-emerald-100 text-emerald-800',
-  COMPLETED: 'bg-blue-100 text-blue-800',
-  ARCHIVED: 'bg-amber-100 text-amber-800',
-}
-
-type Props = { params: Promise<{ tournamentId: string }> }
-
-export default async function TournamentDashboardPage({ params }: Props) {
+export default async function OrganizerDashboardPage({ params }: { params: Promise<{ tournamentId: string }> }) {
   const { tournamentId } = await params
-  let ctx
-  try {
-    ctx = await getTournamentContext(tournamentId)
-  } catch (e) {
-    if (isAppError(e) && (e.code === 'NOT_FOUND' || e.code === 'FORBIDDEN')) notFound()
-    throw e
-  }
-  const { tournament, isDirector } = ctx
-  const readOnly = tournament.status === 'COMPLETED' || tournament.status === 'ARCHIVED'
+  const ctx = await requireTournamentReadable(tournamentId)
+  const { tournament } = ctx
+
+  const [institutions, financial, registration, recent, pendingRequests] = await Promise.all([
+    getInstitutionsForTournament(tournamentId), getFinancialAnalytics(tournamentId), getRegistrationAnalytics(tournamentId),
+    listRecentActivityForTournament(tournamentId, 10),
+    prisma.request.count({ where: { tournamentId, status: 'PENDING' } }),
+  ])
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-center gap-4">
-          {tournament.logoUrl && (
-            <Image src={tournament.logoUrl} alt="" width={64} height={64} className="rounded" />
-          )}
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold">{tournament.name}</h1>
-              <span className={`text-xs px-2 py-0.5 rounded ${STATUS_STYLES[tournament.status]}`}>
-                {tournament.status}
-              </span>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {tournament.venue} · {tournament.startDate.toDateString()} – {tournament.endDate.toDateString()}
-            </p>
-          </div>
-        </div>
-        {isDirector && (
-          <Link href={`/tournaments/${tournament.id}/settings`} className="text-sm text-primary hover:underline">
-            Settings
-          </Link>
-        )}
+      <div className="flex items-start justify-between">
+        <div><h1 className="text-2xl font-bold">{tournament.name}</h1><p className="text-sm text-muted-foreground">{tournament.venue} · {tournament.startDate.toDateString()}</p></div>
+        <Link href={`/tournaments/${tournamentId}/settings`} className="text-sm text-primary hover:underline">Settings</Link>
       </div>
-
-      {readOnly && (
-        <div className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
-          This tournament is {tournament.status.toLowerCase()} and is read-only.
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <PlaceholderCard title="Institutions" body="Registration import lands in Phase 4." />
-        <PlaceholderCard title="Teams" body="Team management lands in Phase 5+." />
-        <PlaceholderCard title="Schedule" body={`${tournament.registrationDeadline.toDateString()} — registration deadline`} />
+      <StatusIndicators tournament={tournament} filled={registration.capacity.filled} totalSlots={registration.capacity.totalSlots} />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <SummaryCard label="Institutions" value={String(institutions.length)} />
+        <SummaryCard label="Teams" value={String(registration.counts.teams)} />
+        <SummaryCard label="Adjudicators" value={String(registration.counts.adjudicators)} />
+        <SummaryCard label="Outstanding" value={formatAmount(financial.outstandingMinor, tournament.currency)} />
+        <SummaryCard label="Pending requests" value={String(pendingRequests)} link={`/tournaments/${tournamentId}/requests`} />
+        <SummaryCard label="Registration filled" value={`${Math.round(registration.capacity.totalSlots === 0 ? 0 : (registration.capacity.filled / registration.capacity.totalSlots) * 100)}%`} />
       </div>
-    </div>
-  )
-}
-
-function PlaceholderCard({ title, body }: { title: string; body: string }) {
-  return (
-    <div className="rounded-md border p-4">
-      <h2 className="font-medium">{title}</h2>
-      <p className="mt-1 text-sm text-muted-foreground">{body}</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:col-span-2"><h2 className="text-lg font-semibold mb-3">Recent activity</h2><RecentActivityFeed rows={recent} /></div>
+        <div><h2 className="text-lg font-semibold mb-3">Quick actions</h2><QuickActions tournamentId={tournamentId} isDirector /></div>
+      </div>
     </div>
   )
 }

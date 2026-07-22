@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma'
 import { toApi, Errors } from '@/lib/errors'
 import { activityLog } from '@/services/activity-log'
+import { logActivity } from '@/features/activity/services'
 import { requireVerifiedUser } from '@/features/auth/queries'
 import { claimTokenSchema } from '@/features/portal/schemas'
 import type { ApiResponse } from '@/types/api'
@@ -38,6 +39,7 @@ export async function claimPortalAction(
         actorId: me.profile.id,
         data: { institutionId: token.tournamentInstitutionId },
       })
+      await logActivity({ action: 'PORTAL_CLAIMED', resourceType: 'institution_portal', resourceId: token.tournamentInstitutionId, description: 'Portal claimed', tournamentId: inst.tournamentId, actorId: me.profile.id, actorRoleAtTime: 'INSTITUTION_REP' })
     }
     return { ok: true, data: { institutionId: token.tournamentInstitutionId } }
   } catch (e) {

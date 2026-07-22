@@ -5,6 +5,7 @@ import { AppError, toApi } from '@/lib/errors'
 import { requireDirectorForReceipt, assertPaymentActionsAllowed } from '@/features/finance/permissions'
 import { approveReceiptSchema } from '@/features/finance/schemas'
 import { notifyReceiptApproved } from '@/features/finance/services/notify-finance'
+import { logActivity } from '@/features/activity/services'
 import type { ApiResponse } from '@/types/api'
 
 export async function approveReceiptAction(fd: FormData): Promise<ApiResponse<{ receiptId: string }>> {
@@ -19,6 +20,7 @@ export async function approveReceiptAction(fd: FormData): Promise<ApiResponse<{ 
       data: { status: 'APPROVED', verifiedById: me.profile.id, verifiedAt: new Date(), rejectionReason: null },
     })
     await notifyReceiptApproved({ receiptId: receipt.id, invoiceId: receipt.invoiceId as string })
+    await logActivity({ action: 'RECEIPT_APPROVED', resourceType: 'payment_receipt', resourceId: receipt.id, description: 'Receipt approved', tournamentId: tournament.id, actorId: me.profile.id, actorRoleAtTime: 'DIRECTOR' })
     const tid = (receipt as any).invoice?.institution?.tournamentId
     const iid = (receipt as any).invoice?.institution?.id
     if (tid && iid) { revalidatePath(`/tournaments/${tid}/finance/${iid}`); revalidatePath(`/tournaments/${tid}/finance`) }
