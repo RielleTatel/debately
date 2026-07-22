@@ -1,53 +1,84 @@
 import { Suspense } from 'react'
-import Link from 'next/link'
 import { requireTournamentReadable } from '@/features/tournaments/permissions'
+import { SectionHeader } from '@/components/ui/section-header'
 import { QuickActions } from '@/features/dashboards/components/quick-actions'
-import { StatusPanel } from '@/features/dashboards/components/tournament-dashboard/status-panel'
 import { SummaryStrip } from '@/features/dashboards/components/tournament-dashboard/summary-strip'
+import { RegistrationHealth } from '@/features/dashboards/components/tournament-dashboard/registration-health'
 import { ActivityPanel } from '@/features/dashboards/components/tournament-dashboard/activity-panel'
+import { DeadlinesPanel } from '@/features/dashboards/components/tournament-dashboard/deadlines-panel'
 import {
-  StatusIndicatorsSkeleton,
   SummaryCardsSkeleton,
+  RegistrationHealthSkeleton,
   RecentActivitySkeleton,
+  DeadlinesSkeleton,
 } from '@/features/dashboards/components/tournament-dashboard/skeletons'
 
-export default async function OrganizerDashboardPage({ params }: { params: Promise<{ tournamentId: string }> }) {
+export default async function OrganizerDashboardPage({
+  params,
+}: {
+  params: Promise<{ tournamentId: string }>
+}) {
   const { tournamentId } = await params
   const { tournament, isDirector } = await requireTournamentReadable(tournamentId)
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">{tournament.name}</h1>
-          <p className="text-sm text-muted-foreground">
-            {tournament.venue} · {tournament.startDate.toDateString()}
-          </p>
+    <div className="space-y-8">
+      {/* Registration health */}
+      <section className="space-y-3">
+        <SectionHeader
+          title="Registration health"
+          description="Progress against the key registration milestones."
+        />
+        <Suspense fallback={<RegistrationHealthSkeleton />}>
+          <RegistrationHealth tournamentId={tournamentId} currency={tournament.currency} />
+        </Suspense>
+      </section>
+
+      {/* Metrics strip */}
+      <section className="space-y-3">
+        <SectionHeader title="At a glance" />
+        <Suspense fallback={<SummaryCardsSkeleton />}>
+          <SummaryStrip tournamentId={tournamentId} currency={tournament.currency} />
+        </Suspense>
+      </section>
+
+      {/* Deadlines + Activity | Quick actions */}
+      <div className="grid gap-8 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-8">
+          <section className="space-y-3">
+            <SectionHeader
+              title="Upcoming deadlines"
+              description="Time-sensitive moments to plan around."
+            />
+            <Suspense fallback={<DeadlinesSkeleton />}>
+              <DeadlinesPanel tournamentId={tournamentId} />
+            </Suspense>
+          </section>
+
+          <section className="space-y-3">
+            <SectionHeader
+              title="Recent activity"
+              action={
+                <a
+                  href={`/tournaments/${tournamentId}/activity`}
+                  className="text-[12.5px] font-medium text-primary hover:underline"
+                >
+                  View all →
+                </a>
+              }
+            />
+            <div className="rounded-lg border border-border bg-card p-4 shadow-xs">
+              <Suspense fallback={<RecentActivitySkeleton />}>
+                <ActivityPanel tournamentId={tournamentId} />
+              </Suspense>
+            </div>
+          </section>
         </div>
-        <Link href={`/tournaments/${tournamentId}/settings`} className="text-sm text-primary hover:underline">
-          Settings
-        </Link>
-      </div>
 
-      <Suspense fallback={<StatusIndicatorsSkeleton />}>
-        <StatusPanel tournamentId={tournamentId} tournament={tournament} />
-      </Suspense>
-
-      <Suspense fallback={<SummaryCardsSkeleton />}>
-        <SummaryStrip tournamentId={tournamentId} currency={tournament.currency} />
-      </Suspense>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2">
-          <h2 className="text-lg font-semibold mb-3">Recent activity</h2>
-          <Suspense fallback={<RecentActivitySkeleton />}>
-            <ActivityPanel tournamentId={tournamentId} />
-          </Suspense>
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold mb-3">Quick actions</h2>
+        <aside className="space-y-3">
+          <SectionHeader title="Quick actions" />
           <QuickActions tournamentId={tournamentId} isDirector={isDirector} />
-        </div>
+        </aside>
       </div>
     </div>
   )

@@ -1,23 +1,21 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Plus, ChevronRight, Calendar, Building2, Trophy, ArrowUpRight } from 'lucide-react'
+import { Plus, Building2, Trophy, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getMyOrganizations } from '@/features/organizations/queries'
 import { listTournamentsForCurrentUser } from '@/features/tournaments/queries'
+import { SectionHeader } from '@/components/ui/section-header'
+import { StatusBadge } from '@/components/ui/status-badge'
+import { MetricCard } from '@/components/ui/metric-card'
+import { EmptyState } from '@/components/empty-state/empty-state'
 import type { TournamentListItem, TournamentStatus } from '@/features/tournaments/types'
 import type { OrganizationWithRole } from '@/features/organizations/types'
 
-const STATUS_STYLES: Record<TournamentStatus, string> = {
-  DRAFT: 'bg-slate-100 text-slate-600',
-  ACTIVE: 'bg-emerald-100 text-emerald-700',
-  COMPLETED: 'bg-blue-100 text-blue-700',
-  ARCHIVED: 'bg-slate-100 text-slate-500',
-}
-const STATUS_LABELS: Record<TournamentStatus, string> = {
-  DRAFT: 'Draft',
-  ACTIVE: 'Active',
-  COMPLETED: 'Completed',
-  ARCHIVED: 'Archived',
+const STATUS_TONE: Record<TournamentStatus, { label: string; tone: 'muted' | 'success' | 'neutral' }> = {
+  DRAFT: { label: 'Draft', tone: 'muted' },
+  ACTIVE: { label: 'Active', tone: 'success' },
+  COMPLETED: { label: 'Completed', tone: 'neutral' },
+  ARCHIVED: { label: 'Archived', tone: 'muted' },
 }
 
 function formatDateRange(start: Date, end: Date | null): string {
@@ -39,71 +37,130 @@ export async function DashboardBodyPanel() {
   const firstOwnedOrg = orgs.find((o) => o.role === 'OWNER') ?? orgs[0]
   const canCreateTournament = !!firstOwnedOrg
 
+  const activeCount = tournaments.filter((t) => t.status === 'ACTIVE').length
+  const upcomingCount = tournaments.filter(
+    (t) => t.status === 'DRAFT' || (t.status === 'ACTIVE' && t.startDate.getTime() > Date.now()),
+  ).length
+  const upcoming = tournaments
+    .filter((t) => t.status !== 'COMPLETED' && t.status !== 'ARCHIVED')
+    .slice(0, 6)
+
   return (
-    <>
-      <section className="space-y-4">
-        <div className="flex items-end justify-between border-b border-slate-200 pb-3">
-          <div>
-            <h2 className="text-lg font-semibold tracking-tight text-slate-900">Tournaments</h2>
-            <p className="mt-0.5 text-sm text-slate-500">Open a workspace to manage teams, schedules and finance.</p>
-          </div>
-          {canCreateTournament && (
-            <Link
-              href={`/tournaments/create?orgId=${firstOwnedOrg.id}`}
-              className="inline-flex items-center gap-1.5 rounded-md bg-slate-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-slate-800"
-            >
-              <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
-              New tournament
-            </Link>
-          )}
-        </div>
-        {tournaments.length === 0 ? (
+    <div className="space-y-8">
+      {/* Metrics summary — cross-workspace */}
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <MetricCard
+          label="Tournaments"
+          value={tournaments.length}
+          icon={<Trophy className="h-3.5 w-3.5" strokeWidth={2} />}
+          href="/tournaments"
+        />
+        <MetricCard
+          label="Active now"
+          value={activeCount}
+          hint="Currently running"
+        />
+        <MetricCard
+          label="Upcoming"
+          value={upcomingCount}
+          hint="Draft or scheduled"
+        />
+        <MetricCard
+          label="Organizations"
+          value={orgs.length}
+          icon={<Building2 className="h-3.5 w-3.5" strokeWidth={2} />}
+          href="/organization"
+        />
+      </div>
+
+      {/* Upcoming tournaments */}
+      <section className="space-y-3">
+        <SectionHeader
+          title="Upcoming & active tournaments"
+          description="Jump straight into a workspace."
+          action={
+            canCreateTournament ? (
+              <Link
+                href={`/tournaments/create?orgId=${firstOwnedOrg.id}`}
+                className="inline-flex h-8 items-center gap-1.5 rounded-md bg-primary px-2.5 text-[13px] font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/92"
+              >
+                <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
+                New tournament
+              </Link>
+            ) : null
+          }
+        />
+
+        {upcoming.length === 0 ? (
           <EmptyState
-            icon={Trophy}
-            title="No tournaments yet"
+            icon={<Trophy className="h-5 w-5" strokeWidth={2} />}
+            title="No upcoming tournaments"
             description={
               canCreateTournament
                 ? 'Create your first tournament to start inviting institutions and teams.'
-                : 'You need to be part of an organization to create a tournament.'
+                : 'Join or create an organization first.'
             }
-            action={
-              canCreateTournament
-                ? { label: 'Create tournament', href: `/tournaments/create?orgId=${firstOwnedOrg.id}` }
-                : { label: 'Create organization', href: '/organization/new' }
+            primaryAction={
+              canCreateTournament ? (
+                <Link
+                  href={`/tournaments/create?orgId=${firstOwnedOrg.id}`}
+                  className="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/92"
+                >
+                  <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
+                  New tournament
+                </Link>
+              ) : (
+                <Link
+                  href="/organization/new"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/92"
+                >
+                  <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
+                  Create organization
+                </Link>
+              )
             }
           />
         ) : (
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {tournaments.map((t) => (
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            {upcoming.map((t) => (
               <TournamentCard key={t.id} tournament={t} />
             ))}
           </div>
         )}
       </section>
 
-      <section className="space-y-4">
-        <div className="flex items-end justify-between border-b border-slate-200 pb-3">
-          <div>
-            <h2 className="text-lg font-semibold tracking-tight text-slate-900">Organizations</h2>
-            <p className="mt-0.5 text-sm text-slate-500">Groups you own or belong to.</p>
-          </div>
-          <Link
-            href="/organization/new"
-            className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50"
-          >
-            <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
-            New organization
-          </Link>
-        </div>
+      {/* Organizations */}
+      <section className="space-y-3">
+        <SectionHeader
+          title="Your organizations"
+          description="Groups you own or belong to."
+          action={
+            <Link
+              href="/organization/new"
+              className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-card px-2.5 text-[13px] font-medium text-foreground transition-colors hover:border-border-strong hover:bg-surface"
+            >
+              <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
+              New organization
+            </Link>
+          }
+        />
         {orgs.length === 0 ? (
           <EmptyState
-            icon={Building2}
+            icon={<Building2 className="h-5 w-5" strokeWidth={2} />}
             title="No organizations yet"
-            description="Create your first organization to invite teammates and host tournaments."
-            action={{ label: 'Create organization', href: '/organization/new' }}
+            description="Create an organization to invite teammates and start hosting tournaments together."
+            primaryAction={
+              <Link
+                href="/organization/new"
+                className="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/92"
+              >
+                <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
+                Create organization
+              </Link>
+            }
           />
         ) : (
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {orgs.map((o) => (
               <OrganizationCard
                 key={o.id}
@@ -114,87 +171,76 @@ export async function DashboardBodyPanel() {
           </div>
         )}
       </section>
-    </>
+    </div>
   )
 }
 
 export function DashboardBodySkeleton() {
   return (
-    <>
-      <section className="space-y-4">
-        <div className="flex items-end justify-between border-b border-slate-200 pb-3">
-          <div className="space-y-2">
-            <div className="animate-pulse rounded bg-muted h-5 w-32" />
-            <div className="animate-pulse rounded bg-muted h-4 w-64" />
+    <div className="space-y-8">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="rounded-lg border border-border bg-card p-4 shadow-xs">
+            <div className="animate-pulse rounded bg-foreground/[0.06] h-3 w-20" />
+            <div className="mt-3 animate-pulse rounded bg-foreground/[0.06] h-6 w-14" />
           </div>
-          <div className="animate-pulse rounded bg-muted h-8 w-36" />
-        </div>
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="animate-pulse rounded-xl bg-muted h-28 w-full" />
-          ))}
-        </div>
-      </section>
-      <section className="space-y-4">
-        <div className="flex items-end justify-between border-b border-slate-200 pb-3">
-          <div className="space-y-2">
-            <div className="animate-pulse rounded bg-muted h-5 w-32" />
-            <div className="animate-pulse rounded bg-muted h-4 w-48" />
+        ))}
+      </div>
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="rounded-lg border border-border bg-card p-4 shadow-xs">
+            <div className="flex items-center gap-3">
+              <div className="animate-pulse rounded-md bg-foreground/[0.06] h-9 w-9" />
+              <div className="space-y-2 flex-1">
+                <div className="animate-pulse rounded bg-foreground/[0.06] h-4 w-3/4" />
+                <div className="animate-pulse rounded bg-foreground/[0.06] h-3 w-1/2" />
+              </div>
+            </div>
+            <div className="mt-4 border-t border-border pt-3 flex items-center justify-between">
+              <div className="animate-pulse rounded bg-foreground/[0.06] h-4 w-16" />
+              <div className="animate-pulse rounded bg-foreground/[0.06] h-3 w-24" />
+            </div>
           </div>
-          <div className="animate-pulse rounded bg-muted h-8 w-40" />
-        </div>
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          {Array.from({ length: 2 }).map((_, i) => (
-            <div key={i} className="animate-pulse rounded-xl bg-muted h-16 w-full" />
-          ))}
-        </div>
-      </section>
-    </>
+        ))}
+      </div>
+    </div>
   )
 }
 
 function TournamentCard({ tournament }: { tournament: TournamentListItem }) {
+  const status = STATUS_TONE[tournament.status]
   return (
     <Link
       href={`/tournaments/${tournament.id}`}
-      className="group relative flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 transition-all hover:border-slate-300 hover:shadow-sm"
+      className="group flex flex-col rounded-lg border border-border bg-card p-4 shadow-xs transition-colors hover:border-border-strong hover:bg-surface"
     >
       <div className="flex items-start gap-3">
         {tournament.logoUrl ? (
           <Image
             src={tournament.logoUrl}
             alt=""
-            width={40}
-            height={40}
-            className="h-10 w-10 shrink-0 rounded-lg object-cover"
+            width={36}
+            height={36}
+            className="h-9 w-9 shrink-0 rounded-md object-cover ring-1 ring-inset ring-border"
           />
         ) : (
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-900 text-sm font-semibold text-white">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-foreground text-sm font-semibold text-background">
             {tournament.name.charAt(0).toUpperCase()}
           </div>
         )}
         <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-2">
-            <p className="truncate text-sm font-semibold text-slate-900 group-hover:text-slate-950">
-              {tournament.name}
-            </p>
-            <ArrowUpRight className="h-4 w-4 shrink-0 text-slate-300 transition-colors group-hover:text-slate-600" strokeWidth={2} />
-          </div>
-          <p className="mt-0.5 truncate text-xs text-slate-500">{tournament.orgName}</p>
+          <p className="truncate text-[14px] font-medium tracking-tight text-foreground">
+            {tournament.name}
+          </p>
+          <p className="mt-0.5 truncate text-[12.5px] text-muted-foreground">
+            {tournament.orgName}
+          </p>
         </div>
       </div>
-      <div className="flex items-center justify-between text-xs">
-        <span className="inline-flex items-center gap-1.5 text-slate-500">
-          <Calendar className="h-3.5 w-3.5" strokeWidth={2} />
+      <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
+        <StatusBadge tone={status.tone} dot>{status.label}</StatusBadge>
+        <span className="text-[12px] text-muted-foreground tabular-nums">
           {formatDateRange(tournament.startDate, tournament.endDate)}
-        </span>
-        <span
-          className={cn(
-            'rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider',
-            STATUS_STYLES[tournament.status],
-          )}
-        >
-          {STATUS_LABELS[tournament.status]}
         </span>
       </div>
     </Link>
@@ -211,71 +257,35 @@ function OrganizationCard({
   return (
     <Link
       href={`/organization/${org.slug}`}
-      className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 transition-all hover:border-slate-300 hover:shadow-sm"
+      className="group flex items-center gap-3 rounded-lg border border-border bg-card p-4 shadow-xs transition-colors hover:border-border-strong hover:bg-surface"
     >
       {org.logoUrl ? (
         <Image
           src={org.logoUrl}
           alt=""
-          width={40}
-          height={40}
-          className="h-10 w-10 shrink-0 rounded-lg object-cover"
+          width={36}
+          height={36}
+          className="h-9 w-9 shrink-0 rounded-md object-cover ring-1 ring-inset ring-border"
         />
       ) : (
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-700 text-sm font-semibold text-white">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary text-sm font-semibold text-primary-foreground">
           {org.name.charAt(0).toUpperCase()}
         </div>
       )}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <p className="truncate text-sm font-semibold text-slate-900">{org.name}</p>
-          <span
-            className={cn(
-              'shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider',
-              org.role === 'OWNER'
-                ? 'bg-blue-100 text-blue-700'
-                : 'bg-slate-100 text-slate-600',
-            )}
-          >
+          <p className="truncate text-[14px] font-medium tracking-tight text-foreground">
+            {org.name}
+          </p>
+          <StatusBadge tone={org.role === 'OWNER' ? 'info' : 'muted'}>
             {org.role === 'OWNER' ? 'Owner' : 'Member'}
-          </span>
+          </StatusBadge>
         </div>
-        <p className="mt-0.5 text-xs text-slate-500">
-          {tournamentCount} {tournamentCount === 1 ? 'tournament' : 'tournaments'}
+        <p className="mt-0.5 text-[12.5px] text-muted-foreground">
+          {tournamentCount} tournament{tournamentCount === 1 ? '' : 's'}
         </p>
       </div>
-      <ChevronRight className="h-4 w-4 shrink-0 text-slate-300 transition-colors group-hover:text-slate-500" strokeWidth={2} />
+      <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/50 group-hover:text-foreground transition-colors" strokeWidth={2} />
     </Link>
-  )
-}
-
-function EmptyState({
-  icon: Icon,
-  title,
-  description,
-  action,
-}: {
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
-  title: string
-  description: string
-  action: { label: string; href: string }
-}) {
-  return (
-    <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-slate-200 bg-slate-50/50 px-6 py-12 text-center">
-      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white ring-1 ring-slate-200">
-        <Icon className="h-5 w-5 text-slate-400" strokeWidth={1.75} />
-      </div>
-      <div>
-        <p className="text-sm font-semibold text-slate-900">{title}</p>
-        <p className="mt-0.5 max-w-sm text-xs text-slate-500">{description}</p>
-      </div>
-      <Link
-        href={action.href}
-        className="mt-1 inline-flex items-center gap-1.5 rounded-md bg-slate-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-slate-800"
-      >
-        <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
-        {action.label}
-      </Link>
-    </div>
   )
 }

@@ -3,12 +3,15 @@
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
+  --color-surface: hsl(var(--surface));
+  --color-surface-muted: hsl(var(--surface-muted));
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
   --color-popover: hsl(var(--popover));
   --color-popover-foreground: hsl(var(--popover-foreground));
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-muted: hsl(var(--primary-muted));
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
   --color-muted: hsl(var(--muted));
@@ -17,57 +20,102 @@
   --color-accent-foreground: hsl(var(--accent-foreground));
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
   --color-border: hsl(var(--border));
+  --color-border-strong: hsl(var(--border-strong));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  --shadow-xs: 0 1px 0 0 rgb(24 24 27 / 0.04);
+  --shadow-sm: 0 1px 2px 0 rgb(24 24 27 / 0.05);
+  --shadow-md: 0 4px 12px -2px rgb(24 24 27 / 0.06), 0 2px 4px -2px rgb(24 24 27 / 0.04);
+  --shadow-pop: 0 12px 32px -8px rgb(24 24 27 / 0.14), 0 4px 8px -2px rgb(24 24 27 / 0.06);
 }
 
 :root {
+  /* Surfaces (near-white zinc) */
   --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
+  --surface: 240 5% 98%;
+  --surface-muted: 240 5% 96%;
+  --foreground: 240 6% 10%;
+
   --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
+  --card-foreground: 240 6% 10%;
   --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
-  --primary: 221 83% 43%;
+  --popover-foreground: 240 6% 10%;
+
+  /* Accent — Linear indigo family (#5E6AD2 ≈ 232 55% 60%) */
+  --primary: 232 55% 58%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 221 83% 43%;
-  --radius: 0.5rem;
+  --primary-muted: 232 80% 96%;
+
+  --secondary: 240 5% 96%;
+  --secondary-foreground: 240 6% 10%;
+
+  --muted: 240 5% 96%;
+  --muted-foreground: 240 4% 44%;
+  --accent: 240 5% 96%;
+  --accent-foreground: 240 6% 10%;
+
+  /* Semantic status colors */
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 160 65% 38%;
+  --success-foreground: 0 0% 100%;
+  --warning: 32 92% 48%;
+  --warning-foreground: 0 0% 100%;
+
+  --border: 240 5% 90%;
+  --border-strong: 240 5% 82%;
+  --input: 240 5% 90%;
+  --ring: 232 55% 58%;
 }
 
 .dark {
-  --background: 224 71% 4%;
-  --foreground: 213 31% 96%;
-  --card: 222 47% 8%;
-  --card-foreground: 213 31% 96%;
-  --popover: 222 47% 8%;
-  --popover-foreground: 213 31% 96%;
-  --primary: 217 91% 60%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 222 47% 11%;
-  --secondary-foreground: 213 31% 96%;
-  --muted: 223 47% 14%;
-  --muted-foreground: 215 20% 65%;
-  --accent: 223 47% 14%;
-  --accent-foreground: 213 31% 96%;
-  --destructive: 0 63% 45%;
-  --destructive-foreground: 213 31% 96%;
-  --border: 223 47% 18%;
-  --input: 223 47% 18%;
-  --ring: 217 91% 60%;
+  --background: 240 6% 7%;
+  --surface: 240 6% 9%;
+  --surface-muted: 240 6% 12%;
+  --foreground: 240 5% 96%;
+
+  --card: 240 6% 9%;
+  --card-foreground: 240 5% 96%;
+  --popover: 240 6% 9%;
+  --popover-foreground: 240 5% 96%;
+
+  --primary: 232 60% 66%;
+  --primary-foreground: 240 6% 10%;
+  --primary-muted: 232 40% 18%;
+
+  --secondary: 240 6% 14%;
+  --secondary-foreground: 240 5% 96%;
+
+  --muted: 240 6% 14%;
+  --muted-foreground: 240 4% 62%;
+  --accent: 240 6% 14%;
+  --accent-foreground: 240 5% 96%;
+
+  --destructive: 0 72% 58%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 160 55% 48%;
+  --success-foreground: 0 0% 100%;
+  --warning: 32 92% 58%;
+  --warning-foreground: 240 6% 10%;
+
+  --border: 240 6% 18%;
+  --border-strong: 240 6% 26%;
+  --input: 240 6% 18%;
+  --ring: 232 60% 66%;
 }
 
 * {
@@ -76,6 +124,12 @@
 
 html {
   scroll-behavior: smooth;
+  color-scheme: light;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+.dark {
+  color-scheme: dark;
 }
 
 body {
@@ -83,4 +137,18 @@ body {
   color: hsl(var(--foreground));
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  font-family: var(--font-sans);
+}
+
+/* Focus ring baseline — used by primitives via `focus-visible` */
+:where(button, a, [role="button"], input, select, textarea):focus-visible {
+  outline: 2px solid hsl(var(--ring) / 0.55);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+/* Subtle scrollbars in scroll containers */
+.scroll-quiet {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border-strong)) transparent;
 }

@@ -1,11 +1,53 @@
-import Link from 'next/link'
-export function QuickActions({ tournamentId }: { tournamentId: string; isDirector: boolean }) {
+import { Upload, Megaphone, Wallet, Inbox, Globe, Users } from 'lucide-react'
+import { ActionCard } from '@/components/ui/action-card'
+
+export function QuickActions({
+  tournamentId,
+  isDirector,
+}: {
+  tournamentId: string
+  isDirector: boolean
+}) {
   return (
-    <div className="space-y-2">
-      <Link href={`/tournaments/${tournamentId}/imports/new`} className="block rounded-md border p-2 text-sm hover:bg-muted">Upload CSV</Link>
-      <Link href={`/tournaments/${tournamentId}/announcements/new`} className="block rounded-md border p-2 text-sm hover:bg-muted">New announcement</Link>
-      <Link href={`/tournaments/${tournamentId}/finance`} className="block rounded-md border p-2 text-sm hover:bg-muted">Finance overview</Link>
-      <Link href={`/tournaments/${tournamentId}/requests`} className="block rounded-md border p-2 text-sm hover:bg-muted">Request queue</Link>
+    <div className="grid gap-2">
+      <ActionCard
+        title="Import CSV"
+        description="Upload registrations from a Google Form or spreadsheet"
+        href={`/tournaments/${tournamentId}/imports/new`}
+        icon={<Upload className="h-4 w-4" strokeWidth={2} />}
+      />
+      <ActionCard
+        title="Send announcement"
+        description="Notify all institutions via portal & email"
+        href={`/tournaments/${tournamentId}/announcements/new`}
+        icon={<Megaphone className="h-4 w-4" strokeWidth={2} />}
+      />
+      <ActionCard
+        title="Finance overview"
+        description="Invoices, payments, and outstanding balances"
+        href={`/tournaments/${tournamentId}/finance`}
+        icon={<Wallet className="h-4 w-4" strokeWidth={2} />}
+      />
+      <ActionCard
+        title="Request queue"
+        description="Institution submissions awaiting review"
+        href={`/tournaments/${tournamentId}/requests`}
+        icon={<Inbox className="h-4 w-4" strokeWidth={2} />}
+      />
+      {isDirector && (
+        <ActionCard
+          title="Institution portals"
+          description="Manage claim tokens and portal access"
+          href={`/tournaments/${tournamentId}/institutions`}
+          icon={<Users className="h-4 w-4" strokeWidth={2} />}
+        />
+      )}
+      <ActionCard
+        title="Public tournament page"
+        description="Configure the outward-facing page"
+        href={`/tournaments/${tournamentId}/settings`}
+        icon={<Globe className="h-4 w-4" strokeWidth={2} />}
+      />
     </div>
   )
 }

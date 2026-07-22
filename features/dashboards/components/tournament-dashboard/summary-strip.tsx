@@ -1,8 +1,9 @@
 import { prisma } from '@/lib/prisma'
 import { getRegistrationAnalytics } from '@/features/analytics/services/registration'
 import { getFinancialAnalytics } from '@/features/analytics/services/financial'
-import { SummaryCard } from '@/features/dashboards/components/summary-card'
+import { MetricCard } from '@/components/ui/metric-card'
 import { formatAmount } from '@/lib/money'
+import { Building2, Users, UserCheck, Wallet, Inbox } from 'lucide-react'
 
 export async function SummaryStrip({
   tournamentId,
@@ -17,22 +18,43 @@ export async function SummaryStrip({
     prisma.request.count({ where: { tournamentId, status: 'PENDING' } }),
   ])
 
-  const filledPct = registration.capacity.totalSlots === 0
-    ? 0
-    : Math.round((registration.capacity.filled / registration.capacity.totalSlots) * 100)
-
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-      <SummaryCard label="Institutions" value={String(registration.counts.institutions)} />
-      <SummaryCard label="Teams" value={String(registration.counts.teams)} />
-      <SummaryCard label="Adjudicators" value={String(registration.counts.adjudicators)} />
-      <SummaryCard label="Outstanding" value={formatAmount(financial.outstandingMinor, currency)} />
-      <SummaryCard
-        label="Pending requests"
-        value={String(pendingRequests)}
-        link={`/tournaments/${tournamentId}/requests`}
+    <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+      <MetricCard
+        label="Institutions"
+        value={registration.counts.institutions}
+        icon={<Building2 className="h-3.5 w-3.5" strokeWidth={2} />}
+        href={`/tournaments/${tournamentId}/institutions`}
       />
-      <SummaryCard label="Registration filled" value={`${filledPct}%`} />
+      <MetricCard
+        label="Teams"
+        value={registration.counts.teams}
+        icon={<Users className="h-3.5 w-3.5" strokeWidth={2} />}
+        href={`/tournaments/${tournamentId}/teams`}
+      />
+      <MetricCard
+        label="Adjudicators"
+        value={registration.counts.adjudicators}
+        icon={<UserCheck className="h-3.5 w-3.5" strokeWidth={2} />}
+        href={`/tournaments/${tournamentId}/adjudicators`}
+      />
+      <MetricCard
+        label="Outstanding"
+        value={formatAmount(financial.outstandingMinor, currency)}
+        icon={<Wallet className="h-3.5 w-3.5" strokeWidth={2} />}
+        href={`/tournaments/${tournamentId}/finance`}
+        hint={
+          financial.statusCount.UNPAID + financial.statusCount.PARTIAL > 0
+            ? `${financial.statusCount.UNPAID + financial.statusCount.PARTIAL} invoices open`
+            : 'All settled'
+        }
+      />
+      <MetricCard
+        label="Pending requests"
+        value={pendingRequests}
+        icon={<Inbox className="h-3.5 w-3.5" strokeWidth={2} />}
+        href={`/tournaments/${tournamentId}/requests`}
+      />
     </div>
   )
 }

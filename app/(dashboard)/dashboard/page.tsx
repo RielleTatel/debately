@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { requireUser } from '@/features/auth/queries'
+import { PageHeader } from '@/components/ui/page-header'
 import {
   DashboardBodyPanel,
   DashboardBodySkeleton,
@@ -10,12 +11,12 @@ export default async function DashboardPage() {
   const firstName = (me.profile.displayName ?? '').split(' ')[0] || 'there'
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-10 space-y-12">
-      <header className="flex flex-col gap-1">
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
-          Welcome back, {firstName}
-        </h1>
-      </header>
+    <div className="mx-auto max-w-6xl px-6 py-8 space-y-8">
+      <PageHeader
+        eyebrow="Home"
+        title={`Welcome back, ${firstName}`}
+        description="Your tournaments, workspaces, and what needs attention."
+      />
       <Suspense fallback={<DashboardBodySkeleton />}>
         <DashboardBodyPanel />
       </Suspense>
