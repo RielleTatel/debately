@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import { authService } from '@/features/auth/services'
 import { prisma } from '@/lib/prisma'
 import { Errors } from '@/lib/errors'
@@ -8,7 +9,7 @@ export type CurrentUser = {
   isVerified: boolean
 }
 
-export async function getCurrentUser(): Promise<CurrentUser | null> {
+export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const { data, error } = await authService.getUser()
   if (error || !data?.user?.email) return null
   const profile = await prisma.profile.findUnique({ where: { userId: data.user.id } })
@@ -19,7 +20,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     isVerified: Boolean((data.user as any).email_confirmed_at),
   }
-}
+})
 
 export async function requireUser(): Promise<CurrentUser> {
   const u = await getCurrentUser()

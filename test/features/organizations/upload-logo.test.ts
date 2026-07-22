@@ -6,6 +6,7 @@ const update = vi.fn()
 vi.mock('@/features/organizations/permissions', () => ({ requireOrgOwner }))
 vi.mock('@/services/storage/org-logos', () => ({ orgLogoStorage: { validate: () => ({ ok: true }), upload } }))
 vi.mock('@/lib/prisma', () => ({ prisma: { organization: { update } } }))
+vi.mock('next/cache', () => ({ revalidateTag: vi.fn() }))
 
 beforeEach(() => { requireOrgOwner.mockReset(); upload.mockClear(); update.mockClear() })
 
@@ -16,7 +17,7 @@ describe('uploadOrgLogoAction', () => {
     expect((await uploadOrgLogoAction(fd)).ok).toBe(false)
   })
   it('uploads and updates logoUrl', async () => {
-    requireOrgOwner.mockResolvedValue({ me: {}, org: { id: 'o1' } })
+    requireOrgOwner.mockResolvedValue({ me: {}, org: { id: 'o1', slug: 's' } })
     const { uploadOrgLogoAction } = await import('@/features/organizations/actions/upload-logo')
     const file = new File([new Uint8Array([1,2,3])], 'l.png', { type: 'image/png' })
     const fd = new FormData(); fd.set('orgId', 'o1'); fd.set('file', file)

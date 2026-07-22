@@ -1,7 +1,8 @@
 'use server'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { requireTournamentDirector, assertTournamentEditable } from '@/features/tournaments/permissions'
+import { TOURNAMENT_TAG } from '@/features/tournaments/queries/tournaments'
 import { tournamentRulesStorage } from '@/services/storage/tournament-rules'
 import { err, ok, type ActionResult } from '@/types/api'
 import { isAppError } from '@/lib/errors'
@@ -19,6 +20,7 @@ export async function uploadRulesPdfAction(fd: FormData): Promise<ActionResult<{
     await prisma.tournament.update({ where: { id: tournament.id }, data: { rulesUrl: url } })
     revalidatePath(`/tournaments/${tournamentId}`)
     revalidatePath(`/tournaments/${tournamentId}/settings`)
+    revalidateTag(TOURNAMENT_TAG(tournamentId))
     return ok({ url })
   } catch (e) { if (isAppError(e)) return err(e.message, e.code); throw e }
 }

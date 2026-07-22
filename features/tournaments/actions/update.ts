@@ -1,8 +1,9 @@
 'use server'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { requireTournamentDirector, assertTournamentEditable } from '@/features/tournaments/permissions'
 import { notifyIfSensitiveChanged } from '@/features/tournaments/services'
+import { TOURNAMENT_TAG } from '@/features/tournaments/queries/tournaments'
 import {
   updateTournamentBasicSchema,
   updateRegistrationSettingsSchema,
@@ -17,6 +18,7 @@ import { isAppError } from '@/lib/errors'
 function revalidate(id: string) {
   revalidatePath(`/tournaments/${id}`)
   revalidatePath(`/tournaments/${id}/settings`)
+  revalidateTag(TOURNAMENT_TAG(id))
 }
 
 export async function updateTournamentBasicAction(fd: FormData): Promise<ActionResult<{ slug: string }>> {

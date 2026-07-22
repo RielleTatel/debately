@@ -187,6 +187,8 @@ model Tournament {
   @@unique([orgId, slug])
   @@index([orgId])
   @@index([status])
+  @@index([orgId, startDate, createdAt])
+  @@index([slug, publicPageEnabled])
   @@map("tournaments")
 }
 
@@ -338,6 +340,7 @@ model Participant {
   @@index([tournamentInstitutionId])
   @@index([teamId])
   @@index([email])
+  @@index([tournamentInstitutionId, displayName])
   @@map("participants")
 }
 
@@ -362,6 +365,7 @@ model Adjudicator {
   @@index([tournamentId])
   @@index([tournamentInstitutionId])
   @@index([email])
+  @@index([tournamentId, status, displayName])
   @@map("adjudicators")
 }
 
@@ -556,6 +560,7 @@ model PaymentReceipt {
 
   @@index([invoiceId, status])
   @@index([status, createdAt])
+  @@index([invoiceId, createdAt(sort: Desc)])
   @@map("payment_receipts")
 }
 

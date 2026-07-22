@@ -1,7 +1,8 @@
 'use server'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { requireOrgOwner } from '@/features/organizations/permissions'
+import { ORG_TAG } from '@/features/organizations/queries/current-org'
 import { updateOrganizationSchema } from '@/features/organizations/schemas'
 import { assertSlugAllowed } from '@/lib/slug'
 import { err, ok, type ActionResult } from '@/types/api'
@@ -39,6 +40,8 @@ export async function updateOrganizationAction(fd: FormData): Promise<ActionResu
       }
     })
     revalidatePath(`/organization/${slug}`)
+    revalidateTag(ORG_TAG(slug))
+    if (slug !== org.slug) revalidateTag(ORG_TAG(org.slug))
     return ok({ slug })
   } catch (e) {
     if (isAppError(e)) return err(e.message, e.code); throw e

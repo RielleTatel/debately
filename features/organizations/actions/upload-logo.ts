@@ -1,5 +1,7 @@
 'use server'
+import { revalidateTag } from 'next/cache'
 import { requireOrgOwner } from '@/features/organizations/permissions'
+import { ORG_TAG } from '@/features/organizations/queries/current-org'
 import { orgLogoStorage } from '@/services/storage/org-logos'
 import { prisma } from '@/lib/prisma'
 import { err, ok, type ActionResult } from '@/types/api'
@@ -15,6 +17,7 @@ export async function uploadOrgLogoAction(fd: FormData): Promise<ActionResult<{ 
     const { org } = await requireOrgOwner(orgId)
     const url = await orgLogoStorage.upload(org.id, file)
     await prisma.organization.update({ where: { id: org.id }, data: { logoUrl: url } })
+    revalidateTag(ORG_TAG(org.slug))
     return ok({ url })
   } catch (e) { if (isAppError(e)) return err(e.message, e.code); throw e }
 }

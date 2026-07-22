@@ -12,7 +12,7 @@ vi.mock('@/features/tournaments/permissions', () => ({
   })),
   assertTournamentEditable: () => {},
 }))
-vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }))
+vi.mock('next/cache', () => ({ revalidatePath: vi.fn(), revalidateTag: vi.fn() }))
 vi.mock('@/services/storage/tournament-logos', () => ({
   tournamentLogoStorage: {
     validate: () => ({ ok: true }),

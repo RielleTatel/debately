@@ -24,7 +24,7 @@ vi.mock('@/features/tournaments/permissions', () => ({
   },
 }))
 vi.mock('@/features/tournaments/services', () => ({ notifyIfSensitiveChanged: notifySensitive }))
-vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }))
+vi.mock('next/cache', () => ({ revalidatePath: vi.fn(), revalidateTag: vi.fn() }))
 
 beforeEach(() => {
   tournamentUpdate.mockClear(); tournamentFindFirst.mockReset(); notifySensitive.mockClear()

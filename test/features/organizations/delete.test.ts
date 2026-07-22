@@ -3,6 +3,7 @@ const requireOrgOwner = vi.fn(); const del = vi.fn()
 vi.mock('@/lib/prisma', () => ({ prisma: { organization: { delete: del } } }))
 vi.mock('@/features/organizations/permissions', () => ({ requireOrgOwner }))
 vi.mock('next/navigation', () => ({ redirect: (u: string) => { throw new Error('REDIRECT:' + u) } }))
+vi.mock('next/cache', () => ({ revalidateTag: vi.fn() }))
 beforeEach(() => { requireOrgOwner.mockReset(); del.mockReset() })
 
 describe('deleteOrganizationAction', () => {

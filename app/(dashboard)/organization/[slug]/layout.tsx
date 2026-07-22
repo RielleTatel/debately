@@ -1,16 +1,16 @@
 import Link from 'next/link'
 import { redirect, notFound } from 'next/navigation'
-import { resolveOrgBySlug } from '@/features/organizations/queries'
-import { requireOrgMember } from '@/features/organizations/permissions'
+import { resolveOrgAndRequireMembership } from '@/features/organizations/queries'
+import { Errors } from '@/lib/errors'
 
 export default async function OrganizationLayout({
   children, params,
 }: { children: React.ReactNode; params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const { org, redirectTo } = await resolveOrgBySlug(slug)
+  const { org, role, redirectTo } = await resolveOrgAndRequireMembership(slug)
   if (redirectTo) redirect(redirectTo)
   if (!org) notFound()
-  const { role } = await requireOrgMember(org.id)
+  if (!role) throw Errors.forbidden()
 
   return (
     <div className="mx-auto max-w-5xl p-6">

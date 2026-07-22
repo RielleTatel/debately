@@ -1,9 +1,17 @@
+import { cache } from 'react'
+import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { requireUser } from '@/features/auth/queries'
 import type { Organization, OrganizationRole } from '@prisma/client'
 import type { MemberWithProfile, OrganizationWithRole, PendingInvitation } from '@/features/organizations/types'
 
-export async function getMyOrganizations(): Promise<OrganizationWithRole[]> {
+export const ORG_TAG = (slug: string) => `org:${slug}`
+
+function rehydrateOrg(raw: Organization): Organization {
+  return { ...raw, createdAt: new Date(raw.createdAt), updatedAt: new Date(raw.updatedAt) }
+}
+
+export const getMyOrganizations = cache(async (): Promise<OrganizationWithRole[]> => {
   const me = await requireUser()
   const rows = await prisma.organization.findMany({
     where: { members: { some: { profileId: me.profile.id } } },
@@ -11,10 +19,16 @@ export async function getMyOrganizations(): Promise<OrganizationWithRole[]> {
     orderBy: { createdAt: 'desc' },
   })
   return rows.map(({ members, ...org }) => ({ ...org, role: members[0]?.role ?? 'MEMBER' }))
-}
+})
 
 export async function getOrganizationBySlug(slug: string): Promise<Organization | null> {
-  return prisma.organization.findUnique({ where: { slug } })
+  const cached = unstable_cache(
+    async () => prisma.organization.findUnique({ where: { slug } }),
+    ['org-by-slug', slug],
+    { tags: [ORG_TAG(slug)] },
+  )
+  const raw = await cached()
+  return raw ? rehydrateOrg(raw) : null
 }
 
 export async function resolveOrgBySlug(slug: string): Promise<{ org: Organization | null; redirectTo: string | null }> {
@@ -24,6 +38,28 @@ export async function resolveOrgBySlug(slug: string): Promise<{ org: Organizatio
   if (!alias || alias.expiresAt.getTime() <= Date.now()) return { org: null, redirectTo: null }
   return { org: null, redirectTo: `/organization/${alias.organization.slug}` }
 }
+
+export const resolveOrgAndRequireMembership = cache(async (slug: string): Promise<{
+  org: Organization | null
+  role: OrganizationRole | null
+  redirectTo: string | null
+}> => {
+  const me = await requireUser()
+  const found = await prisma.organization.findUnique({
+    where: { slug },
+    include: { members: { where: { profileId: me.profile.id }, select: { role: true } } },
+  })
+  if (found) {
+    const { members, ...org } = found
+    return { org, role: members[0]?.role ?? null, redirectTo: null }
+  }
+  const alias = await prisma.organizationSlugAlias.findUnique({
+    where: { oldSlug: slug },
+    include: { organization: true },
+  })
+  if (!alias || alias.expiresAt.getTime() <= Date.now()) return { org: null, role: null, redirectTo: null }
+  return { org: null, role: null, redirectTo: `/organization/${alias.organization.slug}` }
+})
 
 export async function getUserRoleInOrg(profileId: string, orgId: string): Promise<OrganizationRole | null> {
   const m = await prisma.organizationMember.findUnique({

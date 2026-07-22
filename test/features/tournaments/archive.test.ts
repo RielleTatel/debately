@@ -17,7 +17,7 @@ vi.mock('@/lib/prisma', () => ({
 }))
 vi.mock('@/features/tournaments/permissions', () => ({ requireTournamentDirector: requireDirector }))
 vi.mock('@/features/organizations/permissions', () => ({ requireOrgOwner: requireOwner }))
-vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }))
+vi.mock('next/cache', () => ({ revalidatePath: vi.fn(), revalidateTag: vi.fn() }))
 
 beforeEach(() => { update.mockClear(); requireDirector.mockClear(); requireOwner.mockClear() })
 

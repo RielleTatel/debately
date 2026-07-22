@@ -1,7 +1,24 @@
+import { cache } from 'react'
+import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { requireUser } from '@/features/auth/queries'
 import type { Tournament } from '@prisma/client'
 import type { TournamentListItem } from '@/features/tournaments/types'
+
+function rehydrateTournament(raw: Tournament): Tournament {
+  return {
+    ...raw,
+    startDate: new Date(raw.startDate),
+    endDate: new Date(raw.endDate),
+    registrationDeadline: new Date(raw.registrationDeadline),
+    paymentDeadline: raw.paymentDeadline ? new Date(raw.paymentDeadline) : null,
+    archivedAt: raw.archivedAt ? new Date(raw.archivedAt) : null,
+    createdAt: new Date(raw.createdAt),
+    updatedAt: new Date(raw.updatedAt),
+  }
+}
+
+export const TOURNAMENT_TAG = (id: string) => `tournament:${id}`
 
 export async function listTournamentsForOrg(orgId: string): Promise<Tournament[]> {
   return prisma.tournament.findMany({
@@ -10,7 +27,7 @@ export async function listTournamentsForOrg(orgId: string): Promise<Tournament[]
   })
 }
 
-export async function listTournamentsForCurrentUser(): Promise<TournamentListItem[]> {
+export const listTournamentsForCurrentUser = cache(async (): Promise<TournamentListItem[]> => {
   const me = await requireUser()
   const rows = await prisma.tournament.findMany({
     where: { organization: { members: { some: { profileId: me.profile.id } } } },
@@ -28,7 +45,7 @@ export async function listTournamentsForCurrentUser(): Promise<TournamentListIte
     orgSlug: t.organization.slug,
     orgName: t.organization.name,
   }))
-}
+})
 
 export async function resolveTournamentByOrgAndId(orgSlug: string, tournamentId: string): Promise<Tournament | null> {
   const org = await prisma.organization.findUnique({ where: { slug: orgSlug }, select: { id: true } })
@@ -39,5 +56,11 @@ export async function resolveTournamentByOrgAndId(orgSlug: string, tournamentId:
 }
 
 export async function getTournamentById(tournamentId: string): Promise<Tournament | null> {
-  return prisma.tournament.findUnique({ where: { id: tournamentId } })
+  const cached = unstable_cache(
+    async () => prisma.tournament.findUnique({ where: { id: tournamentId } }),
+    ['tournament-by-id', tournamentId],
+    { tags: [TOURNAMENT_TAG(tournamentId)] },
+  )
+  const raw = await cached()
+  return raw ? rehydrateTournament(raw) : null
 }

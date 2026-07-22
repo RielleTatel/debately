@@ -13,7 +13,7 @@ vi.mock('@/lib/prisma', () => ({
   },
 }))
 vi.mock('@/features/organizations/permissions', () => ({ requireOrgOwner }))
-vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }))
+vi.mock('next/cache', () => ({ revalidatePath: vi.fn(), revalidateTag: vi.fn() }))
 vi.mock('@/lib/slug', () => ({ assertSlugAllowed: vi.fn() }))
 
 beforeEach(() => { requireOrgOwner.mockReset(); orgFindUnique.mockReset(); aliasFindUnique.mockReset(); aliasUpsert.mockReset(); orgUpdate.mockReset() })

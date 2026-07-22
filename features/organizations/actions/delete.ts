@@ -1,7 +1,9 @@
 'use server'
 import { redirect } from 'next/navigation'
+import { revalidateTag } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { requireOrgOwner } from '@/features/organizations/permissions'
+import { ORG_TAG } from '@/features/organizations/queries/current-org'
 import { deleteOrganizationSchema } from '@/features/organizations/schemas'
 import { err, type ActionResult } from '@/types/api'
 import { isAppError } from '@/lib/errors'
@@ -18,6 +20,7 @@ export async function deleteOrganizationAction(fd: FormData): Promise<ActionResu
     }
     // Phase 3 will archive child tournaments here before delete. For now, cascade removes members/aliases/invitations.
     await prisma.organization.delete({ where: { id: org.id } })
+    revalidateTag(ORG_TAG(org.slug))
     redirect('/organization')
   } catch (e) { if (isAppError(e)) return err(e.message, e.code); throw e }
 }

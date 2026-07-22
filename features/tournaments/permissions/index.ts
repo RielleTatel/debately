@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import { prisma } from '@/lib/prisma'
 import { requireVerifiedUser } from '@/features/auth/queries'
 import { AppError, Errors } from '@/lib/errors'
@@ -13,23 +14,22 @@ export async function isDirectorOf(profileId: string, tournamentId: string): Pro
   return !!row
 }
 
-async function loadTournamentAndOrg(tournamentId: string): Promise<{ tournament: Tournament; org: Organization }> {
-  const tournament = await prisma.tournament.findUnique({ where: { id: tournamentId } })
-  if (!tournament) throw Errors.notFound('Tournament')
-  const org = await prisma.organization.findUnique({ where: { id: tournament.orgId } })
-  if (!org) throw Errors.notFound('Organization')
-  return { tournament, org }
-}
-
-export async function requireTournamentReadable(tournamentId: string): Promise<{
+export const requireTournamentReadable = cache(async (tournamentId: string): Promise<{
   me: CurrentUser
   tournament: Tournament
   org: Organization
   role: OrganizationRole
   isDirector: boolean
-}> {
-  const me = await requireVerifiedUser()
-  const { tournament, org } = await loadTournamentAndOrg(tournamentId)
+}> => {
+  const [me, tRes] = await Promise.all([
+    requireVerifiedUser(),
+    prisma.tournament.findUnique({
+      where: { id: tournamentId },
+      include: { organization: true },
+    }),
+  ])
+  if (!tRes) throw Errors.notFound('Tournament')
+  const { organization: org, ...tournament } = tRes
   const membership = await prisma.organizationMember.findUnique({
     where: { orgId_profileId: { orgId: org.id, profileId: me.profile.id } },
     select: { role: true },
@@ -37,7 +37,7 @@ export async function requireTournamentReadable(tournamentId: string): Promise<{
   if (!membership) throw Errors.forbidden()
   const isDirector = membership.role === 'OWNER' || (await isDirectorOf(me.profile.id, tournament.id))
   return { me, tournament, org, role: membership.role, isDirector }
-}
+})
 
 export async function requireTournamentDirector(tournamentId: string): Promise<{
   me: CurrentUser
