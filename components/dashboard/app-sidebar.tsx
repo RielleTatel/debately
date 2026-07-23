@@ -1,14 +1,9 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import {
-  Home,
-  Trophy,
-  Building2,
-  Settings as SettingsIcon,
-  Sparkles,
-} from 'lucide-react'
+import { Home, Trophy, Building2, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { UserMenu } from './user-menu'
 
@@ -16,7 +11,6 @@ const nav = [
   { href: '/dashboard', label: 'Home', icon: Home, exact: true },
   { href: '/tournaments', label: 'Tournaments', icon: Trophy },
   { href: '/organization', label: 'Organizations', icon: Building2 },
-  { href: '/settings', label: 'Settings', icon: SettingsIcon },
 ]
 
 type Props = {
@@ -36,9 +30,14 @@ export function AppSidebar({ email, displayName, avatarUrl }: Props) {
       {/* Wordmark */}
       <div className="flex h-14 items-center px-4">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <span className="flex h-6 w-6 items-center justify-center rounded-md bg-foreground text-[11px] font-bold text-background">
-            D
-          </span>
+          <Image
+            src="/logo.png"
+            alt=""
+            width={24}
+            height={24}
+            className="h-6 w-6 shrink-0 rounded-full object-cover"
+            priority
+          />
           <span className="text-[14px] font-semibold tracking-tight text-foreground">
             Debately
           </span>

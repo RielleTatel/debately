@@ -53,7 +53,7 @@ export function MarketingFooter() {
         <div className="grid grid-cols-2 gap-10 md:grid-cols-6 md:gap-8">
           <div className="col-span-2">
             <Link href="/" className="flex items-center gap-2">
-              <Logo className="h-6 w-6 text-blue-700" />
+              <Logo className="h-7 w-7" size={28} />
               <span className="text-[15px] font-semibold tracking-tight text-slate-900">
                 Debately
               </span>
