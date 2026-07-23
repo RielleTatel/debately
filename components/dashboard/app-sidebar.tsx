@@ -81,7 +81,7 @@ export function AppSidebar({ email, displayName, avatarUrl }: Props) {
         <div className="rounded-md border border-border bg-card p-3">
           <div className="flex items-center gap-1.5 text-[11.5px] font-medium text-foreground">
             <Sparkles className="h-3.5 w-3.5 text-primary" strokeWidth={2} />
-            What's new
+            What&apos;s new
           </div>
           <p className="mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
             Faster dashboards & streamed status.
