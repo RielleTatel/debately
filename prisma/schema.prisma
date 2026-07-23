@@ -183,6 +183,7 @@ model Tournament {
   publicAssets           TournamentPublicAsset[]
   contacts               TournamentContact[]
   publicContactMessages  PublicContactMessage[]
+  sheetSources           TournamentSheetSource[]
 
   @@unique([orgId, slug])
   @@index([orgId])
@@ -864,4 +865,50 @@ model UserEmailPreference {
   profile         Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@map("user_email_preferences")
+}
+
+model GoogleFormSubmission {
+  id          String    @id @default(cuid())
+  sourceId    String    @map("source_id")
+  rowIndex    Int       @map("row_index")
+  payload     Json
+  processedAt DateTime? @map("processed_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  source      TournamentSheetSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceId, rowIndex])
+  @@index([sourceId, createdAt(sort: Desc)])
+  @@map("google_form_submissions")
+}
+
+enum RegistrationPhase {
+  INSTITUTIONS
+  TEAMS
+  ADJUDICATORS
+
+  @@map("registration_phase")
+}
+
+model TournamentSheetSource {
+  id            String            @id @default(cuid())
+  tournamentId  String            @map("tournament_id")
+  phase         RegistrationPhase
+  spreadsheetId String            @map("spreadsheet_id")
+  sheetTabName  String?           @map("sheet_tab_name")
+  columnMapping Json?             @map("column_mapping")
+  active        Boolean           @default(true)
+  lastSyncedRow Int               @default(1) @map("last_synced_row")
+  lastSyncedAt  DateTime?         @map("last_synced_at")
+  lastSyncError String?           @map("last_sync_error")
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+
+  tournament  Tournament             @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  submissions GoogleFormSubmission[]
+
+  @@index([tournamentId, phase])
+  @@index([active])
+  @@map("tournament_sheet_sources")
 }
