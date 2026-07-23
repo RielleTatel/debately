@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import {
   getTournamentContext,
   getDirectorsForTournament,
@@ -61,6 +62,14 @@ export default async function TournamentSettingsPage({ params }: Props) {
 
       <Panel title="Registration">
         <TournamentRegistrationSettingsForm tournament={tournament} readOnly={readOnly} />
+        <div className="border-t pt-4">
+          <Link
+            href={`/tournaments/${tournament.id}/settings/registration-sources`}
+            className="text-sm underline"
+          >
+            Manage registration sheet sources
+          </Link>
+        </div>
       </Panel>
 
       <Panel title="Finance">
