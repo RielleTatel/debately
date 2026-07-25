@@ -97,7 +97,7 @@ export default async function InstitutionDetailPage({
       </section>
       <section className="space-y-2">
         <h2 className="text-lg font-medium">Participants</h2>
-        <ParticipantList participants={participants as never} />
+        <ParticipantList participants={participants} />
       </section>
       <section className="space-y-2">
         <h2 className="text-lg font-medium">Adjudicators</h2>

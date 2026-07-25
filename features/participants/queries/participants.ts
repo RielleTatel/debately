@@ -1,10 +1,11 @@
 import { prisma } from '@/lib/prisma'
 import type { Participant } from '@prisma/client'
 
-export async function getParticipantsForInstitution(institutionId: string): Promise<Participant[]> {
+export async function getParticipantsForInstitution(institutionId: string) {
   return prisma.participant.findMany({
     where: { tournamentInstitutionId: institutionId },
     orderBy: { displayName: 'asc' },
+    include: { team: true },
   })
 }
 
