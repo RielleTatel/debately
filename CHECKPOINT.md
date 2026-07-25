@@ -1,159 +1,176 @@
-# Checkpoint — 2026-07-25 (Session 2)
+# Debately — Implementation Checkpoint
 
-## What was implemented this session
-
-### 1. Multi-phase Google Sheets ingest architecture
-
-**Problem:** The ingest pipeline only processed Phase 1 (INSTITUTIONS). TEAMS and ADJUDICATORS phases returned 0 and were never handled. The single `ingest.ts` file had all institution logic monolithically and would need to grow impossibly large.
-
-**What was built:**
-
-#### Shared utilities — `features/google-form-integration/services/handlers/_utils.ts`
-
-Extracted helpers used by all three handlers:
-- `SubmissionPayload` type — shape of the stored `googleFormSubmission.payload` JSON
-- `pick(payload, mapping, field)` — looks up the header for a canonical key, finds the matching response
-- `toInt(v)` — parses integer or returns null
-- `toBool(v)` — parses "yes" / "true" / "1" to boolean (used for novice flags)
+_Sessions 1–3 · as of 2026-07-26_
 
 ---
 
-#### Phase 1 handler — `features/google-form-integration/services/handlers/ingest-institutions.ts`
+## What Is Built
 
-Extracted from the old `ingest.ts` with one key improvement: institution resolution now uses `resolveInstitutionByName(tournamentId, name)` from `features/institutions/queries/institutions.ts`, which does **case-insensitive matching + alias lookup**. Previously, a name case mismatch would create a duplicate institution instead of updating the existing one.
+### 1. Google Sheets Sync Infrastructure
 
-Logic per submission:
-1. Pick `institutionName` → required, mark processed and skip if missing
-2. `resolveInstitutionByName()` → update if found (by exact name or alias), create if not
-3. Upsert fields: `contactEmail`, `contactName`, `contactPhone`, `teamsIntended`, `adjudicatorsIntended`
+**Files:** `features/google-form-integration/services/`
+
+- **`sheets-client.ts`** — authenticates to Google Sheets API via service-account credentials
+- **`mapper.ts`** — converts raw sheet rows into `GoogleFormSubmission` payloads (`{ responses: [{ question, answer }] }`)
+- **`sync.ts`** — `syncAndIngestOneSource(sourceId)` and `syncAllActiveSources()`:
+  - Fetches headers from row 1 (`A1:Z1`)
+  - Fetches only new rows since `lastSyncedRow`
+  - Upserts `GoogleFormSubmission` records keyed on `(sourceId, rowIndex)`
+  - Resets `processedAt = null` on ALL submissions before every ingest run (ensures every "Sync now" is a full re-ingest against current mapping)
+  - Returns actual ingested count, not rows fetched
+- **`ingest.ts`** — phase dispatcher:
+  ```
+  INSTITUTIONS → ingestInstitutions()
+  TEAMS        → ingestTeams()
+  ADJUDICATORS → ingestAdjudicators()
+  ```
+
+### 2. Three-Phase Ingest Handlers
+
+**Files:** `features/google-form-integration/services/handlers/`
+
+#### `_utils.ts`
+Shared utilities: `pick(payload, mapping, field)` for exact-match header lookup, `toInt()`, `toBool()`.
+
+#### `ingest-institutions.ts` (Phase 1 — INSTITUTIONS)
+Per submission:
+1. Pick `institutionName` → skip row if missing
+2. `resolveInstitutionByName(tournamentId, name)` — case-insensitive + alias lookup
+3. Upsert `TournamentInstitution` with contact, intended teams/adj counts
 4. Mark `processedAt`
 
----
+#### `ingest-teams.ts` (Phase 2 — TEAMS)
+Per submission:
+1. Pick `institutionName` → `resolveInstitutionByName()` → auto-create if not found
+2. Pick `teamName` → upsert `Team` on `[tournamentInstitutionId, name]`
+3. Collect up to 3 speakers (`speaker1Name/Email/Contact`, etc.)
+4. **Roster reconciliation** — delete any `importPhase='sheet-sync'` participants for this team that are no longer in the current row (by email if available, else by name)
+5. Upsert each speaker as `Participant` with `teamId` set; email-deduplicated within the institution
+6. Pick `adjudicatorName` (optional, same row) → upsert `Adjudicator`; resolves `adjudicatorInstitution` separately
 
-#### Phase 2 handler — `features/google-form-integration/services/handlers/ingest-teams.ts`
+#### `ingest-adjudicators.ts` (Phase 3 — ADJUDICATORS)
+Per submission:
+1. Pick `adjudicatorName` → skip row if missing
+2. Pick `institutionName` (optional) → `resolveInstitutionByName()` → auto-create if not found; `null` for independents
+3. Email-deduplicate tournament-wide → create or update `Adjudicator`
+4. Mark `processedAt`
 
-Logic per submission:
-1. Pick `institutionName` → resolve via `resolveInstitutionByName()`; warn and mark processed if not found
-2. Pick `teamName` → if both inst + teamName present: upsert `Team` (unique on `[tournamentInstitutionId, name]`), set `isNovice` from `teamIsNovice`
-3. Speakers 1–3: pick `speaker${i}Name`, `speaker${i}Email`, `speaker${i}Contact`
-   - Dedup by email within institution (`participant.findFirst({ where: { tournamentInstitutionId, email } })`)
-   - Create or update `Participant`, linked to team
-4. Pick `adjudicatorName` → if present: resolve `adjudicatorInstitution` (falls back to team's institution if unresolved), dedup by email tournament-wide, create or update `Adjudicator`
-5. Mark `processedAt` regardless; count `ingested` only if team or adjudicator was created/updated
-
-**Note:** Because Phase 2 and Phase 3 from ZDO use the same Google Form and same column headers, a single TEAMS-phase sheet source handles both team rows (teamName filled) and independent adjudicator rows (teamName empty, adjudicatorName filled) from the same spreadsheet.
-
----
-
-#### Phase 3 handler — `features/google-form-integration/services/handlers/ingest-adjudicators.ts`
-
-For tournaments that have a dedicated adjudicator-only registration form.
-
-Logic per submission:
-1. Pick `adjudicatorName` → required, mark processed and skip if missing
-2. Pick `institutionName` → optional; resolve to `tournamentInstitutionId` (null = independent adjudicator)
-3. Dedup by email tournament-wide (`adjudicator.findFirst({ where: { tournamentId, email } })`)
-4. If found by email: update `displayName`, `phone`, `tournamentInstitutionId`; if not: create `Adjudicator`
-5. Mark `processedAt`
-
----
-
-#### Dispatcher — `features/google-form-integration/services/ingest.ts`
-
-Replaced the old institution-only monolith with a clean 3-branch dispatcher:
-
-```typescript
-export async function ingestSource(sourceId, tournamentId, phase, columnMapping) {
-  switch (phase) {
-    case 'INSTITUTIONS': return ingestInstitutions(...)
-    case 'TEAMS':        return ingestTeams(...)
-    case 'ADJUDICATORS': return ingestAdjudicators(...)
-  }
-}
-```
-
----
-
-### 2. Phase-aware column mapping editor
-
-**File:** `features/tournament-sheet-sources/components/column-mapping-editor.tsx`
-
-Added `phase: RegistrationPhase` prop. The static 11-field `CANONICAL_FIELDS` array is replaced by a `FIELDS_BY_PHASE` map that shows the right fields for each phase:
-
-| Phase | Fields shown |
-|---|---|
-| INSTITUTIONS | 8 fields: registrationType, institutionName, representativeName, email, contactNumber, numberOfTeams, numberOfAdjudicators, facebookUrl |
-| TEAMS | 25 fields: registrationType, institutionName, representativeName, teamName, teamIsNovice, debater 1–3 (name/email/contact/facebook/isNovice), judge name/institution/email/contact/facebook |
-| ADJUDICATORS | 6 fields: registrationType, institutionName, adjudicatorName, adjudicatorEmail, adjudicatorContact, adjudicatorFacebook |
-
-The dialog is now scrollable (`overflow-y-auto max-h-[85vh]`) to accommodate the long TEAMS field list.
-
-The system never assumes what column header maps to what canonical key — users map arbitrary headers (e.g. "Debater 1 Full Name (First Name, last Name - E.g., Angelo Corteza)") to canonical keys like `speaker1Name`. Any form structure is supported.
-
----
-
-### 3. Phase threaded through UI
-
-**`features/tournament-sheet-sources/components/row-actions.tsx`**
-- Added `phase: RegistrationPhase` prop to `EditMappingButton`
-- Passed to `ColumnMappingEditor`
-
-**`features/tournament-sheet-sources/components/sources-table.tsx`**
-- Passes `s.phase` to `EditMappingButton`
-
----
-
-## Idempotency strategy
+**Idempotency:**
 
 | Entity | Dedup key |
 |---|---|
-| TournamentInstitution | Case-insensitive name match + alias lookup via `resolveInstitutionByName()` |
-| Team | `[tournamentInstitutionId, name]` unique constraint (upsert) |
-| Participant | Email within institution (`findFirst` + create/update) |
-| Adjudicator | Email within tournament (`findFirst` + create/update) |
+| TournamentInstitution | `[tournamentId, name]` unique constraint + alias lookup |
+| Team | `[tournamentInstitutionId, name]` unique constraint |
+| Participant | email within institution (if email present) |
+| Adjudicator | email within tournament (if email present) |
 
-Re-running sync is safe: all writes are creates or targeted updates. `processedAt` is reset by `updateMappingAction` when the mapping changes, so all rows are re-ingested with the new mapping.
+### 3. Registration Sources Settings Page
 
----
+**Files:** `features/tournament-sheet-sources/`
 
-## Current data pipeline flow
+- **Add source dialog** — choose phase (INSTITUTIONS / TEAMS / ADJUDICATORS), enter spreadsheet ID + optional tab name, test connection (shows detected headers + row count), create source
+- **Sources table** — lists all sources with phase badge, spreadsheet ID, status, last sync time, last error, row actions
+- **Row actions:** Activate/Deactivate, Mapping, Sync now, Delete
+- **Column mapping editor** — phase-aware field list (8 fields for INSTITUTIONS, 25 for TEAMS, 6 for ADJUDICATORS); dropdowns populated from live sheet headers; scrollable modal; saved mapping resets all `processedAt` so next sync re-ingests with new mapping
+- **"Sync now"** — syncs one source, returns "Synced N row(s)" feedback
 
+**Route:** `/tournaments/[id]/settings/registration-sources`
+
+### 4. Settings Sub-Navigation
+
+**File:** `features/tournaments/components/settings-sub-nav.tsx`
+
+Two-tab nav under `/settings`: **General** and **Registration Sources**.
+
+### 5. Judge Rule Settings
+
+**File:** `features/tournaments/components/tournament-judge-settings-form.tsx`
+**Route:** `/tournaments/[id]/settings` (General tab)
+
+New panel with two fields:
+- **Judge rule** (`judgeRule Int?`) — required judges per team (e.g., 1 means 1 judge per team)
+- **Ghost judge fee** (`ghostJudgeFee Float?`) — fee charged per judge deficit
+
+Backed by server action `updateJudgeRuleAction`.
+
+**Schema migration:** `prisma/migrations/20260726000000_judge_rule/migration.sql`
+```sql
+ALTER TABLE "tournaments" ADD COLUMN "judge_rule" INTEGER;
+ALTER TABLE "tournaments" ADD COLUMN "ghost_judge_fee" DOUBLE PRECISION;
 ```
-Google Sheet
-    │
-    ▼ (Sync now button / cron POST /api/cron/google-sheets-sync)
-GoogleFormSubmission (raw payload — all columns stored)
-    │
-    ▼ (ingestSource dispatcher → phase-specific handler)
-    ├── INSTITUTIONS → TournamentInstitution (name, contact fields, intended counts)
-    ├── TEAMS → Team + Participant(s) + Adjudicator (linked to institution)
-    └── ADJUDICATORS → Adjudicator (institution optional)
-    │
-    ▼ (institutions / teams / adjudicators pages)
-UI
-```
+
+### 6. Registration Validation Layer
+
+**File:** `features/tournaments/services/validate-registrations.ts`
+
+`validateRegistrations(tournamentId)` returns `RegistrationFlag[]`. Checks:
+
+| Flag | Severity | Condition |
+|---|---|---|
+| `OVER_TOURNAMENT_CAP` | error | Total teams > `maxTeamSlots` |
+| `OVER_INSTITUTION_CAP` | warning | Institution teams > `maxTeamsPerInstitution` |
+| `JUDGE_DEFICIT` | warning | Institution has fewer judges than `teams × judgeRule`; shows ghost fee if configured |
+| `DUPLICATE_EMAIL` | warning | Same email in 2+ participant records tournament-wide |
+| `MULTI_TEAM_SPEAKER` | error | Same speaker (by email or ID) assigned to 2+ teams |
+
+Surfaced on `/tournaments/[id]/institutions` as red/amber banners above the institutions list.
+
+### 7. Institution & Team Display Fixes
+
+- **Institutions list** — correct team and judge counts per institution row
+- **Institution detail page** — Teams section shows real speaker count per team (derived from participants loaded on the same page)
+- **Participants query** — `getParticipantsForInstitution` includes `team` relation; participants show their team name instead of "Unassigned"
+- **Column mapping editor** — fixed duplicate React key error for forms where the same question text repeats (e.g., novice-status questions for each debater)
 
 ---
 
-## Files changed this session
+## Architecture Notes
 
-| File | Change |
-|---|---|
-| `features/google-form-integration/services/ingest.ts` | Replaced with dispatcher |
-| `features/google-form-integration/services/handlers/_utils.ts` | New — shared types + helpers |
-| `features/google-form-integration/services/handlers/ingest-institutions.ts` | New — Phase 1 handler |
-| `features/google-form-integration/services/handlers/ingest-teams.ts` | New — Phase 2 handler |
-| `features/google-form-integration/services/handlers/ingest-adjudicators.ts` | New — Phase 3 handler |
-| `features/tournament-sheet-sources/components/column-mapping-editor.tsx` | Phase-aware FIELDS_BY_PHASE map + scrollable dialog |
-| `features/tournament-sheet-sources/components/row-actions.tsx` | EditMappingButton now accepts + forwards `phase` |
-| `features/tournament-sheet-sources/components/sources-table.tsx` | Passes `s.phase` to EditMappingButton |
+### Why three phases?
+- **Phase 1 (INSTITUTIONS):** Schools declare intent (# teams, # judges)
+- **Phase 2 (TEAMS):** Institutions submit actual rosters (teams + speakers + optional judge on the same row)
+- **Phase 3 (ADJUDICATORS):** Independent judges register
+
+A single TEAMS-phase source handles both team rows and adjudicator rows from the same form, distinguished by the `registrationType` column (or simply by whether `adjudicatorName` is filled).
+
+### Column mapping design
+All canonical field keys (`teamName`, `speaker1Name`, etc.) are mapped by the user at setup time via the editor. Any form structure is supported — the user maps once, the system syncs forever.
+
+### Auto-create institution
+Phases 2 and 3 ingest auto-create a `TournamentInstitution` if the name is provided but doesn't resolve. Handles the case where Phase 1 was skipped or the institution name was entered differently.
 
 ---
 
-## Known limitations / next steps
+## Not Yet Working / Gaps
 
-- `speaker${i}IsNovice` and `speaker${i}Facebook` fields appear in the TEAMS mapping editor but are not yet stored — `Participant` schema has no `isNovice` or `facebookUrl` columns
-- Adjudicator `facebookUrl` field is in the mapping editor but `Adjudicator` schema has no `facebookUrl` column
-- Loading/error handling refactor (Suspense + `loading.tsx` + `error.tsx`) for institutions, teams, adjudicators pages was started in the previous session but not completed
-- `TournamentStatus.ACTIVE` exists in the schema but no action transitions a tournament from `DRAFT` → `ACTIVE`
-- The `importPhase` field on Team, Participant, Adjudicator is set to `'sheet-sync'` for all sheet-synced records (vs `'phase-1'`, `'phase-2'`, `'phase-3'` from CSV import)
+### 1. `paymentAmount` — not mapped or stored
+**Context:** A new "Payment amount" column was added to Phase 2 (TEAMS) and Phase 3 (ADJUDICATORS) forms.
+
+**What's missing:**
+- No `paymentAmount` key in `FIELDS_BY_PHASE['TEAMS']` or `FIELDS_BY_PHASE['ADJUDICATORS']` in the column mapping editor
+- No field on `TournamentInstitution` or any other model to store the declared amount
+- No display of payment amount on the institution detail, finance, or any other page
+
+**What's needed to implement:**
+1. Add `paymentAmountDeclared Float?` to `TournamentInstitution` in `schema.prisma` + migration SQL
+2. Add `{ key: 'paymentAmount', label: 'Payment Amount' }` to TEAMS and ADJUDICATORS field lists in `column-mapping-editor.tsx`
+3. Pick the value in `ingest-teams.ts` and `ingest-adjudicators.ts` and write it to the institution record
+4. Surface it on the institution detail page and/or the Finance tab
+
+### 2. Name/alias mismatch — no UI guardrail
+Explicitly deferred. If a respondent types "Ateneo Debate Union" but Phase 1 registered "ADU", the system auto-creates a second institution instead of merging them. A future alias editor would allow directors to map variant names to canonical institutions.
+
+### 3. No automated sync
+"Sync now" is manual only. Nothing calls `syncAllActiveSources()` on a schedule. New form responses are not picked up automatically.
+
+### 4. No team-level detail page
+Clicking a team on `/tournaments/[id]/teams` navigates to the institution detail page. There is no dedicated team page showing that team's speakers in isolation.
+
+### 5. Speaker novice status not stored
+`speaker${i}IsNovice` is in the column mapping field list but the `Participant` model has no `isNovice` field. The value is mapped but silently dropped during ingest. Needs a schema migration + ingest update.
+
+### 6. Loading/error boundaries incomplete
+Individual sections (teams, participants, adjudicators, registration sources) are not wrapped in Suspense with per-section skeletons. A slow sync or DB query blocks the full page render.
+
+### 7. Participant dedup without email is name-only
+If a speaker has no email, roster reconciliation prevents duplicates within one sync, but there is no cross-institution dedup by name alone.
