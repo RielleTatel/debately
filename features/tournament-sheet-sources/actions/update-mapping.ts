@@ -29,6 +29,12 @@ export async function updateMappingAction(fd: FormData): Promise<ApiResponse<voi
       data: { columnMapping: parsed.data.columnMapping },
     })
 
+    // Reset so next sync re-ingests all rows with the updated mapping
+    await prisma.googleFormSubmission.updateMany({
+      where: { sourceId: parsed.data.sourceId },
+      data: { processedAt: null },
+    })
+
     revalidatePath(`/tournaments/${source.tournamentId}/settings/registration-sources`)
     return { ok: true, data: undefined }
   } catch (e) {

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { listSourcesForTournament } from '../queries'
 import { PHASE_LABELS } from '../types'
-import { ToggleActiveButton, DeleteButton, EditMappingButton } from './row-actions'
+import { ToggleActiveButton, DeleteButton, EditMappingButton, SyncNowButton } from './row-actions'
 import type { Prisma } from '@prisma/client'
 
 interface Props { tournamentId: string }
@@ -46,11 +46,17 @@ export async function SourcesTable({ tournamentId }: Props) {
             </td>
             <td className="p-2">{s.sheetTabName ?? <em className="text-gray-400">(default)</em>}</td>
             <td className="p-2">
-              {s.columnMapping ? 'Configured' : <span className="text-orange-600">Not set</span>}
+              {s.columnMapping
+                ? <span className="text-green-700">Configured</span>
+                : <span className="text-orange-600 font-medium">⚠ Not set — click Mapping to continue</span>}
             </td>
             <td className="p-2">{s.active ? 'Yes' : 'No'}</td>
             <td className="p-2">
-              {s.lastSyncedAt ? new Date(s.lastSyncedAt).toLocaleString() : 'Never'}
+              {s.lastSyncedAt ? new Date(s.lastSyncedAt).toLocaleString() : (
+                <span className={s.columnMapping ? 'text-gray-400' : 'text-orange-500'}>
+                  {s.columnMapping ? 'Never — click Sync now' : 'Waiting for mapping'}
+                </span>
+              )}
               {s.lastSyncError && (
                 <div className="text-xs text-red-600 truncate max-w-[200px]" title={s.lastSyncError}>
                   {s.lastSyncError}
@@ -64,6 +70,7 @@ export async function SourcesTable({ tournamentId }: Props) {
                 sheetTabName={s.sheetTabName}
                 currentMapping={s.columnMapping as Record<string, string> | null}
               />
+              <SyncNowButton sourceId={s.id} hasMapping={!!s.columnMapping} />
               <ToggleActiveButton sourceId={s.id} active={s.active} hasMapping={!!s.columnMapping} />
               <DeleteButton sourceId={s.id} />
             </td>

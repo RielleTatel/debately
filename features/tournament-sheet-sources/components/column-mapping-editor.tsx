@@ -2,7 +2,19 @@
 import { useEffect, useState, useTransition } from 'react'
 import { testSourceAction, updateMappingAction } from '../actions'
 
-const CANONICAL_FIELDS = ['institutionName', 'teamName', 'speakerName', 'adjudicatorName', 'email']
+const CANONICAL_FIELDS: { key: string; label: string }[] = [
+  { key: 'registrationType',       label: 'Registration Type' },
+  { key: 'institutionName',         label: 'Institution Name' },
+  { key: 'representativeName',      label: 'Representative Name' },
+  { key: 'email',                   label: 'Email' },
+  { key: 'contactNumber',           label: 'Contact Number' },
+  { key: 'numberOfTeams',           label: 'Number of Teams' },
+  { key: 'numberOfAdjudicators',    label: 'Number of Adjudicators' },
+  { key: 'teamName',                label: 'Team Name' },
+  { key: 'speakerName',             label: 'Speaker Name' },
+  { key: 'adjudicatorName',         label: 'Adjudicator Name' },
+  { key: 'facebookUrl',             label: 'Facebook URL' },
+]
 
 interface Props {
   sourceId: string
@@ -49,13 +61,13 @@ export function ColumnMappingEditor({ sourceId, spreadsheetId, sheetTabName, ini
         <h2 className="text-lg font-semibold">Column mapping</h2>
         <p className="text-xs text-gray-500">Map each Debately field to a column in your sheet.</p>
 
-        {CANONICAL_FIELDS.map((field) => (
-          <label key={field} className="grid grid-cols-2 gap-2 text-sm">
-            <span className="self-center">{field}</span>
+        {CANONICAL_FIELDS.map(({ key, label }) => (
+          <label key={key} className="grid grid-cols-2 gap-2 text-sm">
+            <span className="self-center">{label}</span>
             <select
               className="rounded border p-1"
-              value={mapping[field] ?? ''}
-              onChange={(e) => setMapping((m) => ({ ...m, [field]: e.target.value }))}
+              value={mapping[key] ?? ''}
+              onChange={(e) => setMapping((m) => ({ ...m, [key]: e.target.value }))}
             >
               <option value="">— skip —</option>
               {headers.map((h) => <option key={h} value={h}>{h}</option>)}

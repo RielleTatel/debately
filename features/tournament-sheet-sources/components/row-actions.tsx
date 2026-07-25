@@ -1,6 +1,6 @@
 'use client'
 import { useTransition, useState } from 'react'
-import { toggleActiveAction, deleteSourceAction } from '../actions'
+import { toggleActiveAction, deleteSourceAction, syncNowAction } from '../actions'
 import { ColumnMappingEditor } from './column-mapping-editor'
 
 export function ToggleActiveButton({ sourceId, active, hasMapping }: { sourceId: string; active: boolean; hasMapping: boolean }) {
@@ -45,6 +45,37 @@ export function DeleteButton({ sourceId }: { sourceId: string }) {
     >
       Delete
     </button>
+  )
+}
+
+export function SyncNowButton({ sourceId, hasMapping }: { sourceId: string; hasMapping: boolean }) {
+  const [pending, start] = useTransition()
+  const [result, setResult] = useState<string | null>(null)
+
+  return (
+    <span className="inline-flex flex-col gap-0.5">
+      <button
+        className="text-xs underline disabled:opacity-50"
+        disabled={pending || !hasMapping}
+        title={!hasMapping ? 'Configure column mapping before syncing' : ''}
+        onClick={() => {
+          setResult(null)
+          start(async () => {
+            const fd = new FormData()
+            fd.set('sourceId', sourceId)
+            const r = await syncNowAction(fd)
+            setResult(r.ok ? `Synced ${r.data.synced} row(s)` : r.error)
+          })
+        }}
+      >
+        {pending ? 'Syncing…' : 'Sync now'}
+      </button>
+      {result && (
+        <span className={`text-xs ${result.startsWith('Synced') ? 'text-green-600' : 'text-red-600'}`}>
+          {result}
+        </span>
+      )}
+    </span>
   )
 }
 

@@ -46,6 +46,45 @@ export default async function InstitutionDetailPage({
         <h1 className="text-2xl font-semibold">{institution.name}</h1>
         <p className="text-sm text-muted-foreground">Director controls</p>
       </div>
+
+      {(institution.teamsIntended != null || institution.adjudicatorsIntended != null || institution.contactName || institution.contactEmail || institution.contactPhone) && (
+        <div className="rounded-lg border border-border bg-card px-5 py-4 shadow-xs">
+          <h2 className="mb-3 text-[13px] font-semibold uppercase tracking-wide text-muted-foreground">Registration details</h2>
+          <dl className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm sm:grid-cols-3">
+            {institution.teamsIntended != null && (
+              <>
+                <dt className="text-muted-foreground">Teams intended</dt>
+                <dd className="font-medium tabular-nums">{institution.teamsIntended}</dd>
+              </>
+            )}
+            {institution.adjudicatorsIntended != null && (
+              <>
+                <dt className="text-muted-foreground">Adjudicators intended</dt>
+                <dd className="font-medium tabular-nums">{institution.adjudicatorsIntended}</dd>
+              </>
+            )}
+            {institution.contactName && (
+              <>
+                <dt className="text-muted-foreground">Representative</dt>
+                <dd className="font-medium">{institution.contactName}</dd>
+              </>
+            )}
+            {institution.contactEmail && (
+              <>
+                <dt className="text-muted-foreground">Email</dt>
+                <dd><a href={`mailto:${institution.contactEmail}`} className="font-medium text-primary hover:underline">{institution.contactEmail}</a></dd>
+              </>
+            )}
+            {institution.contactPhone && (
+              <>
+                <dt className="text-muted-foreground">Contact</dt>
+                <dd className="font-medium">{institution.contactPhone}</dd>
+              </>
+            )}
+          </dl>
+        </div>
+      )}
+
       <PortalControlsPanel
         institutionId={institution.id}
         token={token}
