@@ -36,6 +36,10 @@ export default async function InstitutionDetailPage({
     const arr = flagsByTeam.get(f.teamId) ?? []
     arr.push(f); flagsByTeam.set(f.teamId, arr)
   }
+  const participantCountByTeam = new Map<string, number>()
+  for (const p of participants) {
+    if (p.teamId) participantCountByTeam.set(p.teamId, (participantCountByTeam.get(p.teamId) ?? 0) + 1)
+  }
   const proto = headersList.get('x-forwarded-proto') ?? 'http'
   const host = headersList.get('host') ?? 'localhost:3000'
   const appOrigin = `${proto}://${host}`
@@ -93,7 +97,7 @@ export default async function InstitutionDetailPage({
       />
       <section className="space-y-2">
         <h2 className="text-lg font-medium">Teams</h2>
-        <TeamList teams={teams.map((t) => ({ ...t, validationFlags: flagsByTeam.get(t.id) ?? [], participantCount: 0 }))} />
+        <TeamList teams={teams.map((t) => ({ ...t, validationFlags: flagsByTeam.get(t.id) ?? [], participantCount: participantCountByTeam.get(t.id) ?? 0 }))} />
       </section>
       <section className="space-y-2">
         <h2 className="text-lg font-medium">Participants</h2>
