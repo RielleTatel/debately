@@ -10,6 +10,7 @@ import {
   updateFinanceSettingsSchema,
   updatePortalSettingsSchema,
   updateFormatSettingsSchema,
+  updateJudgeRuleSchema,
 } from '@/features/tournaments/schemas'
 import { assertSlugAllowed } from '@/lib/slug'
 import { err, ok, type ActionResult } from '@/types/api'
@@ -126,6 +127,29 @@ export async function updatePortalSettingsAction(fd: FormData): Promise<ActionRe
     await prisma.tournament.update({
       where: { id: tournamentId },
       data: { portalActive: parsed.data.portalActive },
+    })
+    revalidate(tournamentId)
+    return ok(undefined)
+  } catch (e) { if (isAppError(e)) return err(e.message, e.code); throw e }
+}
+
+export async function updateJudgeRuleAction(fd: FormData): Promise<ActionResult<void>> {
+  const tournamentId = String(fd.get('tournamentId') ?? '')
+  if (!tournamentId) return err('Missing tournament id', 'VALIDATION_ERROR')
+  const parsed = updateJudgeRuleSchema.safeParse({
+    judgeRule: fd.get('judgeRule') || undefined,
+    ghostJudgeFee: fd.get('ghostJudgeFee') || undefined,
+  })
+  if (!parsed.success) return err(parsed.error.errors[0].message, 'VALIDATION_ERROR')
+  try {
+    const { tournament } = await requireTournamentDirector(tournamentId)
+    assertTournamentEditable(tournament)
+    await prisma.tournament.update({
+      where: { id: tournamentId },
+      data: {
+        judgeRule: parsed.data.judgeRule ?? null,
+        ghostJudgeFee: parsed.data.ghostJudgeFee ?? null,
+      },
     })
     revalidate(tournamentId)
     return ok(undefined)

@@ -85,6 +85,13 @@ export const updateFormatSettingsSchema = z.object({
   formatConfig,
 })
 
+export const updateJudgeRuleSchema = z.object({
+  judgeRule: z.coerce.number().int().min(1).max(10).optional(),
+  ghostJudgeFee: z.coerce.number().nonnegative().max(100_000).optional(),
+})
+
+export type UpdateJudgeRuleInput = z.infer<typeof updateJudgeRuleSchema>
+
 export const archiveTournamentSchema = z.object({
   confirmName: z.string().min(1),
 })

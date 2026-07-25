@@ -36,29 +36,50 @@ export async function ingestTeams(
       })
       didWork = true
 
+      // Collect new speakers from this row
+      const newSpeakers: { name: string; email?: string; phone?: string }[] = []
       for (const i of [1, 2, 3] as const) {
         const speakerName = pick(payload, columnMapping, `speaker${i}Name`)
         if (!speakerName) continue
-        const email = pick(payload, columnMapping, `speaker${i}Email`) ?? undefined
-        const phone = pick(payload, columnMapping, `speaker${i}Contact`) ?? undefined
+        newSpeakers.push({
+          name: speakerName,
+          email: pick(payload, columnMapping, `speaker${i}Email`) ?? undefined,
+          phone: pick(payload, columnMapping, `speaker${i}Contact`) ?? undefined,
+        })
+      }
 
-        const existing = email
-          ? await prisma.participant.findFirst({ where: { tournamentInstitutionId: inst.id, email } })
+      // Reconcile: remove sheet-sync speakers no longer in the row
+      const existingSheetSyncParticipants = await prisma.participant.findMany({
+        where: { teamId: team.id, importPhase: IMPORT_PHASE },
+      })
+      const newEmails = new Set(newSpeakers.map((s) => s.email).filter(Boolean))
+      const newNames = new Set(newSpeakers.map((s) => s.name))
+      for (const p of existingSheetSyncParticipants) {
+        const stillPresent = p.email ? newEmails.has(p.email) : newNames.has(p.displayName)
+        if (!stillPresent) {
+          await prisma.participant.delete({ where: { id: p.id } })
+        }
+      }
+
+      // Upsert current speakers
+      for (const speaker of newSpeakers) {
+        const existing = speaker.email
+          ? await prisma.participant.findFirst({ where: { tournamentInstitutionId: inst.id, email: speaker.email } })
           : null
 
         if (existing) {
           await prisma.participant.update({
             where: { id: existing.id },
-            data: { displayName: speakerName, phone, teamId: team.id, importPhase: IMPORT_PHASE },
+            data: { displayName: speaker.name, phone: speaker.phone, teamId: team.id, importPhase: IMPORT_PHASE },
           })
         } else {
           await prisma.participant.create({
             data: {
               tournamentInstitutionId: inst.id,
               teamId: team.id,
-              displayName: speakerName,
-              email,
-              phone,
+              displayName: speaker.name,
+              email: speaker.email,
+              phone: speaker.phone,
               eligibility: 'ELIGIBLE',
               importPhase: IMPORT_PHASE,
             },

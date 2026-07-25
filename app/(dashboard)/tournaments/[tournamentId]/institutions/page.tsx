@@ -1,11 +1,12 @@
 import Link from 'next/link'
-import { Building2, Upload, Mail, ChevronRight } from 'lucide-react'
+import { Building2, Upload, Mail, ChevronRight, AlertTriangle, XCircle } from 'lucide-react'
 import { requireTournamentReadable } from '@/features/tournaments/permissions'
 import { getInstitutionsForTournament } from '@/features/institutions/queries'
 import { prisma } from '@/lib/prisma'
 import { PageHeader } from '@/components/ui/page-header'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { EmptyState } from '@/components/empty-state/empty-state'
+import { validateRegistrations } from '@/features/tournaments/services/validate-registrations'
 
 export default async function InstitutionsPage({
   params,
@@ -16,7 +17,7 @@ export default async function InstitutionsPage({
   await requireTournamentReadable(tournamentId)
 
   const institutions = await getInstitutionsForTournament(tournamentId)
-  const [claims, teamCounts, adjCounts] = await Promise.all([
+  const [claims, teamCounts, adjCounts, flags] = await Promise.all([
     prisma.institutionClaim.findMany({
       where: { tournamentInstitutionId: { in: institutions.map((i) => i.id) } },
       select: { tournamentInstitutionId: true },
@@ -31,6 +32,7 @@ export default async function InstitutionsPage({
       where: { tournamentInstitutionId: { in: institutions.map((i) => i.id) } },
       _count: { _all: true },
     }),
+    validateRegistrations(tournamentId),
   ])
   const claimedSet = new Set(claims.map((c) => c.tournamentInstitutionId))
   const teamMap = new Map(
@@ -71,6 +73,26 @@ export default async function InstitutionsPage({
           )
         }
       />
+
+      {flags.length > 0 && (
+        <div className="space-y-2">
+          {flags.map((f, idx) => (
+            <div
+              key={idx}
+              className={`flex items-start gap-2.5 rounded-md border px-3.5 py-2.5 text-sm ${
+                f.severity === 'error'
+                  ? 'border-red-200 bg-red-50 text-red-800'
+                  : 'border-amber-200 bg-amber-50 text-amber-800'
+              }`}
+            >
+              {f.severity === 'error'
+                ? <XCircle className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2} />
+                : <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2} />}
+              <span>{f.message}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {institutions.length === 0 ? (
         <EmptyState

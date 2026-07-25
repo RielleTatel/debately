@@ -164,6 +164,8 @@ model Tournament {
   registrationOpen             Boolean          @default(false) @map("registration_open")
   maxTeamsPerInstitution       Int?             @map("max_teams_per_institution")
   maxAdjudicatorsPerInstitution Int?            @map("max_adjudicators_per_institution")
+  judgeRule                    Int?             @map("judge_rule")
+  ghostJudgeFee                Float?           @map("ghost_judge_fee")
   portalActive                 Boolean          @default(false) @map("portal_active")
   publicPageEnabled            Boolean          @default(false) @map("public_page_enabled")
   archivedAt                   DateTime?        @map("archived_at")

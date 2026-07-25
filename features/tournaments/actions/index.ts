@@ -5,6 +5,7 @@ export {
   updateFinanceSettingsAction,
   updatePortalSettingsAction,
   updateFormatSettingsAction,
+  updateJudgeRuleAction,
 } from './update'
 export { archiveTournamentAction, unarchiveTournamentAction } from './archive'
 export { assignDirectorAction, removeDirectorAction } from './directors'

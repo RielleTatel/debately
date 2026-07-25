@@ -11,6 +11,7 @@ import { TournamentRegistrationSettingsForm } from '@/features/tournaments/compo
 import { TournamentFinanceSettingsForm } from '@/features/tournaments/components/tournament-finance-settings-form'
 import { TournamentPortalSettingsForm } from '@/features/tournaments/components/tournament-portal-settings-form'
 import { TournamentFormatSettingsForm } from '@/features/tournaments/components/tournament-format-settings-form'
+import { TournamentJudgeSettingsForm } from '@/features/tournaments/components/tournament-judge-settings-form'
 import { TournamentLogoUploader } from '@/features/tournaments/components/tournament-logo-uploader'
 import { TournamentRulesUploader } from '@/features/tournaments/components/tournament-rules-uploader'
 import { TournamentDirectorsPanel } from '@/features/tournaments/components/tournament-directors-panel'
@@ -69,6 +70,10 @@ export default async function TournamentSettingsPage({ params }: Props) {
 
       <Panel title="Portal">
         <TournamentPortalSettingsForm tournament={tournament} readOnly={readOnly} />
+      </Panel>
+
+      <Panel title="Judge rule">
+        <TournamentJudgeSettingsForm tournament={tournament} readOnly={readOnly} />
       </Panel>
 
       <Panel title="Format and rules">
