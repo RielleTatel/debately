@@ -14,6 +14,9 @@ export async function ingestTeams(
     orderBy: { rowIndex: 'asc' },
   })
 
+  console.log(`[ingest-teams] ${submissions.length} unprocessed submissions for source ${sourceId}`)
+  console.log(`[ingest-teams] columnMapping keys:`, Object.keys(columnMapping))
+
   let ingested = 0
   for (const sub of submissions) {
     const payload = sub.payload as SubmissionPayload
@@ -30,6 +33,7 @@ export async function ingestTeams(
     }
 
     const teamName = pick(payload, columnMapping, 'teamName')
+    console.log(`[ingest-teams] row ${sub.id}: instName=${JSON.stringify(instName)} inst=${inst?.id ?? 'null'} teamName=${JSON.stringify(teamName)}`)
 
     if (inst && teamName) {
       const team = await prisma.team.upsert({
