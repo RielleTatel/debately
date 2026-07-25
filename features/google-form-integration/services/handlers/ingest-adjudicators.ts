@@ -28,7 +28,13 @@ export async function ingestAdjudicators(
     }
 
     const instName = pick(payload, columnMapping, 'institutionName')
-    const inst = instName ? await resolveInstitutionByName(tournamentId, instName) : null
+    let inst = instName ? await resolveInstitutionByName(tournamentId, instName) : null
+
+    if (instName && !inst) {
+      inst = await prisma.tournamentInstitution.create({
+        data: { tournamentId, name: instName },
+      })
+    }
 
     const adjEmail = pick(payload, columnMapping, 'adjudicatorEmail') ?? undefined
     const adjPhone = pick(payload, columnMapping, 'adjudicatorContact') ?? undefined

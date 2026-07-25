@@ -20,7 +20,15 @@ export async function ingestTeams(
     let didWork = false
 
     const instName = pick(payload, columnMapping, 'institutionName')
-    const inst = instName ? await resolveInstitutionByName(tournamentId, instName) : null
+    let inst = instName ? await resolveInstitutionByName(tournamentId, instName) : null
+
+    // Auto-create institution if name is present but not yet in the DB
+    if (instName && !inst) {
+      inst = await prisma.tournamentInstitution.create({
+        data: { tournamentId, name: instName },
+      })
+    }
+
     const teamName = pick(payload, columnMapping, 'teamName')
 
     if (inst && teamName) {
@@ -93,7 +101,12 @@ export async function ingestTeams(
     const adjName = pick(payload, columnMapping, 'adjudicatorName')
     if (adjName) {
       const adjInstName = pick(payload, columnMapping, 'adjudicatorInstitution')
-      const adjInst = adjInstName ? await resolveInstitutionByName(tournamentId, adjInstName) : null
+      let adjInst = adjInstName ? await resolveInstitutionByName(tournamentId, adjInstName) : null
+      if (adjInstName && !adjInst) {
+        adjInst = await prisma.tournamentInstitution.create({
+          data: { tournamentId, name: adjInstName },
+        })
+      }
       const adjInstitutionId = adjInst?.id ?? inst?.id ?? null
 
       const adjEmail = pick(payload, columnMapping, 'adjudicatorEmail') ?? undefined
