@@ -84,8 +84,23 @@ export async function syncAndIngestOneSource(sourceId: string): Promise<SyncSour
     return { sourceId, synced: 0, error: 'Source not found or mapping not configured.' }
   }
   try {
-    const synced = await syncOneSource(row as SourceLite)
-    return { sourceId, synced, error: null }
+    // Fetch new rows from the sheet
+    await syncOneSource(row as SourceLite)
+
+    // Reset processedAt for all submissions so ingest always reflects current sheet + mapping
+    await prisma.googleFormSubmission.updateMany({
+      where: { sourceId },
+      data: { processedAt: null },
+    })
+
+    // Ingest and return the actual ingested count
+    const ingested = await ingestSource(
+      sourceId,
+      row.tournamentId,
+      row.phase as RegistrationPhase,
+      row.columnMapping as Record<string, string>,
+    )
+    return { sourceId, synced: ingested, error: null }
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e)
     await prisma.tournamentSheetSource.update({

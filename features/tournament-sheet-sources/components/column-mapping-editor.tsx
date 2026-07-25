@@ -109,7 +109,7 @@ export function ColumnMappingEditor({ sourceId, spreadsheetId, sheetTabName, pha
                 onChange={(e) => setMapping((m) => ({ ...m, [key]: e.target.value }))}
               >
                 <option value="">— skip —</option>
-                {headers.map((h) => <option key={h} value={h}>{h}</option>)}
+                {headers.map((h, idx) => <option key={idx} value={h}>{h}</option>)}
               </select>
             </label>
           ))}
