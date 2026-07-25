@@ -20,7 +20,7 @@ export function TournamentBasicSettingsForm({ tournament, readOnly }: { tourname
       </div>
       <div className="space-y-2">
         <Label htmlFor="slug">Slug</Label>
-        <Input id="slug" name="slug" defaultValue={tournament.slug} required pattern="[a-z0-9-]+" minLength={3} maxLength={64} disabled={readOnly} />
+        <Input id="slug" name="slug" defaultValue={tournament.slug} required pattern="[a-z0-9\-]+" minLength={3} maxLength={64} disabled={readOnly} />
       </div>
       <div className="space-y-2">
         <Label htmlFor="description">Description</Label>

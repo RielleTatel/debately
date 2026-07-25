@@ -49,7 +49,7 @@ export function TournamentCreateForm({ orgOptions, defaultOrgId }: Props) {
 
       <div className="space-y-2">
         <Label htmlFor="slug">Slug</Label>
-        <Input id="slug" name="slug" required pattern="[a-z0-9-]+" minLength={3} maxLength={64} />
+        <Input id="slug" name="slug" required pattern="[a-z0-9\-]+" minLength={3} maxLength={64} />
         <p className="text-xs text-muted-foreground">Lowercase letters, numbers, and hyphens. Unique within your organization.</p>
       </div>
 

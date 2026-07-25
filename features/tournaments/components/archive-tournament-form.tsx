@@ -48,7 +48,7 @@ export function ArchiveTournamentForm({ tournament, isOwner }: { tournament: Tou
         <Label htmlFor="confirmName">Tournament name</Label>
         <Input id="confirmName" value={confirmName} onChange={(e) => setConfirmName(e.target.value)} placeholder={tournament.name} />
       </div>
-      <Button type="button" variant="destructive" onClick={onArchive} disabled={pending || confirmName !== tournament.name}>
+      <Button type="button" variant="destructive" onClick={onArchive} disabled={pending || confirmName.trim() !== tournament.name.trim()}>
         Archive tournament
       </Button>
       {error && <p className="text-sm text-destructive" role="alert">{error}</p>}

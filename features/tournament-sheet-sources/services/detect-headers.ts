@@ -36,6 +36,12 @@ export async function detectSheetHeaders(
     const message = e instanceof Error ? e.message : String(e)
     if (code === 403) throw new AppError('FORBIDDEN', `Service account cannot access sheet: ${message}`, 403)
     if (code === 404) throw new AppError('NOT_FOUND', 'Spreadsheet or tab not found.', 404)
+    if (message.includes('Unable to parse range') || message.includes('parse range')) {
+      const hint = sheetTabName
+        ? `Tab "${sheetTabName}" was not found in this spreadsheet. Check the exact tab name (case-sensitive) or leave it blank to use the first tab.`
+        : 'Unable to read spreadsheet range. Check the spreadsheet ID.'
+      throw new AppError('NOT_FOUND', hint, 404)
+    }
     throw new AppError('INTERNAL_ERROR', `Sheets API error: ${message}`, 500)
   }
 }

@@ -16,7 +16,7 @@ export async function archiveTournamentAction(fd: FormData): Promise<ActionResul
 
   try {
     const { tournament } = await requireTournamentDirector(tournamentId)
-    if (parsed.data.confirmName !== tournament.name) {
+    if (parsed.data.confirmName.trim() !== tournament.name.trim()) {
       return err('Type the tournament name exactly to confirm.', 'VALIDATION_ERROR')
     }
     await prisma.tournament.update({
