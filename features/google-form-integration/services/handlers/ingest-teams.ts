@@ -52,6 +52,7 @@ export async function ingestTeams(
       const newSpeakers: { name: string; email?: string; phone?: string }[] = []
       for (const i of [1, 2, 3] as const) {
         const speakerName = pick(payload, columnMapping, `speaker${i}Name`)
+        console.log(`[ingest-teams] speaker${i}Name mapped header="${columnMapping[`speaker${i}Name`] ?? '(not mapped)'}" → picked="${speakerName ?? 'null'}"`)
         if (!speakerName) continue
         newSpeakers.push({
           name: speakerName,
