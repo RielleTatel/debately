@@ -2,6 +2,7 @@
 import { useTransition, useState } from 'react'
 import { toggleActiveAction, deleteSourceAction, syncNowAction } from '../actions'
 import { ColumnMappingEditor } from './column-mapping-editor'
+import type { RegistrationPhase } from '../types'
 
 export function ToggleActiveButton({ sourceId, active, hasMapping }: { sourceId: string; active: boolean; hasMapping: boolean }) {
   const [pending, start] = useTransition()
@@ -79,10 +80,11 @@ export function SyncNowButton({ sourceId, hasMapping }: { sourceId: string; hasM
   )
 }
 
-export function EditMappingButton({ sourceId, spreadsheetId, sheetTabName, currentMapping }: {
+export function EditMappingButton({ sourceId, spreadsheetId, sheetTabName, phase, currentMapping }: {
   sourceId: string
   spreadsheetId: string
   sheetTabName: string | null
+  phase: RegistrationPhase
   currentMapping: Record<string, string> | null
 }) {
   const [open, setOpen] = useState(false)
@@ -94,6 +96,7 @@ export function EditMappingButton({ sourceId, spreadsheetId, sheetTabName, curre
           sourceId={sourceId}
           spreadsheetId={spreadsheetId}
           sheetTabName={sheetTabName}
+          phase={phase}
           initial={currentMapping ?? {}}
           onClose={() => setOpen(false)}
         />

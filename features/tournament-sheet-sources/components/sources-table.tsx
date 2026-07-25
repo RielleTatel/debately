@@ -68,6 +68,7 @@ export async function SourcesTable({ tournamentId }: Props) {
                 sourceId={s.id}
                 spreadsheetId={s.spreadsheetId}
                 sheetTabName={s.sheetTabName}
+                phase={s.phase}
                 currentMapping={s.columnMapping as Record<string, string> | null}
               />
               <SyncNowButton sourceId={s.id} hasMapping={!!s.columnMapping} />
