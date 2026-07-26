@@ -10,10 +10,7 @@ export default async function AdjudicatorsPortalPage({ params }: { params: Promi
   return (
     <div className="mx-auto max-w-3xl space-y-6 p-6">
       <h1 className="text-xl font-semibold">Adjudicators</h1>
-      <AdjudicatorList
-        adjudicators={adjudicators.map((a) => ({ ...a, institution })) as never}
-        showDirectorNotes={false}
-      />
+      <AdjudicatorList adjudicators={adjudicators.map((a) => ({ ...a, institution }))} />
       <div className="space-y-3">
         {adjudicators.map((a) => (
           <div key={a.id} id={`edit-${a.id}`}><AdjudicatorEditForm adjudicator={a} /></div>

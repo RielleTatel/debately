@@ -18,4 +18,5 @@ export const ACTION_LABELS: Record<ActivityAction, string> = {
   ANNOUNCEMENT_SCHEDULED: 'Scheduled announcement', ANNOUNCEMENT_RETRACTED: 'Retracted announcement',
   REQUEST_SUBMITTED: 'Submitted request', REQUEST_MORE_INFO_REQUESTED: 'Requested more info', REQUEST_MORE_INFO_PROVIDED: 'Provided more info',
   REQUEST_APPROVED: 'Approved request', REQUEST_REJECTED: 'Rejected request',
+  PAYMENT_CREATED: 'Created payment', PAYMENT_UPDATED: 'Updated payment', PAYMENT_VOIDED: 'Voided payment',
 }

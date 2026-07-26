@@ -105,10 +105,7 @@ export default async function InstitutionDetailPage({
       </section>
       <section className="space-y-2">
         <h2 className="text-lg font-medium">Adjudicators</h2>
-        <AdjudicatorList
-          adjudicators={adjudicators.map((a) => ({ ...a, institution })) as never}
-          showDirectorNotes
-        />
+        <AdjudicatorList adjudicators={adjudicators.map((a) => ({ ...a, institution }))} />
       </section>
     </div>
   )

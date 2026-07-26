@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { resolveInstitutionByName } from '@/features/institutions/queries/institutions'
-import { pick, type SubmissionPayload } from './_utils'
+import { pick, toMinor, type SubmissionPayload } from './_utils'
 
 const IMPORT_PHASE = 'sheet-sync'
 
@@ -13,6 +13,12 @@ export async function ingestAdjudicators(
     where: { sourceId, processedAt: null },
     orderBy: { rowIndex: 'asc' },
   })
+
+  const tournament = await prisma.tournament.findUnique({
+    where: { id: tournamentId },
+    select: { currency: true },
+  })
+  const currency = tournament?.currency ?? 'PHP'
 
   let ingested = 0
   for (const sub of submissions) {
@@ -64,6 +70,29 @@ export async function ingestAdjudicators(
           status: 'ACTIVE',
           importPhase: IMPORT_PHASE,
         },
+      })
+    }
+
+    // Upsert payment record if paymentAmount is mapped and institution is known
+    const amountMinor = toMinor(pick(payload, columnMapping, 'paymentAmount'))
+    if (amountMinor != null && inst) {
+      await prisma.tournamentPayment.upsert({
+        where: {
+          tournamentInstitutionId_sourceSubmissionId: {
+            tournamentInstitutionId: inst.id,
+            sourceSubmissionId: sub.id,
+          },
+        },
+        create: {
+          tournamentId,
+          tournamentInstitutionId: inst.id,
+          phase: 'ADJUDICATORS',
+          amountMinor,
+          currency,
+          paymentSource: 'GOOGLE_FORM',
+          sourceSubmissionId: sub.id,
+        },
+        update: { amountMinor },
       })
     }
 

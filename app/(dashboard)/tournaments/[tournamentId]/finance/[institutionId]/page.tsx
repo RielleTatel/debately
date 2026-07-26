@@ -3,8 +3,10 @@ import { getInstitutionById } from '@/features/institutions/queries'
 import { getInstitutionBalance } from '@/features/finance/queries/balance'
 import { getInvoiceForInstitution } from '@/features/finance/queries/invoices'
 import { listReceiptsForInvoice } from '@/features/finance/queries/receipts'
+import { getPaymentsForInstitution } from '@/features/finance/queries/payments'
 import { formatAmount } from '@/lib/money'
 import { ReceiptUploader } from '@/features/finance/components/receipt-uploader'
+import { PaymentHistory } from '@/features/finance/components/payment-history'
 import { notFound } from 'next/navigation'
 
 export default async function PerInstitutionFinancePage({ params }: { params: Promise<{ tournamentId: string; institutionId: string }> }) {
@@ -13,8 +15,11 @@ export default async function PerInstitutionFinancePage({ params }: { params: Pr
   const institution = await getInstitutionById(institutionId)
   if (!institution || institution.tournamentId !== tournamentId) notFound()
 
-  const balance = await getInstitutionBalance(institutionId)
-  const inv = await getInvoiceForInstitution(institutionId)
+  const [balance, inv, payments] = await Promise.all([
+    getInstitutionBalance(institutionId),
+    getInvoiceForInstitution(institutionId),
+    getPaymentsForInstitution(institutionId),
+  ])
   const recs = inv ? await listReceiptsForInvoice(inv.id) : []
 
   return (
@@ -41,6 +46,11 @@ export default async function PerInstitutionFinancePage({ params }: { params: Pr
         </div>
       )}
       {inv && <ReceiptUploader invoiceId={inv.id} currency={inv.currency} />}
+
+      <div className="space-y-2">
+        <h2 className="text-lg font-medium">Payment History</h2>
+        <PaymentHistory payments={payments} />
+      </div>
     </div>
   )
 }

@@ -23,3 +23,9 @@ export function toBool(v: string | null): boolean {
   if (!v) return false
   return ['yes', 'true', '1'].includes(v.toLowerCase())
 }
+
+export function toMinor(v: string | null): number | null {
+  if (!v) return null
+  const n = parseFloat(v.replace(/,/g, ''))
+  return isFinite(n) ? Math.round(n * 100) : null
+}

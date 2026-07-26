@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/prisma'
-import type { Adjudicator } from '@prisma/client'
 
-export async function getAdjudicatorsForTournament(tournamentId: string): Promise<Adjudicator[]> {
+export async function getAdjudicatorsForTournament(tournamentId: string) {
   return prisma.adjudicator.findMany({
     where: { tournamentId },
     orderBy: [{ status: 'asc' }, { displayName: 'asc' }],
@@ -9,7 +8,7 @@ export async function getAdjudicatorsForTournament(tournamentId: string): Promis
   })
 }
 
-export async function getAdjudicatorsForInstitution(institutionId: string): Promise<Adjudicator[]> {
+export async function getAdjudicatorsForInstitution(institutionId: string) {
   return prisma.adjudicator.findMany({
     where: { tournamentInstitutionId: institutionId },
     orderBy: { displayName: 'asc' },

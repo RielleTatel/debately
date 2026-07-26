@@ -186,6 +186,7 @@ model Tournament {
   contacts               TournamentContact[]
   publicContactMessages  PublicContactMessage[]
   sheetSources           TournamentSheetSource[]
+  payments               TournamentPayment[]
 
   @@unique([orgId, slug])
   @@index([orgId])
@@ -284,6 +285,7 @@ model TournamentInstitution {
   invoice          Invoice?
   requests         Request[]
   announcementTargets AnnouncementTarget[]
+  payments         TournamentPayment[]
 
   @@unique([tournamentId, name])
   @@index([tournamentId])
@@ -757,6 +759,9 @@ enum ActivityAction {
   RECEIPT_APPROVED
   RECEIPT_REJECTED
   REMINDER_SENT
+  PAYMENT_CREATED
+  PAYMENT_UPDATED
+  PAYMENT_VOIDED
   ANNOUNCEMENT_CREATED
   ANNOUNCEMENT_UPDATED
   ANNOUNCEMENT_PUBLISHED
@@ -891,6 +896,45 @@ enum RegistrationPhase {
   ADJUDICATORS
 
   @@map("registration_phase")
+}
+
+enum PaymentSource {
+  GOOGLE_FORM
+  MANUAL
+
+  @@map("payment_source")
+}
+
+enum TournamentPaymentStatus {
+  PENDING
+  CONFIRMED
+  VOIDED
+
+  @@map("tournament_payment_status")
+}
+
+model TournamentPayment {
+  id                      String                  @id @default(cuid())
+  tournamentId            String                  @map("tournament_id")
+  tournamentInstitutionId String                  @map("tournament_institution_id")
+  phase                   RegistrationPhase?
+  amountMinor             Int                     @map("amount_minor")
+  currency                String                  @db.Char(3)
+  paymentSource           PaymentSource           @default(GOOGLE_FORM) @map("payment_source")
+  sourceSubmissionId      String?                 @map("source_submission_id")
+  receivedAt              DateTime?               @map("received_at")
+  status                  TournamentPaymentStatus @default(PENDING)
+  notes                   String?
+  createdAt               DateTime                @default(now()) @map("created_at")
+  updatedAt               DateTime                @updatedAt @map("updated_at")
+
+  tournament  Tournament            @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  institution TournamentInstitution @relation(fields: [tournamentInstitutionId], references: [id], onDelete: Cascade)
+
+  @@unique([tournamentInstitutionId, sourceSubmissionId])
+  @@index([tournamentId])
+  @@index([tournamentInstitutionId])
+  @@map("tournament_payments")
 }
 
 model TournamentSheetSource {

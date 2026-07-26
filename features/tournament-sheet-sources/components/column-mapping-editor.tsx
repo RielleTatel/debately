@@ -40,6 +40,7 @@ const FIELDS_BY_PHASE: Record<RegistrationPhase, { key: string; label: string }[
     { key: 'adjudicatorEmail',    label: 'Judge Email' },
     { key: 'adjudicatorContact',  label: 'Judge Contact' },
     { key: 'adjudicatorFacebook', label: 'Judge Facebook' },
+    { key: 'paymentAmount',       label: 'Payment Amount' },
   ],
   ADJUDICATORS: [
     { key: 'registrationType',    label: 'Registration Type' },
@@ -48,6 +49,7 @@ const FIELDS_BY_PHASE: Record<RegistrationPhase, { key: string; label: string }[
     { key: 'adjudicatorEmail',    label: 'Judge Email' },
     { key: 'adjudicatorContact',  label: 'Judge Contact' },
     { key: 'adjudicatorFacebook', label: 'Judge Facebook' },
+    { key: 'paymentAmount',       label: 'Payment Amount' },
   ],
 }
 

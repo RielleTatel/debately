@@ -47,7 +47,7 @@ export default async function AdjudicatorsPage({
         }
       />
 
-      <AdjudicatorList adjudicators={adjudicators as never} showDirectorNotes />
+      <AdjudicatorList adjudicators={adjudicators} />
     </div>
   )
 }

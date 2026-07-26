@@ -5,13 +5,7 @@ import type { Adjudicator, TournamentInstitution } from '@prisma/client'
 
 type Row = Adjudicator & { institution: TournamentInstitution | null }
 
-export function AdjudicatorList({
-  adjudicators,
-  showDirectorNotes,
-}: {
-  adjudicators: Row[]
-  showDirectorNotes: boolean
-}) {
+export function AdjudicatorList({ adjudicators }: { adjudicators: Row[] }) {
   if (adjudicators.length === 0) {
     return (
       <EmptyState
@@ -28,9 +22,6 @@ export function AdjudicatorList({
           <tr className="border-b border-border bg-surface/60 text-left text-[11.5px] font-medium uppercase tracking-[0.05em] text-muted-foreground">
             <th className="px-4 py-2.5">Name</th>
             <th className="px-4 py-2.5">Institution</th>
-            <th className="px-4 py-2.5">Experience</th>
-            <th className="px-4 py-2.5">Availability</th>
-            {showDirectorNotes && <th className="px-4 py-2.5">Director notes</th>}
             <th className="px-4 py-2.5">Status</th>
           </tr>
         </thead>
@@ -43,17 +34,6 @@ export function AdjudicatorList({
                   <span className="text-muted-foreground/60">Independent</span>
                 )}
               </td>
-              <td className="px-4 py-3 text-muted-foreground">
-                {a.experienceLevel ?? <span className="text-muted-foreground/60">—</span>}
-              </td>
-              <td className="px-4 py-3 text-[12.5px] text-muted-foreground">
-                {a.availabilityNotes ?? <span className="text-muted-foreground/60">—</span>}
-              </td>
-              {showDirectorNotes && (
-                <td className="px-4 py-3 text-[12.5px] text-muted-foreground">
-                  {a.directorNotes ?? <span className="text-muted-foreground/60">—</span>}
-                </td>
-              )}
               <td className="px-4 py-3">
                 <StatusBadge
                   tone={a.status === 'WITHDRAWN' ? 'danger' : 'success'}

@@ -1,16 +1,19 @@
 import { getInstitutionsForTournament } from '@/features/institutions/queries'
 import { getInstitutionBalancesForTournament } from '@/features/finance/queries/balance'
+import { getPaymentTotalsForTournament } from '@/features/finance/queries/payments'
 import { FinanceOverviewTable } from '@/features/finance/components/finance-overview-table'
 
 export async function FinanceOverviewPanel({ tournamentId }: { tournamentId: string }) {
-  const [institutions, balanceMap] = await Promise.all([
+  const [institutions, balanceMap, paymentTotals] = await Promise.all([
     getInstitutionsForTournament(tournamentId),
     getInstitutionBalancesForTournament(tournamentId),
+    getPaymentTotalsForTournament(tournamentId),
   ])
   const rows = institutions.map((i) => ({
     institutionId: i.id,
     institutionName: i.name,
     balance: balanceMap.get(i.id) ?? null,
+    declaredPaid: paymentTotals.get(i.id) ?? null,
   }))
   return <FinanceOverviewTable rows={rows} />
 }
