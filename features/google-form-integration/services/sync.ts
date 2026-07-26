@@ -19,26 +19,25 @@ interface SourceLite {
   columnMapping: Record<string, string>
 }
 
-async function syncOneSource(source: SourceLite): Promise<number> {
+async function syncOneSource(source: SourceLite, fromRow = source.lastSyncedRow + 1): Promise<number> {
   const sheets = await getSheetsClient()
   const prefix = tabPrefix(source.sheetTabName)
 
   const headersRes = await sheets.spreadsheets.values.get({
     spreadsheetId: source.spreadsheetId,
-    range: `${prefix}A1:Z1`,
+    range: `${prefix}1:1`,
   })
   const headers = (headersRes.data.values?.[0] ?? []) as string[]
 
-  const startRow = source.lastSyncedRow + 1
   const dataRes = await sheets.spreadsheets.values.get({
     spreadsheetId: source.spreadsheetId,
-    range: `${prefix}A${startRow}:Z`,
+    range: `${prefix}A${fromRow}:ZZ`,
   })
   const rows = (dataRes.data.values ?? []) as string[][]
 
   let lastRow = source.lastSyncedRow
   for (let i = 0; i < rows.length; i++) {
-    const rowIndex = startRow + i
+    const rowIndex = fromRow + i
     const data = mapRowToSubmission(headers, rows[i], rowIndex, source.id)
 
     await prisma.googleFormSubmission.upsert({
@@ -48,7 +47,7 @@ async function syncOneSource(source: SourceLite): Promise<number> {
         rowIndex: data.rowIndex,
         payload: data.payload as object,
       },
-      update: {},
+      update: { payload: data.payload as object },
     })
     lastRow = rowIndex
   }
@@ -84,8 +83,8 @@ export async function syncAndIngestOneSource(sourceId: string): Promise<SyncSour
     return { sourceId, synced: 0, error: 'Source not found or mapping not configured.' }
   }
   try {
-    // Fetch new rows from the sheet
-    await syncOneSource(row as SourceLite)
+    // Re-fetch ALL rows from row 2 so payload changes (new columns) are picked up on existing rows
+    await syncOneSource(row as SourceLite, 2)
 
     // Reset processedAt for all submissions so ingest always reflects current sheet + mapping
     await prisma.googleFormSubmission.updateMany({
