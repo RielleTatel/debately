@@ -25,7 +25,7 @@ export function FinanceOverviewTable({ rows }: { rows: Row[] }) {
             <td>{r.balance ? formatAmount(r.balance.invoicedMinor, r.balance.currency) : '—'}</td>
             <td>{r.balance ? formatAmount(r.balance.paidMinor, r.balance.currency) : '—'}</td>
             <td>{r.balance ? formatAmount(r.balance.balanceMinor, r.balance.currency) : '—'}</td>
-            <td className="font-medium text-emerald-600">{r.declaredPaid ? formatAmount(r.declaredPaid.totalMinor, r.declaredPaid.currency) : '—'}</td>
+            <td>{r.declaredPaid ? <span className="font-medium text-emerald-600">{formatAmount(r.declaredPaid.totalMinor, r.declaredPaid.currency)}</span> : '—'}</td>
             <td>{r.balance ? <Badge variant={STATUS_COLOR[r.balance.status]}>{r.balance.status}</Badge> : '—'}</td>
           </tr>
         ))}
