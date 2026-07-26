@@ -9,7 +9,9 @@ export function pick(
 ): string | null {
   const header = mapping[field]
   if (!header) return null
-  const r = payload.responses.find((x) => x.question === header)
+  const matches = payload.responses.filter((x) => x.question === header)
+  // Prefer first non-empty answer (handles duplicate column names in sheet)
+  const r = matches.find((x) => x.answer?.trim()) ?? matches[0]
   return r?.answer?.trim() || null
 }
 

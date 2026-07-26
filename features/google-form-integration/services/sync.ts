@@ -61,8 +61,6 @@ async function syncOneSource(source: SourceLite, fromRow = source.lastSyncedRow 
     },
   })
 
-  await ingestSource(source.id, source.tournamentId, source.phase, source.columnMapping)
-
   return rows.length
 }
 
@@ -131,6 +129,7 @@ export async function syncAllActiveSources(): Promise<SyncBatchResult> {
   for (const source of sources) {
     try {
       const synced = await syncOneSource(source)
+      await ingestSource(source.id, source.tournamentId, source.phase, source.columnMapping)
       totalSynced += synced
       results.push({ sourceId: source.id, synced, error: null })
     } catch (e) {
