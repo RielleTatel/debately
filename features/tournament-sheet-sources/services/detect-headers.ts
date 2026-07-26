@@ -16,7 +16,7 @@ export async function detectSheetHeaders(
   try {
     const headerRes = await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: `${prefix}A1:Z1`,
+      range: `${prefix}1:1`,
     })
     const headers = (headerRes.data.values?.[0] ?? []) as string[]
     if (headers.length === 0) {
