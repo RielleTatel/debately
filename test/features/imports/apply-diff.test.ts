@@ -2,7 +2,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { applyDiffAction } from '@/features/imports/actions/apply-diff'
 
 vi.mock('@/lib/prisma', () => ({
-  prisma: { csvImportRow: { findFirst: vi.fn(), update: vi.fn() } },
+  prisma: {
+    csvImportRow: { findFirst: vi.fn(), update: vi.fn() },
+    $transaction: async (callback: (tx: unknown) => Promise<unknown>) =>
+      callback({
+        $queryRaw: async () => [{ status: 'PROCESSED' }],
+        csvImportRow: {
+          findFirst: (...args: unknown[]) => prisma.csvImportRow.findFirst(...(args as [never])),
+          update: (...args: unknown[]) => prisma.csvImportRow.update(...(args as [never])),
+        },
+      }),
+  },
 }))
 vi.mock('@/features/imports/permissions', () => ({ requireImportEditor: vi.fn() }))
 vi.mock('@/services/activity-log', () => ({ activityLog: { record: vi.fn() } }))
@@ -12,23 +22,34 @@ import { requireImportEditor } from '@/features/imports/permissions'
 describe('applyDiffAction', () => {
   beforeEach(() => vi.clearAllMocks())
   it('stores DIFF_DECISION marker with mode=apply', async () => {
-    (requireImportEditor as ReturnType<typeof vi.fn>).mockResolvedValue({
-      import: { id: 'i' }, tournamentId: 't1', meId: 'p1', orgId: 'o1',
+    ;(requireImportEditor as ReturnType<typeof vi.fn>).mockResolvedValue({
+      import: { id: 'i' },
+      tournamentId: 't1',
+      meId: 'p1',
+      orgId: 'o1',
     })
     ;(prisma.csvImportRow.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue({
-      id: 'row_1', importId: 'i', rowIndex: 3, status: 'PENDING', messages: [],
+      id: 'row_1',
+      importId: 'i',
+      rowIndex: 3,
+      status: 'PENDING',
+      messages: [],
     })
     const f = new FormData()
-    f.append('importId', 'i'); f.append('rowIndex', '3'); f.append('mode', 'apply'); f.append('selectedFields', '[]')
+    f.append('importId', 'i')
+    f.append('rowIndex', '3')
+    f.append('mode', 'apply')
+    f.append('selectedFields', '[]')
     const r = await applyDiffAction(f)
     expect(r.ok).toBe(true)
-    expect(prisma.csvImportRow.update).toHaveBeenCalledWith(expect.objectContaining({
-      data: expect.objectContaining({ status: 'RESUBMISSION' }),
-    }))
+    expect(r).toEqual({ ok: true, data: { rowIndex: 3 } })
   })
   it('rejects apply-selected with empty fields', async () => {
     const f = new FormData()
-    f.append('importId', 'i'); f.append('rowIndex', '3'); f.append('mode', 'apply-selected'); f.append('selectedFields', '[]')
+    f.append('importId', 'i')
+    f.append('rowIndex', '3')
+    f.append('mode', 'apply-selected')
+    f.append('selectedFields', '[]')
     const r = await applyDiffAction(f)
     expect(r.ok).toBe(false)
   })

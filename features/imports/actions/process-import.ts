@@ -1,4 +1,5 @@
 'use server'
+import { invalidateTournamentViews } from '@/features/tournaments/services/invalidate-views'
 
 import { prisma } from '@/lib/prisma'
 import { toApi, Errors } from '@/lib/errors'
@@ -32,15 +33,21 @@ export async function processImportAction(importId: string): Promise<ApiResponse
     const mapping = rec.mappingJson as unknown as MappingSpec
     const tournament = await prisma.tournament.findUnique({ where: { id: tournamentId } })
     if (!tournament) throw Errors.notFound('Tournament not found')
-    const speakerCount = ((tournament.formatConfig as { speakerCount?: number } | null)?.speakerCount) ?? 3
+    const speakerCount =
+      (tournament.formatConfig as { speakerCount?: number } | null)?.speakerCount ?? 3
     const phase = inferPhase(rec.phaseLabel)
 
     const csvText = await tournamentImportsStorage.readText(rec.storagePath)
     const { rows } = parseCsvRows(csvText)
 
-    let errors = 0, warns = 0
+    let errors = 0,
+      warns = 0
     const seed: Array<{
-      importId: string; rowIndex: number; rawJson: unknown; status: string; messages: string[]
+      importId: string
+      rowIndex: number
+      rawJson: unknown
+      status: string
+      messages: string[]
     }> = []
     for (let i = 0; i < rows.length; i++) {
       const parsed: ParsedRow = applyMapping(rows[i], mapping, i)
@@ -69,6 +76,7 @@ export async function processImportAction(importId: string): Promise<ApiResponse
       },
     })
 
+    invalidateTournamentViews(tournamentId)
     logger.info('CSV import processed', { importId: rec.id, rowsTotal: rows.length })
     return {
       ok: true,

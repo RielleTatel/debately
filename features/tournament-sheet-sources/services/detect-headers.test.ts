@@ -21,7 +21,7 @@ describe('detectSheetHeaders', () => {
     const result = await detectSheetHeaders('sheet123')
 
     expect(result).toEqual({ headers: ['Timestamp', 'Team Name', 'Speakers'], sampleRowCount: 2 })
-    expect(mockGet).toHaveBeenNthCalledWith(1, { spreadsheetId: 'sheet123', range: 'A1:Z1' })
+    expect(mockGet).toHaveBeenNthCalledWith(1, { spreadsheetId: 'sheet123', range: '1:1' })
   })
 
   it('uses the tab name when provided', async () => {
@@ -31,7 +31,7 @@ describe('detectSheetHeaders', () => {
 
     await detectSheetHeaders('sheet123', 'Form Responses 1')
 
-    expect(mockGet).toHaveBeenNthCalledWith(1, { spreadsheetId: 'sheet123', range: "'Form Responses 1'!A1:Z1" })
+    expect(mockGet).toHaveBeenNthCalledWith(1, { spreadsheetId: 'sheet123', range: "'Form Responses 1'!1:1" })
   })
 
   it('throws FORBIDDEN when Sheets API returns 403', async () => {

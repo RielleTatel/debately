@@ -1,4 +1,5 @@
 'use server'
+import { invalidateTournamentViews } from '@/features/tournaments/services/invalidate-views'
 
 import { prisma } from '@/lib/prisma'
 import { toApi } from '@/lib/errors'
@@ -19,11 +20,14 @@ export async function uploadInstitutionLogoAction(
     const { me, institution, tournament } = await requireInstitutionRep(institutionId)
     const url = await institutionLogoStorage.upload(institution.id, file)
     await prisma.tournamentInstitution.update({
-      where: { id: institution.id }, data: { logoUrl: url },
+      where: { id: institution.id },
+      data: { logoUrl: url },
     })
+    invalidateTournamentViews(tournament.id, [institution.id])
     await activityLog.record({
       code: 'INSTITUTION_LOGO_UPLOADED',
-      tournamentId: tournament.id, actorId: me.id,
+      tournamentId: tournament.id,
+      actorId: me.id,
       data: { institutionId: institution.id, logoUrl: url },
     })
     return { ok: true, data: { logoUrl: url } }

@@ -1,20 +1,13 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import {
-  Calendar,
-  MapPin,
-  Users,
-  ExternalLink,
-  Settings,
-  Megaphone,
-} from 'lucide-react'
+import { Calendar, MapPin, Users, ExternalLink, Settings, Megaphone } from 'lucide-react'
 import { StatusBadge } from '@/components/ui/status-badge'
 import type { Tournament, TournamentStatus } from '@prisma/client'
 
 type Props = {
   tournament: Tournament
   isDirector: boolean
-  filledSlots?: number
+  capacity?: React.ReactNode
 }
 
 const statusMap: Record<
@@ -28,11 +21,9 @@ const statusMap: Record<
 }
 
 function fmtRange(start: Date, end: Date) {
-  const sameMonth =
-    start.getFullYear() === end.getFullYear() && start.getMonth() === end.getMonth()
+  const sameMonth = start.getFullYear() === end.getFullYear() && start.getMonth() === end.getMonth()
   const sameDay = sameMonth && start.getDate() === end.getDate()
-  const monthDay = (d: Date) =>
-    d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+  const monthDay = (d: Date) => d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
   if (sameDay) {
     return `${monthDay(start)}, ${start.getFullYear()}`
   }
@@ -46,7 +37,7 @@ function daysUntil(date: Date): number {
   return Math.ceil((date.getTime() - Date.now()) / 86_400_000)
 }
 
-export function TournamentHeader({ tournament, isDirector, filledSlots }: Props) {
+export function TournamentHeader({ tournament, isDirector, capacity }: Props) {
   const status = statusMap[tournament.status]
   const daysToStart = daysUntil(tournament.startDate)
   const started = daysToStart <= 0
@@ -76,13 +67,15 @@ export function TournamentHeader({ tournament, isDirector, filledSlots }: Props)
                 <h1 className="text-[22px] font-semibold tracking-tight text-foreground leading-tight truncate">
                   {tournament.name}
                 </h1>
-                <StatusBadge tone={status.tone} dot>{status.label}</StatusBadge>
+                <StatusBadge tone={status.tone} dot>
+                  {status.label}
+                </StatusBadge>
                 {tournament.registrationOpen && (
-                  <StatusBadge tone="info" dot>Registration open</StatusBadge>
+                  <StatusBadge tone="info" dot>
+                    Registration open
+                  </StatusBadge>
                 )}
-                {tournament.portalActive && (
-                  <StatusBadge tone="neutral">Portal live</StatusBadge>
-                )}
+                {tournament.portalActive && <StatusBadge tone="neutral">Portal live</StatusBadge>}
                 {tournament.publicPageEnabled && (
                   <StatusBadge tone="neutral">Public page</StatusBadge>
                 )}
@@ -103,15 +96,8 @@ export function TournamentHeader({ tournament, isDirector, filledSlots }: Props)
                 <div className="flex items-center gap-1.5">
                   <Users className="h-3.5 w-3.5" strokeWidth={2} />
                   <dt className="sr-only">Capacity</dt>
-                  <dd className="tabular-nums">
-                    {typeof filledSlots === 'number' ? (
-                      <>
-                        {filledSlots}
-                        <span className="text-muted-foreground/60">/{tournament.maxTeamSlots}</span> teams
-                      </>
-                    ) : (
-                      <>{tournament.maxTeamSlots} team slots</>
-                    )}
+                  <dd className="min-w-[14ch] tabular-nums">
+                    {capacity ?? <>{tournament.maxTeamSlots} team slots</>}
                   </dd>
                 </div>
                 <div className="flex items-center gap-1.5">

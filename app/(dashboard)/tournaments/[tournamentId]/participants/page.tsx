@@ -1,5 +1,6 @@
+import { Suspense } from 'react'
 import { requireTournamentReadable } from '@/features/tournaments/permissions'
-import { getRegistrationAnalytics } from '@/features/analytics/services/registration'
+import { getRegistrationSummary } from '@/features/analytics/services/registration'
 import { PageHeader } from '@/components/ui/page-header'
 import { ActionCard } from '@/components/ui/action-card'
 import { MetricCard } from '@/components/ui/metric-card'
@@ -12,7 +13,6 @@ export default async function ParticipantsPage({
 }) {
   const { tournamentId } = await params
   await requireTournamentReadable(tournamentId)
-  const reg = await getRegistrationAnalytics(tournamentId)
 
   return (
     <div className="space-y-8">
@@ -21,28 +21,17 @@ export default async function ParticipantsPage({
         description="Everything about who's coming — institutions, teams, and adjudicators."
       />
 
-      <div className="grid gap-3 sm:grid-cols-3">
-        <MetricCard
-          label="Institutions"
-          value={reg.counts.institutions}
-          icon={<Building2 className="h-3.5 w-3.5" strokeWidth={2} />}
-          href={`/tournaments/${tournamentId}/institutions`}
-          hint={`${reg.claimBreakdown.claimed} claimed portal`}
-        />
-        <MetricCard
-          label="Teams"
-          value={reg.counts.teams}
-          icon={<Users className="h-3.5 w-3.5" strokeWidth={2} />}
-          href={`/tournaments/${tournamentId}/teams`}
-          hint={`of ${reg.capacity.totalSlots} slots`}
-        />
-        <MetricCard
-          label="Adjudicators"
-          value={reg.counts.adjudicators}
-          icon={<UserCheck className="h-3.5 w-3.5" strokeWidth={2} />}
-          href={`/tournaments/${tournamentId}/adjudicators`}
-        />
-      </div>
+      <Suspense
+        fallback={
+          <div className="grid gap-3 sm:grid-cols-3">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="h-[112px] animate-pulse rounded border bg-muted" />
+            ))}
+          </div>
+        }
+      >
+        <Counts tournamentId={tournamentId} />
+      </Suspense>
 
       <div className="grid gap-3 md:grid-cols-3">
         <ActionCard
@@ -64,6 +53,34 @@ export default async function ParticipantsPage({
           icon={<UserCheck className="h-4 w-4" strokeWidth={2} />}
         />
       </div>
+    </div>
+  )
+}
+
+async function Counts({ tournamentId }: { tournamentId: string }) {
+  const reg = await getRegistrationSummary(tournamentId)
+  return (
+    <div className="grid gap-3 sm:grid-cols-3">
+      <MetricCard
+        label="Institutions"
+        value={reg.counts.institutions}
+        icon={<Building2 className="h-3.5 w-3.5" strokeWidth={2} />}
+        href={`/tournaments/${tournamentId}/institutions`}
+        hint={`${reg.claimBreakdown.claimed} claimed portal`}
+      />
+      <MetricCard
+        label="Teams"
+        value={reg.counts.teams}
+        icon={<Users className="h-3.5 w-3.5" strokeWidth={2} />}
+        href={`/tournaments/${tournamentId}/teams`}
+        hint={`of ${reg.capacity.totalSlots} slots`}
+      />
+      <MetricCard
+        label="Adjudicators"
+        value={reg.counts.adjudicators}
+        icon={<UserCheck className="h-3.5 w-3.5" strokeWidth={2} />}
+        href={`/tournaments/${tournamentId}/adjudicators`}
+      />
     </div>
   )
 }

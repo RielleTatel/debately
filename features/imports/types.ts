@@ -79,6 +79,9 @@ export type NormalizationPrompt = {
 }
 
 export type TeamDiff = {
+  rowIndex: number
+  decision?: 'applied' | 'kept'
+  selectedFields?: string[]
   teamName: string
   institutionName: string
   existingTeamId: string

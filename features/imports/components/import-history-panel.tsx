@@ -1,21 +1,27 @@
-import { getImportsForTournament } from '@/features/imports/queries'
-import { prisma } from '@/lib/prisma'
-import { ImportHistoryList } from '@/features/imports/components/import-history-list'
+import { getImportHistoryPage } from '@/features/imports/queries/imports'
+import { ImportHistoryList } from './import-history-list'
+import { PageNavigation } from '@/components/ui/page-navigation'
+import type { SearchParams } from '@/lib/pagination'
 
-export async function ImportHistoryPanel({ tournamentId }: { tournamentId: string }) {
-  const imports = await getImportsForTournament(tournamentId)
-  const uploaders = imports.length === 0
-    ? []
-    : await prisma.profile.findMany({
-        where: { id: { in: imports.map((i) => i.uploaderId) } },
-        select: { id: true, displayName: true },
-      })
-  const uploaderName = new Map(uploaders.map((u) => [u.id, u.displayName]))
-  const items = imports.map((i) => ({
-    ...i,
-    uploaderName: uploaderName.get(i.uploaderId) ?? null,
-  }))
-  return <ImportHistoryList tournamentId={tournamentId} imports={items} />
+export async function ImportHistoryPanel({
+  tournamentId,
+  search = {},
+}: {
+  tournamentId: string
+  search?: SearchParams
+}) {
+  const data = await getImportHistoryPage(tournamentId, search)
+  return (
+    <>
+      <ImportHistoryList tournamentId={tournamentId} imports={data.rows} />
+      <PageNavigation
+        pathname={`/tournaments/${tournamentId}/imports`}
+        params={search}
+        paging={data.paging}
+        total={data.total}
+      />
+    </>
+  )
 }
 
 export function ImportHistorySkeleton() {

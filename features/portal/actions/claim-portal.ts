@@ -7,6 +7,7 @@ import { logActivity } from '@/features/activity/services'
 import { requireVerifiedUser } from '@/features/auth/queries'
 import { claimTokenSchema } from '@/features/portal/schemas'
 import type { ApiResponse } from '@/types/api'
+import { invalidateTournamentViews } from '@/features/tournaments/services/invalidate-views'
 
 export async function claimPortalAction(
   formData: FormData,
@@ -33,13 +34,22 @@ export async function claimPortalAction(
       select: { tournamentId: true },
     })
     if (inst) {
+      invalidateTournamentViews(inst.tournamentId, [token.tournamentInstitutionId])
       await activityLog.record({
         code: 'INSTITUTION_PORTAL_CLAIMED',
         tournamentId: inst.tournamentId,
         actorId: me.profile.id,
         data: { institutionId: token.tournamentInstitutionId },
       })
-      await logActivity({ action: 'PORTAL_CLAIMED', resourceType: 'institution_portal', resourceId: token.tournamentInstitutionId, description: 'Portal claimed', tournamentId: inst.tournamentId, actorId: me.profile.id, actorRoleAtTime: 'INSTITUTION_REP' })
+      await logActivity({
+        action: 'PORTAL_CLAIMED',
+        resourceType: 'institution_portal',
+        resourceId: token.tournamentInstitutionId,
+        description: 'Portal claimed',
+        tournamentId: inst.tournamentId,
+        actorId: me.profile.id,
+        actorRoleAtTime: 'INSTITUTION_REP',
+      })
     }
     return { ok: true, data: { institutionId: token.tournamentInstitutionId } }
   } catch (e) {

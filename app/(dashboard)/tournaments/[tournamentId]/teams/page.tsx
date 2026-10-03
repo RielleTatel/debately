@@ -1,22 +1,27 @@
 import Link from 'next/link'
 import { Users, Upload, FileText, ChevronRight } from 'lucide-react'
 import { requireTournamentReadable } from '@/features/tournaments/permissions'
-import { getTeamsForTournament } from '@/features/teams/queries'
+import { getTeamPage } from '@/features/teams/queries/page'
+import { PageNavigation } from '@/components/ui/page-navigation'
+import type { SearchParams } from '@/lib/pagination'
 import { PageHeader } from '@/components/ui/page-header'
 import { EmptyState } from '@/components/empty-state/empty-state'
-import type { Team, TournamentInstitution } from '@prisma/client'
 
-type TeamWithInst = Team & { institution: TournamentInstitution | null }
+type TeamWithInst = Awaited<ReturnType<typeof getTeamPage>>['rows'][number]
 
 export default async function TeamsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ tournamentId: string }>
+  searchParams: Promise<SearchParams>
 }) {
   const { tournamentId } = await params
   await requireTournamentReadable(tournamentId)
 
-  const teams = (await getTeamsForTournament(tournamentId)) as TeamWithInst[]
+  const search = await searchParams
+  const data = await getTeamPage({ tournamentId }, search)
+  const teams = data.rows
 
   // Group by institution
   const grouped = new Map<string, { institutionName: string; teams: TeamWithInst[] }>()
@@ -29,9 +34,7 @@ export default async function TeamsPage({
     bucket.teams.push(t)
     grouped.set(key, bucket)
   }
-  const groups = Array.from(grouped.entries()).sort((a, b) =>
-    a[1].institutionName.localeCompare(b[1].institutionName),
-  )
+  const groups = Array.from(grouped.entries())
 
   return (
     <div className="space-y-6">
@@ -52,8 +55,8 @@ export default async function TeamsPage({
         meta={
           teams.length > 0 && (
             <span className="flex items-center gap-1.5 text-[12.5px] text-muted-foreground font-normal">
-              <span className="tabular-nums font-medium text-foreground">{teams.length}</span>{' '}
-              total across {groups.length} institution{groups.length === 1 ? '' : 's'}
+              <span className="tabular-nums font-medium text-foreground">{data.total}</span> total
+              across {data.institutionCount} institution{data.institutionCount === 1 ? '' : 's'}
             </span>
           )
         }
@@ -91,7 +94,7 @@ export default async function TeamsPage({
                 <h2 className="text-[13px] font-semibold tracking-tight text-foreground">
                   {institutionName}
                   <span className="ml-1.5 text-muted-foreground/70 font-normal tabular-nums">
-                    {grp.length}
+                    {grp.length} of {grp[0].institution._count.teams} on this page
                   </span>
                 </h2>
               </div>
@@ -104,9 +107,7 @@ export default async function TeamsPage({
                         className="group flex items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-surface/60"
                       >
                         <div className="min-w-0 flex items-center gap-2">
-                          <p className="truncate text-sm font-medium text-foreground">
-                            {t.name}
-                          </p>
+                          <p className="truncate text-sm font-medium text-foreground">{t.name}</p>
                           {t.isNovice && (
                             <span className="inline-flex h-5 items-center rounded-md bg-primary/10 px-1.5 text-[10.5px] font-medium text-primary ring-1 ring-inset ring-primary/20">
                               Novice
@@ -118,7 +119,10 @@ export default async function TeamsPage({
                             </span>
                           )}
                         </div>
-                        <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/50 group-hover:text-foreground" strokeWidth={2} />
+                        <ChevronRight
+                          className="h-4 w-4 shrink-0 text-muted-foreground/50 group-hover:text-foreground"
+                          strokeWidth={2}
+                        />
                       </Link>
                     </li>
                   ))}
@@ -128,6 +132,12 @@ export default async function TeamsPage({
           ))}
         </div>
       )}
+      <PageNavigation
+        pathname={`/tournaments/${tournamentId}/teams`}
+        params={search}
+        paging={data.paging}
+        total={data.total}
+      />
     </div>
   )
 }

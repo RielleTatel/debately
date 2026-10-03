@@ -1,13 +1,22 @@
-import { ChartSectionSkeleton } from '@/features/dashboards/components/tournament-analytics/skeletons'
-
+import {
+  RegistrationSkeleton,
+  FinancialSkeleton,
+  ImportSkeleton,
+  RequestSkeleton,
+} from '@/features/dashboards/components/tournament-analytics/skeletons'
 export default function Loading() {
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-6">
-      <div className="animate-pulse rounded bg-muted h-7 w-40" />
-      {['Registration', 'Financial', 'Imports', 'Requests'].map((label) => (
-        <section key={label} className="space-y-3">
-          <div className="animate-pulse rounded bg-muted h-5 w-32" />
-          <ChartSectionSkeleton />
+      <h1 className="text-2xl font-semibold">Analytics</h1>
+      {[
+        { title: 'Registration', Placeholder: RegistrationSkeleton },
+        { title: 'Financial', Placeholder: FinancialSkeleton },
+        { title: 'Imports', Placeholder: ImportSkeleton },
+        { title: 'Requests', Placeholder: RequestSkeleton },
+      ].map(({ title, Placeholder }) => (
+        <section key={title}>
+          <h2 className="text-lg font-medium mb-3">{title}</h2>
+          <Placeholder />
         </section>
       ))}
     </div>

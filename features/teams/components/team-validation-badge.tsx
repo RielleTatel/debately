@@ -7,12 +7,18 @@ const LABEL: Record<TeamValidationKind, string> = {
   MISSING_JUDGE: 'Missing judge',
 }
 
-export function TeamValidationBadges({ flags }: { flags: TeamValidationFlag[] }) {
+export function TeamValidationBadges({
+  flags,
+}: {
+  flags: Pick<TeamValidationFlag, 'id' | 'kind' | 'note'>[]
+}) {
   if (flags.length === 0) return <Badge variant="secondary">OK</Badge>
   return (
     <div className="flex flex-wrap gap-1">
       {flags.map((f) => (
-        <Badge key={f.id} variant="destructive" title={f.note}>{LABEL[f.kind]}</Badge>
+        <Badge key={f.id} variant="destructive" title={f.note}>
+          {LABEL[f.kind]}
+        </Badge>
       ))}
     </div>
   )

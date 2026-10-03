@@ -1,12 +1,20 @@
+import { cache } from 'react'
 import { prisma } from '@/lib/prisma'
 
-export async function getRequestAnalytics(tournamentId: string) {
-  const [byStatus, byType, resolved] = await Promise.all([
+export const getRequestAnalytics = cache(async (tournamentId: string) => {
+  const [byStatus, byType, averages] = await Promise.all([
     prisma.request.groupBy({ by: ['status'], where: { tournamentId }, _count: true }),
     prisma.request.groupBy({ by: ['type'], where: { tournamentId }, _count: true }),
-    prisma.request.findMany({ where: { tournamentId, resolvedAt: { not: null } }, select: { createdAt: true, resolvedAt: true, status: true } }),
+    prisma.$queryRaw<Array<{ avgResolutionMs: number; approvalRate: number }>>`
+      SELECT COALESCE(AVG(EXTRACT(EPOCH FROM (resolved_at-created_at))*1000),0)::double precision AS "avgResolutionMs",
+        COALESCE(AVG(CASE WHEN status='APPROVED' THEN 1.0 ELSE 0.0 END),0)::double precision AS "approvalRate"
+      FROM requests WHERE tournament_id=${tournamentId} AND resolved_at IS NOT NULL
+    `,
   ])
-  const ms = resolved.map((r) => r.resolvedAt!.getTime() - r.createdAt.getTime())
-  const avgRes = ms.length === 0 ? 0 : ms.reduce((a, b) => a + b, 0) / ms.length
-  return { byStatus: Object.fromEntries(byStatus.map((r) => [r.status, r._count])), byType: Object.fromEntries(byType.map((r) => [r.type, r._count])), avgResolutionMs: avgRes, approvalRate: resolved.length === 0 ? 0 : resolved.filter((r) => r.status === 'APPROVED').length / resolved.length }
-}
+  return {
+    byStatus: Object.fromEntries(byStatus.map((row) => [row.status, row._count])),
+    byType: Object.fromEntries(byType.map((row) => [row.type, row._count])),
+    avgResolutionMs: averages[0]?.avgResolutionMs ?? 0,
+    approvalRate: averages[0]?.approvalRate ?? 0,
+  }
+})

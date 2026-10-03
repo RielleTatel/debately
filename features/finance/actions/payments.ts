@@ -1,4 +1,5 @@
 'use server'
+import { invalidateFinancialViews } from '@/features/tournaments/services/invalidate-views'
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { AppError, toApi } from '@/lib/errors'
@@ -16,7 +17,9 @@ async function requireDirectorForPayment(paymentId: string) {
   return { payment, ...auth }
 }
 
-export async function updatePaymentAction(fd: FormData): Promise<ApiResponse<{ paymentId: string }>> {
+export async function updatePaymentAction(
+  fd: FormData,
+): Promise<ApiResponse<{ paymentId: string }>> {
   try {
     const paymentId = fd.get('paymentId') as string
     if (!paymentId) throw new AppError('VALIDATION_ERROR', 'paymentId required.')
@@ -52,9 +55,14 @@ export async function updatePaymentAction(fd: FormData): Promise<ApiResponse<{ p
     })
 
     revalidatePath(`/tournaments/${payment.tournamentId}/finance`)
-    revalidatePath(`/tournaments/${payment.tournamentId}/finance/${payment.tournamentInstitutionId}`)
+    revalidatePath(
+      `/tournaments/${payment.tournamentId}/finance/${payment.tournamentInstitutionId}`,
+    )
+    invalidateFinancialViews(payment.tournamentId, [payment.tournamentInstitutionId])
     return { ok: true, data: { paymentId: payment.id } }
-  } catch (e) { return toApi(e) }
+  } catch (e) {
+    return toApi(e)
+  }
 }
 
 export async function voidPaymentAction(fd: FormData): Promise<ApiResponse<{ paymentId: string }>> {
@@ -81,7 +89,12 @@ export async function voidPaymentAction(fd: FormData): Promise<ApiResponse<{ pay
     })
 
     revalidatePath(`/tournaments/${payment.tournamentId}/finance`)
-    revalidatePath(`/tournaments/${payment.tournamentId}/finance/${payment.tournamentInstitutionId}`)
+    revalidatePath(
+      `/tournaments/${payment.tournamentId}/finance/${payment.tournamentInstitutionId}`,
+    )
+    invalidateFinancialViews(payment.tournamentId, [payment.tournamentInstitutionId])
     return { ok: true, data: { paymentId: payment.id } }
-  } catch (e) { return toApi(e) }
+  } catch (e) {
+    return toApi(e)
+  }
 }

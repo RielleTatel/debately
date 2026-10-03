@@ -1,4 +1,5 @@
 'use server'
+import { invalidateTournamentViews } from '@/features/tournaments/services/invalidate-views'
 
 import { prisma } from '@/lib/prisma'
 import { toApi } from '@/lib/errors'
@@ -28,10 +29,15 @@ export async function updateParticipantAction(
       },
     })
     if (updated.teamId) await recomputeTeamValidation(updated.teamId)
+    invalidateTournamentViews(ctx.tournament.id, [ctx.institution.id])
     await activityLog.record({
-      code: 'PARTICIPANT_UPDATED', tournamentId: ctx.tournament.id, actorId: ctx.meId,
+      code: 'PARTICIPANT_UPDATED',
+      tournamentId: ctx.tournament.id,
+      actorId: ctx.meId,
       data: { participantId: updated.id, mode: ctx.mode },
     })
     return { ok: true, data: { participantId: updated.id } }
-  } catch (e) { return toApi(e) }
+  } catch (e) {
+    return toApi(e)
+  }
 }

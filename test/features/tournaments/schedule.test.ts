@@ -17,7 +17,7 @@ vi.mock('@/features/tournaments/permissions', () => ({
   })),
   assertTournamentEditable: () => {},
 }))
-vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }))
+vi.mock('next/cache', () => ({ revalidatePath: vi.fn(), revalidateTag: vi.fn() }))
 
 beforeEach(() => {
   create.mockClear(); update.mockClear(); deleteFn.mockClear(); findUnique.mockReset()

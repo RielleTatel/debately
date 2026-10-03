@@ -1,4 +1,5 @@
 'use server'
+import { invalidateTournamentViews } from '@/features/tournaments/services/invalidate-views'
 
 import { prisma } from '@/lib/prisma'
 import { toApi } from '@/lib/errors'
@@ -15,11 +16,12 @@ export async function updateTeamAction(
     const parsed = updateTeamSchema.parse({
       teamId: formData.get('teamId'),
       name: formData.get('name') ?? undefined,
-      isNovice: formData.get('isNovice') === 'true'
-        ? true
-        : formData.get('isNovice') === 'false'
-          ? false
-          : undefined,
+      isNovice:
+        formData.get('isNovice') === 'true'
+          ? true
+          : formData.get('isNovice') === 'false'
+            ? false
+            : undefined,
     })
     const ctx = await requireTeamEditor(parsed.teamId)
     await prisma.team.update({
@@ -27,10 +29,15 @@ export async function updateTeamAction(
       data: { name: parsed.name ?? undefined, isNovice: parsed.isNovice ?? undefined },
     })
     await recomputeTeamValidation(ctx.team.id)
+    invalidateTournamentViews(ctx.tournament.id, [ctx.institution.id])
     await activityLog.record({
-      code: 'TEAM_UPDATED', tournamentId: ctx.tournament.id, actorId: ctx.meId,
+      code: 'TEAM_UPDATED',
+      tournamentId: ctx.tournament.id,
+      actorId: ctx.meId,
       data: { teamId: ctx.team.id, mode: ctx.mode },
     })
     return { ok: true, data: { teamId: ctx.team.id } }
-  } catch (e) { return toApi(e) }
+  } catch (e) {
+    return toApi(e)
+  }
 }

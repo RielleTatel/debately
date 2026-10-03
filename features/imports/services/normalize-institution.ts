@@ -9,7 +9,7 @@ export type NormalizationOutcome =
 
 const MAX_DISTANCE = 3
 
-function canonical(s: string): string {
+export function canonicalInstitutionName(s: string): string {
   return s.trim().toLowerCase().replace(/\s+/g, ' ')
 }
 
@@ -18,7 +18,7 @@ export async function normalizeInstitutionName(
   rawName: string,
 ): Promise<NormalizationOutcome> {
   const alias = await prisma.institutionAlias.findFirst({
-    where: { tournamentId, alias: canonical(rawName) },
+    where: { tournamentId, alias: canonicalInstitutionName(rawName) },
   })
   if (alias) return { kind: 'alias', institutionId: alias.resolvedInstitutionId }
 
@@ -26,20 +26,33 @@ export async function normalizeInstitutionName(
     where: { tournamentId },
     select: { id: true, name: true },
   })
-  const target = canonical(rawName)
+  return matchInstitutionName(rawName, candidates)
+}
+
+export function matchInstitutionName(
+  rawName: string,
+  candidates: Array<{ id: string; name: string }>,
+): NormalizationOutcome {
+  const target = canonicalInstitutionName(rawName)
 
   for (const c of candidates) {
-    if (canonical(c.name) === target) return { kind: 'exact', institutionId: c.id }
+    if (canonicalInstitutionName(c.name) === target) return { kind: 'exact', institutionId: c.id }
   }
 
   let best: { id: string; name: string; d: number } | null = null
   for (const c of candidates) {
-    const d = distance(canonical(c.name), target)
+    const d = distance(canonicalInstitutionName(c.name), target)
     if (d <= MAX_DISTANCE && (!best || d < best.d)) {
       best = { id: c.id, name: c.name, d }
     }
   }
-  if (best) return { kind: 'fuzzy', suggestedInstitutionId: best.id, suggestedName: best.name, distance: best.d }
+  if (best)
+    return {
+      kind: 'fuzzy',
+      suggestedInstitutionId: best.id,
+      suggestedName: best.name,
+      distance: best.d,
+    }
   return { kind: 'new' }
 }
 
@@ -49,8 +62,8 @@ export async function applyConfirmedAlias(
   resolvedInstitutionId: string,
 ): Promise<void> {
   await prisma.institutionAlias.upsert({
-    where: { tournamentId_alias: { tournamentId, alias: canonical(alias) } },
+    where: { tournamentId_alias: { tournamentId, alias: canonicalInstitutionName(alias) } },
     update: { resolvedInstitutionId },
-    create: { tournamentId, alias: canonical(alias), resolvedInstitutionId },
+    create: { tournamentId, alias: canonicalInstitutionName(alias), resolvedInstitutionId },
   })
 }

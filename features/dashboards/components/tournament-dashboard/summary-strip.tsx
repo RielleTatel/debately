@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { getRegistrationAnalytics } from '@/features/analytics/services/registration'
+import { getRegistrationSummary } from '@/features/analytics/services/registration'
 import { getFinancialAnalytics } from '@/features/analytics/services/financial'
 import { MetricCard } from '@/components/ui/metric-card'
 import { formatAmount } from '@/lib/money'
@@ -13,7 +13,7 @@ export async function SummaryStrip({
   currency: string
 }) {
   const [registration, financial, pendingRequests] = await Promise.all([
-    getRegistrationAnalytics(tournamentId),
+    getRegistrationSummary(tournamentId),
     getFinancialAnalytics(tournamentId),
     prisma.request.count({ where: { tournamentId, status: 'PENDING' } }),
   ])
@@ -40,7 +40,9 @@ export async function SummaryStrip({
       />
       <MetricCard
         label="Outstanding"
-        value={formatAmount(financial.outstandingMinor, currency)}
+        value={financial.byCurrency
+          .map((group) => formatAmount(group.outstandingMinor, group.currency))
+          .join(' · ')}
         icon={<Wallet className="h-3.5 w-3.5" strokeWidth={2} />}
         href={`/tournaments/${tournamentId}/finance`}
         hint={

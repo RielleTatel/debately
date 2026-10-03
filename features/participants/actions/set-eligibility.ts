@@ -1,4 +1,5 @@
 'use server'
+import { invalidateTournamentViews } from '@/features/tournaments/services/invalidate-views'
 
 import { prisma } from '@/lib/prisma'
 import { toApi, Errors } from '@/lib/errors'
@@ -27,10 +28,19 @@ export async function setEligibilityAction(
       },
     })
     if (updated.teamId) await recomputeTeamValidation(updated.teamId)
+    invalidateTournamentViews(ctx.tournament.id, [ctx.institution.id])
     await activityLog.record({
-      code: 'PARTICIPANT_ELIGIBILITY_SET', tournamentId: ctx.tournament.id, actorId: ctx.meId,
-      data: { participantId: updated.id, eligibility: parsed.eligibility, reason: parsed.reason ?? null },
+      code: 'PARTICIPANT_ELIGIBILITY_SET',
+      tournamentId: ctx.tournament.id,
+      actorId: ctx.meId,
+      data: {
+        participantId: updated.id,
+        eligibility: parsed.eligibility,
+        reason: parsed.reason ?? null,
+      },
     })
     return { ok: true, data: { participantId: updated.id } }
-  } catch (e) { return toApi(e) }
+  } catch (e) {
+    return toApi(e)
+  }
 }

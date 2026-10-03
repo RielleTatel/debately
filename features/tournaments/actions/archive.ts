@@ -1,4 +1,5 @@
 'use server'
+import { invalidateTournamentViews } from '@/features/tournaments/services/invalidate-views'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { requireTournamentDirector } from '@/features/tournaments/permissions'
@@ -26,9 +27,13 @@ export async function archiveTournamentAction(fd: FormData): Promise<ActionResul
     revalidatePath(`/tournaments/${tournamentId}`)
     revalidatePath(`/tournaments/${tournamentId}/settings`)
     revalidatePath('/tournaments')
+    invalidateTournamentViews(tournamentId)
     revalidateTag(TOURNAMENT_TAG(tournamentId))
     return ok(undefined)
-  } catch (e) { if (isAppError(e)) return err(e.message, e.code); throw e }
+  } catch (e) {
+    if (isAppError(e)) return err(e.message, e.code)
+    throw e
+  }
 }
 
 export async function unarchiveTournamentAction(fd: FormData): Promise<ActionResult<void>> {
@@ -46,7 +51,11 @@ export async function unarchiveTournamentAction(fd: FormData): Promise<ActionRes
     revalidatePath(`/tournaments/${tournamentId}`)
     revalidatePath(`/tournaments/${tournamentId}/settings`)
     revalidatePath('/tournaments')
+    invalidateTournamentViews(tournamentId)
     revalidateTag(TOURNAMENT_TAG(tournamentId))
     return ok(undefined)
-  } catch (e) { if (isAppError(e)) return err(e.message, e.code); throw e }
+  } catch (e) {
+    if (isAppError(e)) return err(e.message, e.code)
+    throw e
+  }
 }

@@ -1,5 +1,4 @@
-import { prisma } from '@/lib/prisma'
-import { getRegistrationAnalytics } from '@/features/analytics/services/registration'
+import { getRegistrationSummary } from '@/features/analytics/services/registration'
 import { getFinancialAnalytics } from '@/features/analytics/services/financial'
 import { ProgressCard } from '@/components/ui/progress-card'
 import { formatAmount } from '@/lib/money'
@@ -11,12 +10,12 @@ export async function RegistrationHealth({
   tournamentId: string
   currency: string
 }) {
-  const [registration, financial, institutions] = await Promise.all([
-    getRegistrationAnalytics(tournamentId),
+  const [registration, financial] = await Promise.all([
+    getRegistrationSummary(tournamentId),
     getFinancialAnalytics(tournamentId),
-    prisma.tournamentInstitution.count({ where: { tournamentId } }),
   ])
 
+  const institutions = registration.counts.institutions
   const teamSlots = registration.capacity
   const claimedInst = registration.claimBreakdown.claimed
   const totalInvoiced = financial.totalInvoicedMinor
@@ -63,7 +62,7 @@ export async function RegistrationHealth({
         }
       />
       <ProgressCard
-        label="Payments collected"
+        label={`Payments collected (${financial.currency})`}
         value={Math.round(totalPaid / 100)}
         total={Math.round(totalInvoiced / 100) || 1}
         tone={paymentsTone}

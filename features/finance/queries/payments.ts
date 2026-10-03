@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
-import type { TournamentPayment } from '@prisma/client'
+import { Prisma, type TournamentPayment } from '@prisma/client'
+import { databaseInteger } from '@/lib/database-number'
 
 export async function getPaymentsForInstitution(
   tournamentInstitutionId: string,
@@ -10,20 +11,28 @@ export async function getPaymentsForInstitution(
   })
 }
 
+export type DeclaredPaymentTotal = { totalMinor: number; currency: string }
 export async function getPaymentTotalsForTournament(
   tournamentId: string,
-): Promise<Map<string, { totalMinor: number; currency: string }>> {
-  const payments = await prisma.tournamentPayment.findMany({
-    where: { tournamentId, status: { not: 'VOIDED' } },
-    select: { tournamentInstitutionId: true, amountMinor: true, currency: true },
-  })
-  const out = new Map<string, { totalMinor: number; currency: string }>()
-  for (const p of payments) {
-    const existing = out.get(p.tournamentInstitutionId)
-    out.set(p.tournamentInstitutionId, {
-      totalMinor: (existing?.totalMinor ?? 0) + p.amountMinor,
-      currency: p.currency,
+  institutionIds?: string[],
+): Promise<Map<string, DeclaredPaymentTotal[]>> {
+  if (institutionIds?.length === 0) return new Map()
+  const rows = await prisma.$queryRaw<
+    Array<{ institutionId: string; total: bigint; currency: string }>
+  >(Prisma.sql`
+    SELECT tournament_institution_id AS "institutionId", currency, SUM(amount_minor)::bigint AS total
+    FROM tournament_payments WHERE tournament_id=${tournamentId} AND status<>'VOIDED'
+      ${institutionIds ? Prisma.sql`AND tournament_institution_id IN (${Prisma.join(institutionIds)})` : Prisma.empty}
+    GROUP BY tournament_institution_id,currency ORDER BY tournament_institution_id,currency
+  `)
+  const result = new Map<string, DeclaredPaymentTotal[]>()
+  for (const row of rows) {
+    const totals = result.get(row.institutionId) ?? []
+    totals.push({
+      totalMinor: databaseInteger(row.total, 'Declared payment total'),
+      currency: row.currency,
     })
+    result.set(row.institutionId, totals)
   }
-  return out
+  return result
 }

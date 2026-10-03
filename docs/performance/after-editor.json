@@ -1,0 +1,126 @@
+{
+  "repetitions": 20,
+  "method": "Fixture webpack pre-loader counts AnnouncementForm function renders; real Tiptap editor and 150 visible institution options; production build",
+  "samples": [
+    {
+      "index": 0,
+      "typingMs": 61.13004100002581,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 1,
+      "typingMs": 53.329208000039216,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 2,
+      "typingMs": 51.820582999964245,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 3,
+      "typingMs": 55.505957999965176,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 4,
+      "typingMs": 49.114583000016864,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 5,
+      "typingMs": 53.99045899999328,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 6,
+      "typingMs": 53.94033399998443,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 7,
+      "typingMs": 51.48441599996295,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 8,
+      "typingMs": 54.23149999999441,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 9,
+      "typingMs": 51.710292000032496,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 10,
+      "typingMs": 51.56750000000466,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 11,
+      "typingMs": 53.90000000002328,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 12,
+      "typingMs": 53.67958300001919,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 13,
+      "typingMs": 52.618124999979045,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 14,
+      "typingMs": 53.723875000025146,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 15,
+      "typingMs": 53.746791999961715,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 16,
+      "typingMs": 53.48262500000419,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 17,
+      "typingMs": 52.18799999996554,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 18,
+      "typingMs": 52.386499999964144,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    },
+    {
+      "index": 19,
+      "typingMs": 52.60120800003642,
+      "parentRendersDuringTyping": 0,
+      "institutionCheckboxes": 152
+    }
+  ]
+}

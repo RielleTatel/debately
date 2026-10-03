@@ -1,4 +1,5 @@
 'use server'
+import { invalidateTournamentViews } from '@/features/tournaments/services/invalidate-views'
 
 import { toApi, Errors } from '@/lib/errors'
 import { activityLog } from '@/services/activity-log'
@@ -14,10 +15,12 @@ export async function finalizeImportAction(
     const parsed = finalizeImportSchema.parse({ importId: formData.get('importId') })
     const { import: rec, tournamentId, meId } = await requireImportEditor(parsed.importId)
     if (rec.status !== 'PROCESSED') throw Errors.conflict('Import is not in PROCESSED state')
-    const result = await finalizeImport(parsed.importId)
+    const { summary: result, institutionIds } = await finalizeImport(parsed.importId)
+    invalidateTournamentViews(tournamentId, institutionIds)
     await activityLog.record({
       code: 'IMPORT_FINALIZED',
-      tournamentId, actorId: meId,
+      tournamentId,
+      actorId: meId,
       data: { importId: parsed.importId, ...result },
     })
     return { ok: true, data: result }

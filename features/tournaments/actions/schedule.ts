@@ -1,7 +1,11 @@
 'use server'
+import { invalidateTournamentViews } from '@/features/tournaments/services/invalidate-views'
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
-import { requireTournamentDirector, assertTournamentEditable } from '@/features/tournaments/permissions'
+import {
+  requireTournamentDirector,
+  assertTournamentEditable,
+} from '@/features/tournaments/permissions'
 import { scheduleEntrySchema } from '@/features/tournaments/schemas'
 import { err, ok, type ActionResult } from '@/types/api'
 import { isAppError, Errors } from '@/lib/errors'
@@ -16,7 +20,9 @@ function parseEntry(fd: FormData) {
   })
 }
 
-export async function createScheduleEntryAction(fd: FormData): Promise<ActionResult<{ id: string }>> {
+export async function createScheduleEntryAction(
+  fd: FormData,
+): Promise<ActionResult<{ id: string }>> {
   const tournamentId = String(fd.get('tournamentId') ?? '')
   if (!tournamentId) return err('Missing tournament id', 'VALIDATION_ERROR')
   const parsed = parseEntry(fd)
@@ -34,9 +40,13 @@ export async function createScheduleEntryAction(fd: FormData): Promise<ActionRes
         description: parsed.data.description || null,
       },
     })
+    invalidateTournamentViews(tournamentId)
     revalidatePath(`/tournaments/${tournamentId}/settings`)
     return ok({ id: created.id })
-  } catch (e) { if (isAppError(e)) return err(e.message, e.code); throw e }
+  } catch (e) {
+    if (isAppError(e)) return err(e.message, e.code)
+    throw e
+  }
 }
 
 export async function updateScheduleEntryAction(fd: FormData): Promise<ActionResult<void>> {
@@ -50,7 +60,8 @@ export async function updateScheduleEntryAction(fd: FormData): Promise<ActionRes
     assertTournamentEditable(tournament)
     const existing = await prisma.tournamentScheduleEntry.findUnique({ where: { id: entryId } })
     if (!existing) throw Errors.notFound('Schedule entry')
-    if (existing.tournamentId !== tournament.id) return err('Schedule entry does not belong to this tournament', 'FORBIDDEN')
+    if (existing.tournamentId !== tournament.id)
+      return err('Schedule entry does not belong to this tournament', 'FORBIDDEN')
     await prisma.tournamentScheduleEntry.update({
       where: { id: entryId },
       data: {
@@ -61,9 +72,13 @@ export async function updateScheduleEntryAction(fd: FormData): Promise<ActionRes
         description: parsed.data.description || null,
       },
     })
+    invalidateTournamentViews(tournamentId)
     revalidatePath(`/tournaments/${tournamentId}/settings`)
     return ok(undefined)
-  } catch (e) { if (isAppError(e)) return err(e.message, e.code); throw e }
+  } catch (e) {
+    if (isAppError(e)) return err(e.message, e.code)
+    throw e
+  }
 }
 
 export async function deleteScheduleEntryAction(fd: FormData): Promise<ActionResult<void>> {
@@ -75,9 +90,14 @@ export async function deleteScheduleEntryAction(fd: FormData): Promise<ActionRes
     assertTournamentEditable(tournament)
     const existing = await prisma.tournamentScheduleEntry.findUnique({ where: { id: entryId } })
     if (!existing) throw Errors.notFound('Schedule entry')
-    if (existing.tournamentId !== tournament.id) return err('Schedule entry does not belong to this tournament', 'FORBIDDEN')
+    if (existing.tournamentId !== tournament.id)
+      return err('Schedule entry does not belong to this tournament', 'FORBIDDEN')
     await prisma.tournamentScheduleEntry.delete({ where: { id: entryId } })
+    invalidateTournamentViews(tournamentId)
     revalidatePath(`/tournaments/${tournamentId}/settings`)
     return ok(undefined)
-  } catch (e) { if (isAppError(e)) return err(e.message, e.code); throw e }
+  } catch (e) {
+    if (isAppError(e)) return err(e.message, e.code)
+    throw e
+  }
 }

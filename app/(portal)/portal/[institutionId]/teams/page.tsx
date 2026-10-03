@@ -1,23 +1,57 @@
 import { requireInstitutionRep } from '@/features/portal/permissions'
-import { prisma } from '@/lib/prisma'
+import { getTeamCountForInstitution, getTeamPage } from '@/features/teams/queries/page'
 import { TeamList } from '@/features/teams/components/team-list'
-import { TeamEditForm } from '@/features/teams/components/team-edit-form'
+import { PageNavigation } from '@/components/ui/page-navigation'
+import { pageRowCount, readPage, type SearchParams } from '@/lib/pagination'
+import { RosterSkeleton } from '@/components/ui/roster-skeleton'
+import { Suspense } from 'react'
 
-export default async function TeamsPage({ params }: { params: Promise<{ institutionId: string }> }) {
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ institutionId: string }>
+  searchParams: Promise<SearchParams>
+}) {
   const { institutionId } = await params
-  const { institution } = await requireInstitutionRep(institutionId)
-  const teams = await prisma.team.findMany({
-    where: { tournamentInstitutionId: institution.id },
-    orderBy: { name: 'asc' },
-    include: { validationFlags: true, _count: { select: { participants: true } } },
-  })
+  await requireInstitutionRep(institutionId)
+  const search = await searchParams
+  const data = getTeamPage({ institutionId }, search)
+  const total = await getTeamCountForInstitution(institutionId)
   return (
     <div className="mx-auto max-w-3xl space-y-6 p-6">
       <h1 className="text-xl font-semibold">Teams</h1>
-      <TeamList teams={teams.map((t) => ({ ...t, participantCount: t._count.participants }))} />
-      <div className="space-y-3">
-        {teams.map((t) => <div key={t.id} id={`edit-${t.id}`}><TeamEditForm team={t} /></div>)}
-      </div>
+      <Suspense
+        fallback={<RosterSkeleton kind="teams" rows={pageRowCount(total, readPage(search))} />}
+      >
+        <Roster institutionId={institutionId} search={search} data={data} />
+      </Suspense>
+    </div>
+  )
+}
+
+async function Roster({
+  institutionId,
+  search,
+  data: pending,
+}: {
+  institutionId: string
+  search: SearchParams
+  data: ReturnType<typeof getTeamPage>
+}) {
+  const data = await pending
+  return (
+    <div className="space-y-2">
+      <TeamList
+        teams={data.rows.map((row) => ({ ...row, participantCount: row._count.participants }))}
+        editBase={`/portal/${institutionId}/teams`}
+      />
+      <PageNavigation
+        pathname={`/portal/${institutionId}/teams`}
+        params={search}
+        paging={data.paging}
+        total={data.total}
+      />
     </div>
   )
 }

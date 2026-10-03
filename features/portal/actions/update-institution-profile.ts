@@ -1,4 +1,5 @@
 'use server'
+import { invalidateTournamentViews } from '@/features/tournaments/services/invalidate-views'
 
 import { prisma } from '@/lib/prisma'
 import { toApi } from '@/lib/errors'
@@ -26,9 +27,11 @@ export async function updateInstitutionProfileAction(
         contactPhone: parsed.contactPhone ?? undefined,
       },
     })
+    invalidateTournamentViews(tournament.id, [institution.id])
     await activityLog.record({
       code: 'INSTITUTION_PROFILE_UPDATED',
-      tournamentId: tournament.id, actorId: me.id,
+      tournamentId: tournament.id,
+      actorId: me.id,
       data: { institutionId: institution.id },
     })
     return { ok: true, data: { institutionId: institution.id } }

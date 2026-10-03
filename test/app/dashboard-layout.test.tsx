@@ -28,7 +28,7 @@ describe('DashboardLayout', () => {
   it('renders verify banner when unverified', async () => {
     const ui = await (DashboardLayout as any)({ children: <div>child</div> })
     render(ui)
-    expect(screen.getByText(/verify your email/i)).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('Verify a@b.com to enable all features.')
     expect(screen.getByText('child')).toBeInTheDocument()
   })
 })

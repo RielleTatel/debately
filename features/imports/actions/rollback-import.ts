@@ -1,4 +1,5 @@
 'use server'
+import { invalidateTournamentViews } from '@/features/tournaments/services/invalidate-views'
 
 import { prisma } from '@/lib/prisma'
 import { toApi, Errors } from '@/lib/errors'
@@ -23,9 +24,11 @@ export async function rollbackImportAction(
       where: { id: parsed.importId },
       data: { status: 'ROLLED_BACK' },
     })
+    invalidateTournamentViews(tournamentId)
     await activityLog.record({
       code: 'IMPORT_ROLLED_BACK',
-      tournamentId, actorId: meId,
+      tournamentId,
+      actorId: meId,
       data: { importId: parsed.importId, previousStatus: rec.status },
     })
     return { ok: true, data: { importId: parsed.importId } }

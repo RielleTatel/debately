@@ -1,27 +1,45 @@
 import Link from 'next/link'
 import { requireInstitutionRep } from '@/features/portal/permissions'
-import { listRequestsForInstitution } from '@/features/requests/queries'
+import { getRequestPage } from '@/features/requests/queries/requests'
+import { PageNavigation } from '@/components/ui/page-navigation'
+import type { SearchParams } from '@/lib/pagination'
 import { Badge } from '@/components/ui/badge'
 
-export default async function PortalRequestsPage({ params }: { params: Promise<{ institutionId: string }> }) {
+export default async function PortalRequestsPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ institutionId: string }>
+  searchParams: Promise<SearchParams>
+}) {
   const { institutionId } = await params
   const { institution } = await requireInstitutionRep(institutionId)
-  const list = await listRequestsForInstitution(institution.id)
+  const search = await searchParams
+  const data = await getRequestPage({ institutionId: institution.id }, search)
+  const list = data.rows
 
   return (
     <div className="max-w-3xl space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Requests</h1>
-        <Link href={`/portal/${institutionId}/requests/new`} className="text-sm text-primary hover:underline">
+        <Link
+          href={`/portal/${institutionId}/requests/new`}
+          className="text-sm text-primary hover:underline"
+        >
           New request
         </Link>
       </div>
       <ul className="divide-y rounded-md border">
-        {list.length === 0 && <li className="p-4 text-sm text-muted-foreground">No requests yet.</li>}
+        {list.length === 0 && (
+          <li className="p-4 text-sm text-muted-foreground">No requests yet.</li>
+        )}
         {list.map((r) => (
           <li key={r.id} className="p-3">
             <div className="flex items-center justify-between">
-              <Link href={`/portal/${institutionId}/requests/${r.id}`} className="font-medium hover:underline">
+              <Link
+                href={`/portal/${institutionId}/requests/${r.id}`}
+                className="font-medium hover:underline"
+              >
                 #{r.sequenceNumber} — {r.type}
               </Link>
               <Badge
@@ -44,6 +62,12 @@ export default async function PortalRequestsPage({ params }: { params: Promise<{
           </li>
         ))}
       </ul>
+      <PageNavigation
+        pathname={`/portal/${institutionId}/requests`}
+        params={search}
+        paging={data.paging}
+        total={data.total}
+      />
     </div>
   )
 }

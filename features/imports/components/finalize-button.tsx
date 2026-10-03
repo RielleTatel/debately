@@ -18,7 +18,11 @@ export function FinalizeImportButton({ tournamentId, importId }: Props) {
 
   return (
     <div className="flex flex-col items-end gap-2">
-      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+      {error && (
+        <p role="alert" className="text-sm text-destructive">
+          {error}
+        </p>
+      )}
       <Button
         type="button"
         disabled={pending}
@@ -34,7 +38,6 @@ export function FinalizeImportButton({ tournamentId, importId }: Props) {
             return
           }
           router.push(`${ROUTES.imports(tournamentId)}/${importId}/summary`)
-          router.refresh()
         }}
       >
         {pending ? 'Finalizing…' : 'Finalize import'}

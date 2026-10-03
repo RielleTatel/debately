@@ -1,0 +1,2050 @@
+{
+  "method": "Median of sorted samples; p95 uses nearest rank ceil(0.95*n). No samples discarded.",
+  "browser": {
+    "before": {
+      "teams-owner/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 132.80000007152557,
+            "p95": 166.60000002384186
+          },
+          "headerMs": {
+            "median": 206.88839600000028,
+            "p95": 268.4811249999998
+          },
+          "usefulMs": {
+            "median": 248.33560400000079,
+            "p95": 303.078207999999
+          },
+          "htmlBytes": {
+            "median": 294898,
+            "p95": 294898
+          },
+          "javascriptBytes": {
+            "median": 122283,
+            "p95": 122283
+          },
+          "domElements": {
+            "median": 7604,
+            "p95": 7604
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 11,
+            "p95": 11
+          },
+          "sqlDurationMs": {
+            "median": 6,
+            "p95": 17
+          }
+        }
+      },
+      "teams-owner/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 72.95000004768372,
+            "p95": 82.39999997615814
+          },
+          "headerMs": {
+            "median": 154.06779149999966,
+            "p95": 171.33258300000307
+          },
+          "usefulMs": {
+            "median": 190.66706249999697,
+            "p95": 198.90933399999994
+          },
+          "htmlBytes": {
+            "median": 294898,
+            "p95": 294898
+          },
+          "javascriptBytes": {
+            "median": 122283,
+            "p95": 122283
+          },
+          "domElements": {
+            "median": 7604,
+            "p95": 7604
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 6,
+            "p95": 6
+          },
+          "sqlDurationMs": {
+            "median": 1,
+            "p95": 2
+          }
+        }
+      },
+      "teams-director/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 140.0999999642372,
+            "p95": 152.69999992847443
+          },
+          "headerMs": {
+            "median": 219.12912499999584,
+            "p95": 244.11929199999577
+          },
+          "usefulMs": {
+            "median": 262.79054149999865,
+            "p95": 280.38987500000076
+          },
+          "htmlBytes": {
+            "median": 294898,
+            "p95": 294899
+          },
+          "javascriptBytes": {
+            "median": 122283,
+            "p95": 122283
+          },
+          "domElements": {
+            "median": 7604,
+            "p95": 7604
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 12,
+            "p95": 12
+          },
+          "sqlDurationMs": {
+            "median": 6,
+            "p95": 26
+          }
+        }
+      },
+      "teams-director/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 74.15000003576279,
+            "p95": 85.5
+          },
+          "headerMs": {
+            "median": 174.14814599999954,
+            "p95": 191.234666999997
+          },
+          "usefulMs": {
+            "median": 197.27168749999691,
+            "p95": 215.83283299999312
+          },
+          "htmlBytes": {
+            "median": 294898,
+            "p95": 294898
+          },
+          "javascriptBytes": {
+            "median": 122283,
+            "p95": 122283
+          },
+          "domElements": {
+            "median": 7604,
+            "p95": 7604
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 7,
+            "p95": 7
+          },
+          "sqlDurationMs": {
+            "median": 1,
+            "p95": 1
+          }
+        }
+      },
+      "teams-member/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 136.04999995231628,
+            "p95": 142.19999992847443
+          },
+          "headerMs": {
+            "median": 211.33283300000767,
+            "p95": 224.9077499999985
+          },
+          "usefulMs": {
+            "median": 254.22277049999684,
+            "p95": 261.37087499999325
+          },
+          "htmlBytes": {
+            "median": 294234,
+            "p95": 294234
+          },
+          "javascriptBytes": {
+            "median": 122283,
+            "p95": 122283
+          },
+          "domElements": {
+            "median": 7599,
+            "p95": 7599
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 12,
+            "p95": 12
+          },
+          "sqlDurationMs": {
+            "median": 6,
+            "p95": 7
+          }
+        }
+      },
+      "teams-member/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 75.94999992847443,
+            "p95": 116.79999995231628
+          },
+          "headerMs": {
+            "median": 173.30056199999672,
+            "p95": 201.81945799999812
+          },
+          "usefulMs": {
+            "median": 197.9644374999989,
+            "p95": 248.93499999999767
+          },
+          "htmlBytes": {
+            "median": 294234,
+            "p95": 294234
+          },
+          "javascriptBytes": {
+            "median": 122283,
+            "p95": 122283
+          },
+          "domElements": {
+            "median": 7599,
+            "p95": 7599
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 7,
+            "p95": 7
+          },
+          "sqlDurationMs": {
+            "median": 1,
+            "p95": 2
+          }
+        }
+      },
+      "participants-representative/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 101.25,
+            "p95": 102.60000002384186
+          },
+          "headerMs": {
+            "median": 199.18762500000594,
+            "p95": 202.37212500002352
+          },
+          "usefulMs": {
+            "median": 210.63866650001728,
+            "p95": 219.35900000002584
+          },
+          "htmlBytes": {
+            "median": 104961,
+            "p95": 104961
+          },
+          "javascriptBytes": {
+            "median": 138551,
+            "p95": 138551
+          },
+          "domElements": {
+            "median": 7425,
+            "p95": 7426
+          },
+          "forms": {
+            "median": 378,
+            "p95": 378
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 6,
+            "p95": 6
+          },
+          "sqlDurationMs": {
+            "median": 0,
+            "p95": 1
+          }
+        }
+      },
+      "participants-representative/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 54.950000047683716,
+            "p95": 73.89999997615814
+          },
+          "headerMs": {
+            "median": 152.3597710000031,
+            "p95": 171.50533400001586
+          },
+          "usefulMs": {
+            "median": 167.2523749999964,
+            "p95": 188.21620900000562
+          },
+          "htmlBytes": {
+            "median": 104961,
+            "p95": 104961
+          },
+          "javascriptBytes": {
+            "median": 138551,
+            "p95": 138551
+          },
+          "domElements": {
+            "median": 7426,
+            "p95": 7426
+          },
+          "forms": {
+            "median": 378,
+            "p95": 378
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 6,
+            "p95": 6
+          },
+          "sqlDurationMs": {
+            "median": 0,
+            "p95": 0
+          }
+        }
+      },
+      "analytics-owner/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 64.80000001192093,
+            "p95": 94
+          },
+          "headerMs": {
+            "median": 102.42179150000447,
+            "p95": 134.2153330000001
+          },
+          "usefulMs": {
+            "median": 433.87418750001234,
+            "p95": 468.20437500000116
+          },
+          "htmlBytes": {
+            "median": 10206,
+            "p95": 10330
+          },
+          "javascriptBytes": {
+            "median": 239192,
+            "p95": 239192
+          },
+          "domElements": {
+            "median": 558,
+            "p95": 560
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 1,
+            "p95": 1
+          },
+          "sqlCount": {
+            "median": 22,
+            "p95": 22
+          },
+          "sqlDurationMs": {
+            "median": 20,
+            "p95": 44
+          }
+        }
+      },
+      "analytics-owner/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 7.100000023841858,
+            "p95": 14.100000023841858
+          },
+          "headerMs": {
+            "median": 59.96170850000635,
+            "p95": 76.99679199999082
+          },
+          "usefulMs": {
+            "median": 377.4672084999911,
+            "p95": 441.36495899999863
+          },
+          "htmlBytes": {
+            "median": 10191,
+            "p95": 10191
+          },
+          "javascriptBytes": {
+            "median": 239192,
+            "p95": 239192
+          },
+          "domElements": {
+            "median": 561,
+            "p95": 561
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 1,
+            "p95": 1
+          },
+          "sqlCount": {
+            "median": 10,
+            "p95": 10
+          },
+          "sqlDurationMs": {
+            "median": 0,
+            "p95": 10
+          }
+        }
+      },
+      "teams-small-owner/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 49.450000047683716,
+            "p95": 54
+          },
+          "headerMs": {
+            "median": 86.11416699999972,
+            "p95": 118.17370800000026
+          },
+          "usefulMs": {
+            "median": 106.06758300000047,
+            "p95": 132.23024999999961
+          },
+          "htmlBytes": {
+            "median": 9257,
+            "p95": 9257
+          },
+          "javascriptBytes": {
+            "median": 122283,
+            "p95": 122283
+          },
+          "domElements": {
+            "median": 194,
+            "p95": 194
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 11,
+            "p95": 11
+          },
+          "sqlDurationMs": {
+            "median": 3,
+            "p95": 4
+          }
+        }
+      },
+      "teams-small-owner/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 5.800000011920929,
+            "p95": 11.5
+          },
+          "headerMs": {
+            "median": 58.017541999997775,
+            "p95": 67.34795899999881
+          },
+          "usefulMs": {
+            "median": 65.730458,
+            "p95": 76.63916699999754
+          },
+          "htmlBytes": {
+            "median": 9261,
+            "p95": 9261
+          },
+          "javascriptBytes": {
+            "median": 122283,
+            "p95": 122283
+          },
+          "domElements": {
+            "median": 194,
+            "p95": 194
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 6,
+            "p95": 6
+          },
+          "sqlDurationMs": {
+            "median": 0,
+            "p95": 0
+          }
+        }
+      },
+      "participants-small-representative/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 34.64999997615814,
+            "p95": 35.10000002384186
+          },
+          "headerMs": {
+            "median": 66.93791699999929,
+            "p95": 69.35916599999473
+          },
+          "usefulMs": {
+            "median": 90.06333349999477,
+            "p95": 95.56587500000023
+          },
+          "htmlBytes": {
+            "median": 5829,
+            "p95": 5829
+          },
+          "javascriptBytes": {
+            "median": 138551,
+            "p95": 138551
+          },
+          "domElements": {
+            "median": 260.5,
+            "p95": 261
+          },
+          "forms": {
+            "median": 12,
+            "p95": 12
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 6,
+            "p95": 6
+          },
+          "sqlDurationMs": {
+            "median": 0,
+            "p95": 0
+          }
+        }
+      },
+      "participants-small-representative/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 7.600000023841858,
+            "p95": 11.899999976158142
+          },
+          "headerMs": {
+            "median": 58.86427099999855,
+            "p95": 63.571165999994264
+          },
+          "usefulMs": {
+            "median": 68.99779149999813,
+            "p95": 77.79591600000276
+          },
+          "htmlBytes": {
+            "median": 5829,
+            "p95": 5829
+          },
+          "javascriptBytes": {
+            "median": 138551,
+            "p95": 138551
+          },
+          "domElements": {
+            "median": 261,
+            "p95": 261
+          },
+          "forms": {
+            "median": 12,
+            "p95": 12
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 6,
+            "p95": 6
+          },
+          "sqlDurationMs": {
+            "median": 0,
+            "p95": 0
+          }
+        }
+      },
+      "teams-empty-owner/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 48.09999996423721,
+            "p95": 55.10000002384186
+          },
+          "headerMs": {
+            "median": 82.89514600000257,
+            "p95": 91.29279199999291
+          },
+          "usefulMs": {
+            "median": 104.81777100000909,
+            "p95": 126.43575000000419
+          },
+          "htmlBytes": {
+            "median": 8555,
+            "p95": 8555
+          },
+          "javascriptBytes": {
+            "median": 122283,
+            "p95": 122283
+          },
+          "domElements": {
+            "median": 175,
+            "p95": 175
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 10,
+            "p95": 10
+          },
+          "sqlDurationMs": {
+            "median": 2,
+            "p95": 4
+          }
+        }
+      },
+      "teams-empty-owner/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 6.149999976158142,
+            "p95": 14.5
+          },
+          "headerMs": {
+            "median": 58.105645499992534,
+            "p95": 74.41987500000687
+          },
+          "usefulMs": {
+            "median": 66.93106249999255,
+            "p95": 84.13237500000105
+          },
+          "htmlBytes": {
+            "median": 8555,
+            "p95": 8555
+          },
+          "javascriptBytes": {
+            "median": 122283,
+            "p95": 122283
+          },
+          "domElements": {
+            "median": 175,
+            "p95": 175
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 5,
+            "p95": 5
+          },
+          "sqlDurationMs": {
+            "median": 0,
+            "p95": 2
+          }
+        }
+      },
+      "participants-empty-representative/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 25,
+            "p95": 25.5
+          },
+          "headerMs": {
+            "median": 67.14027049999277,
+            "p95": 68.76066699999501
+          },
+          "usefulMs": {
+            "median": 72.20014550000633,
+            "p95": 73.88370799997938
+          },
+          "htmlBytes": {
+            "median": 2284,
+            "p95": 2284
+          },
+          "javascriptBytes": {
+            "median": 103314,
+            "p95": 103314
+          },
+          "domElements": {
+            "median": 23,
+            "p95": 23
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 5,
+            "p95": 5
+          },
+          "sqlDurationMs": {
+            "median": 0,
+            "p95": 0
+          }
+        }
+      },
+      "participants-empty-representative/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 5.5,
+            "p95": 7.100000023841858
+          },
+          "headerMs": {
+            "median": 47.56283300000359,
+            "p95": 49.31741599997622
+          },
+          "usefulMs": {
+            "median": 52.58870799999568,
+            "p95": 54.405375000002095
+          },
+          "htmlBytes": {
+            "median": 2284,
+            "p95": 2284
+          },
+          "javascriptBytes": {
+            "median": 103314,
+            "p95": 103314
+          },
+          "domElements": {
+            "median": 23,
+            "p95": 23
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 5,
+            "p95": 5
+          },
+          "sqlDurationMs": {
+            "median": 0,
+            "p95": 0
+          }
+        }
+      }
+    },
+    "after": {
+      "teams-owner/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 42.90000003576279,
+            "p95": 60.800000071525574
+          },
+          "headerMs": {
+            "median": 100.21747900000264,
+            "p95": 141.51195800000278
+          },
+          "usefulMs": {
+            "median": 434.4953960000021,
+            "p95": 885.6159999999982
+          },
+          "htmlBytes": {
+            "median": 36783,
+            "p95": 37464
+          },
+          "javascriptBytes": {
+            "median": 122237,
+            "p95": 122237
+          },
+          "domElements": {
+            "median": 537,
+            "p95": 586
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 10,
+            "p95": 10
+          },
+          "sqlDurationMs": {
+            "median": 4,
+            "p95": 10
+          }
+        }
+      },
+      "teams-owner/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 6.949999988079071,
+            "p95": 10.600000023841858
+          },
+          "headerMs": {
+            "median": 63.78627050000432,
+            "p95": 70.4097499999989
+          },
+          "usefulMs": {
+            "median": 360.6895829999994,
+            "p95": 853.8361250000016
+          },
+          "htmlBytes": {
+            "median": 36783,
+            "p95": 36898
+          },
+          "javascriptBytes": {
+            "median": 122237,
+            "p95": 122237
+          },
+          "domElements": {
+            "median": 537,
+            "p95": 537
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 10,
+            "p95": 11
+          },
+          "sqlDurationMs": {
+            "median": 1,
+            "p95": 4
+          }
+        }
+      },
+      "teams-director/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 39.64999997615814,
+            "p95": 44.59999990463257
+          },
+          "headerMs": {
+            "median": 80.79064550000476,
+            "p95": 107.75924999998824
+          },
+          "usefulMs": {
+            "median": 414.59785399999964,
+            "p95": 887.5021249999991
+          },
+          "htmlBytes": {
+            "median": 36783,
+            "p95": 37344
+          },
+          "javascriptBytes": {
+            "median": 122237,
+            "p95": 122237
+          },
+          "domElements": {
+            "median": 537,
+            "p95": 585
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 10,
+            "p95": 10
+          },
+          "sqlDurationMs": {
+            "median": 3.5,
+            "p95": 4
+          }
+        }
+      },
+      "teams-director/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 7.349999964237213,
+            "p95": 19.59999990463257
+          },
+          "headerMs": {
+            "median": 63.24008300000423,
+            "p95": 72.60908400001063
+          },
+          "usefulMs": {
+            "median": 363.4552085000032,
+            "p95": 415.5112080000108
+          },
+          "htmlBytes": {
+            "median": 36783,
+            "p95": 36898
+          },
+          "javascriptBytes": {
+            "median": 122237,
+            "p95": 122237
+          },
+          "domElements": {
+            "median": 537,
+            "p95": 537
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 10,
+            "p95": 10
+          },
+          "sqlDurationMs": {
+            "median": 1,
+            "p95": 4
+          }
+        }
+      },
+      "teams-member/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 37.65000003576279,
+            "p95": 46.10000002384186
+          },
+          "headerMs": {
+            "median": 74.53918750000594,
+            "p95": 108.34524999998393
+          },
+          "usefulMs": {
+            "median": 878.2412705000024,
+            "p95": 895.1569580000069
+          },
+          "htmlBytes": {
+            "median": 36037,
+            "p95": 36702
+          },
+          "javascriptBytes": {
+            "median": 122237,
+            "p95": 122237
+          },
+          "domElements": {
+            "median": 531,
+            "p95": 580
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 10,
+            "p95": 10
+          },
+          "sqlDurationMs": {
+            "median": 3,
+            "p95": 6
+          }
+        }
+      },
+      "teams-member/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 6.500000059604645,
+            "p95": 12.899999976158142
+          },
+          "headerMs": {
+            "median": 63.15981250000186,
+            "p95": 78.57212500000605
+          },
+          "usefulMs": {
+            "median": 359.32608349999646,
+            "p95": 863.7078340000007
+          },
+          "htmlBytes": {
+            "median": 36179.5,
+            "p95": 36257
+          },
+          "javascriptBytes": {
+            "median": 122237,
+            "p95": 122237
+          },
+          "domElements": {
+            "median": 532,
+            "p95": 532
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 10,
+            "p95": 11
+          },
+          "sqlDurationMs": {
+            "median": 1,
+            "p95": 5
+          }
+        }
+      },
+      "participants-representative/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 28.600000023841858,
+            "p95": 38.10000002384186
+          },
+          "headerMs": {
+            "median": 53.95458299999882,
+            "p95": 94.75800000000163
+          },
+          "usefulMs": {
+            "median": 94.98166649999621,
+            "p95": 395.31474999999045
+          },
+          "htmlBytes": {
+            "median": 11204,
+            "p95": 11204
+          },
+          "javascriptBytes": {
+            "median": 106796,
+            "p95": 106796
+          },
+          "domElements": {
+            "median": 348,
+            "p95": 350
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 7,
+            "p95": 7
+          },
+          "sqlDurationMs": {
+            "median": 0,
+            "p95": 2
+          }
+        }
+      },
+      "participants-representative/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 6.100000083446503,
+            "p95": 8
+          },
+          "headerMs": {
+            "median": 54.33318750000035,
+            "p95": 58.240208000002895
+          },
+          "usefulMs": {
+            "median": 351.8710215000028,
+            "p95": 356.51095899997745
+          },
+          "htmlBytes": {
+            "median": 11204,
+            "p95": 11204
+          },
+          "javascriptBytes": {
+            "median": 106796,
+            "p95": 106796
+          },
+          "domElements": {
+            "median": 350,
+            "p95": 350
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 7,
+            "p95": 7
+          },
+          "sqlDurationMs": {
+            "median": 0,
+            "p95": 0
+          }
+        }
+      },
+      "analytics-owner/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 38.89999997615814,
+            "p95": 45.299999952316284
+          },
+          "headerMs": {
+            "median": 67.19687550001254,
+            "p95": 79.54295800000546
+          },
+          "usefulMs": {
+            "median": 109.5291040000011,
+            "p95": 880.6476250000123
+          },
+          "htmlBytes": {
+            "median": 12548,
+            "p95": 12548
+          },
+          "javascriptBytes": {
+            "median": 241715,
+            "p95": 241715
+          },
+          "domElements": {
+            "median": 374,
+            "p95": 375
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 1,
+            "p95": 1
+          },
+          "sqlCount": {
+            "median": 15,
+            "p95": 15
+          },
+          "sqlDurationMs": {
+            "median": 13.5,
+            "p95": 18
+          }
+        }
+      },
+      "analytics-owner/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 7.500000059604645,
+            "p95": 12.100000023841858
+          },
+          "headerMs": {
+            "median": 61.35099999996601,
+            "p95": 63.848250000039116
+          },
+          "usefulMs": {
+            "median": 353.64408349999576,
+            "p95": 365.0269579999731
+          },
+          "htmlBytes": {
+            "median": 12221,
+            "p95": 12374
+          },
+          "javascriptBytes": {
+            "median": 241715,
+            "p95": 241715
+          },
+          "domElements": {
+            "median": 375,
+            "p95": 375
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 1,
+            "p95": 1
+          },
+          "sqlCount": {
+            "median": 11,
+            "p95": 12
+          },
+          "sqlDurationMs": {
+            "median": 0,
+            "p95": 4
+          }
+        }
+      },
+      "teams-small-owner/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 36.90000003576279,
+            "p95": 40.60000002384186
+          },
+          "headerMs": {
+            "median": 80.98572899997816,
+            "p95": 95.77191700000549
+          },
+          "usefulMs": {
+            "median": 384.9592915000103,
+            "p95": 394.68445800000336
+          },
+          "htmlBytes": {
+            "median": 12400,
+            "p95": 12505
+          },
+          "javascriptBytes": {
+            "median": 122237,
+            "p95": 122237
+          },
+          "domElements": {
+            "median": 206,
+            "p95": 207
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 10,
+            "p95": 10
+          },
+          "sqlDurationMs": {
+            "median": 1,
+            "p95": 2
+          }
+        }
+      },
+      "teams-small-owner/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 7.150000035762787,
+            "p95": 13.399999976158142
+          },
+          "headerMs": {
+            "median": 63.116062500019325,
+            "p95": 65.54220799996983
+          },
+          "usefulMs": {
+            "median": 354.56750000000466,
+            "p95": 359.4158329999773
+          },
+          "htmlBytes": {
+            "median": 12400,
+            "p95": 12505
+          },
+          "javascriptBytes": {
+            "median": 122237,
+            "p95": 122237
+          },
+          "domElements": {
+            "median": 206,
+            "p95": 207
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 10,
+            "p95": 11
+          },
+          "sqlDurationMs": {
+            "median": 0.5,
+            "p95": 1
+          }
+        }
+      },
+      "participants-small-representative/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 26.099999964237213,
+            "p95": 27.700000047683716
+          },
+          "headerMs": {
+            "median": 54.56168750001234,
+            "p95": 81.93650000001071
+          },
+          "usefulMs": {
+            "median": 365.6547914999828,
+            "p95": 376.6166669999948
+          },
+          "htmlBytes": {
+            "median": 5130,
+            "p95": 5130
+          },
+          "javascriptBytes": {
+            "median": 106796,
+            "p95": 106796
+          },
+          "domElements": {
+            "median": 104,
+            "p95": 106
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 7,
+            "p95": 7
+          },
+          "sqlDurationMs": {
+            "median": 0,
+            "p95": 0
+          }
+        }
+      },
+      "participants-small-representative/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 5.250000059604645,
+            "p95": 8.5
+          },
+          "headerMs": {
+            "median": 51.42258300000685,
+            "p95": 55.54245800001081
+          },
+          "usefulMs": {
+            "median": 345.09831249999115,
+            "p95": 354.1083750000107
+          },
+          "htmlBytes": {
+            "median": 5130,
+            "p95": 5130
+          },
+          "javascriptBytes": {
+            "median": 106796,
+            "p95": 106796
+          },
+          "domElements": {
+            "median": 106,
+            "p95": 106
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 7,
+            "p95": 7
+          },
+          "sqlDurationMs": {
+            "median": 0,
+            "p95": 0
+          }
+        }
+      },
+      "teams-empty-owner/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 36.39999997615814,
+            "p95": 36.89999997615814
+          },
+          "headerMs": {
+            "median": 71.90747900001588,
+            "p95": 91.02062499994645
+          },
+          "usefulMs": {
+            "median": 384.620187499997,
+            "p95": 393.8420829999959
+          },
+          "htmlBytes": {
+            "median": 11778,
+            "p95": 11778
+          },
+          "javascriptBytes": {
+            "median": 122237,
+            "p95": 122237
+          },
+          "domElements": {
+            "median": 187,
+            "p95": 187
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 8,
+            "p95": 8
+          },
+          "sqlDurationMs": {
+            "median": 1,
+            "p95": 2
+          }
+        }
+      },
+      "teams-empty-owner/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 7.099999964237213,
+            "p95": 11.399999976158142
+          },
+          "headerMs": {
+            "median": 62.83152049998171,
+            "p95": 66.0578749999986
+          },
+          "usefulMs": {
+            "median": 352.7581254999968,
+            "p95": 356.36095800000476
+          },
+          "htmlBytes": {
+            "median": 11778,
+            "p95": 11778
+          },
+          "javascriptBytes": {
+            "median": 122237,
+            "p95": 122237
+          },
+          "domElements": {
+            "median": 187,
+            "p95": 187
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 8,
+            "p95": 8
+          },
+          "sqlDurationMs": {
+            "median": 0,
+            "p95": 1
+          }
+        }
+      },
+      "participants-empty-representative/cold": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 25.700000047683716,
+            "p95": 27.899999976158142
+          },
+          "headerMs": {
+            "median": 53.81529149998096,
+            "p95": 72.06879099999787
+          },
+          "usefulMs": {
+            "median": 71.45735449998756,
+            "p95": 78.20487499999581
+          },
+          "htmlBytes": {
+            "median": 3340,
+            "p95": 3340
+          },
+          "javascriptBytes": {
+            "median": 103172,
+            "p95": 103172
+          },
+          "domElements": {
+            "median": 29,
+            "p95": 29
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 6,
+            "p95": 6
+          },
+          "sqlDurationMs": {
+            "median": 0,
+            "p95": 0
+          }
+        }
+      },
+      "participants-empty-representative/warm": {
+        "samples": 20,
+        "metrics": {
+          "ttfbMs": {
+            "median": 4.350000083446503,
+            "p95": 7.699999928474426
+          },
+          "headerMs": {
+            "median": 48.186791500018444,
+            "p95": 51.127416000002995
+          },
+          "usefulMs": {
+            "median": 53.649687500001164,
+            "p95": 56.2328330000164
+          },
+          "htmlBytes": {
+            "median": 3340,
+            "p95": 3340
+          },
+          "javascriptBytes": {
+            "median": 103172,
+            "p95": 103172
+          },
+          "domElements": {
+            "median": 29,
+            "p95": 29
+          },
+          "forms": {
+            "median": 0,
+            "p95": 0
+          },
+          "cls": {
+            "median": 0,
+            "p95": 0
+          },
+          "longTasks": {
+            "median": 0,
+            "p95": 0
+          },
+          "sqlCount": {
+            "median": 6,
+            "p95": 6
+          },
+          "sqlDurationMs": {
+            "median": 0,
+            "p95": 0
+          }
+        }
+      }
+    }
+  },
+  "imports": {
+    "before": {
+      "50/repeated": {
+        "samples": 20,
+        "metrics": {
+          "previewMs": {
+            "median": 16.043333499999903,
+            "p95": 19.678082999999987
+          },
+          "previewSqlCount": {
+            "median": 54,
+            "p95": 54
+          },
+          "finalizeMs": {
+            "median": 94.35762549999998,
+            "p95": 104.63962500000002
+          },
+          "finalizeSqlCount": {
+            "median": 312,
+            "p95": 312
+          }
+        }
+      },
+      "50/distinct": {
+        "samples": 20,
+        "metrics": {
+          "previewMs": {
+            "median": 47.9914789999998,
+            "p95": 55.44954199999938
+          },
+          "previewSqlCount": {
+            "median": 152,
+            "p95": 152
+          },
+          "finalizeMs": {
+            "median": 110.84291699999994,
+            "p95": 130.20129199999974
+          },
+          "finalizeSqlCount": {
+            "median": 410,
+            "p95": 410
+          }
+        }
+      },
+      "500/repeated": {
+        "samples": 20,
+        "metrics": {
+          "previewMs": {
+            "median": 111.18331200000011,
+            "p95": 125.02516700000069
+          },
+          "previewSqlCount": {
+            "median": 504,
+            "p95": 504
+          },
+          "finalizeMs": {
+            "median": 723.0762919999997,
+            "p95": 741.0011670000004
+          },
+          "finalizeSqlCount": {
+            "median": 3012,
+            "p95": 3012
+          }
+        }
+      },
+      "500/distinct": {
+        "samples": 20,
+        "metrics": {
+          "previewMs": {
+            "median": 410.8551664999977,
+            "p95": 470.4850000000006
+          },
+          "previewSqlCount": {
+            "median": 1502,
+            "p95": 1503
+          },
+          "finalizeMs": {
+            "median": 899.8697920000013,
+            "p95": 946.3189999999995
+          },
+          "finalizeSqlCount": {
+            "median": 4010,
+            "p95": 4011
+          }
+        }
+      },
+      "1000/repeated": {
+        "samples": 20,
+        "metrics": {
+          "previewMs": {
+            "median": 240.2424585000008,
+            "p95": 254.35124999999243
+          },
+          "previewSqlCount": {
+            "median": 1004,
+            "p95": 1004
+          },
+          "finalizeMs": {
+            "median": 1547.5235204999917,
+            "p95": 1560.263583
+          },
+          "finalizeSqlCount": {
+            "median": 6012,
+            "p95": 6013
+          }
+        }
+      },
+      "1000/distinct": {
+        "samples": 20,
+        "metrics": {
+          "previewMs": {
+            "median": 1031.7869585000008,
+            "p95": 1280.6387920000125
+          },
+          "previewSqlCount": {
+            "median": 3002,
+            "p95": 3002
+          },
+          "finalizeMs": {
+            "median": 1864.3181250000052,
+            "p95": 2321.839333000011
+          },
+          "finalizeSqlCount": {
+            "median": 8010,
+            "p95": 8011
+          }
+        }
+      }
+    },
+    "after": {
+      "50/repeated": {
+        "samples": 20,
+        "metrics": {
+          "previewMs": {
+            "median": 2.2799375000000737,
+            "p95": 5.646375000000006
+          },
+          "previewSqlCount": {
+            "median": 5,
+            "p95": 5
+          },
+          "finalizeMs": {
+            "median": 42.13997899999998,
+            "p95": 91.23983399999997
+          },
+          "finalizeSqlCount": {
+            "median": 29,
+            "p95": 29
+          }
+        }
+      },
+      "50/distinct": {
+        "samples": 20,
+        "metrics": {
+          "previewMs": {
+            "median": 4.81033350000007,
+            "p95": 16.33462499999996
+          },
+          "previewSqlCount": {
+            "median": 5,
+            "p95": 5
+          },
+          "finalizeMs": {
+            "median": 61.96112499999981,
+            "p95": 393.9285829999999
+          },
+          "finalizeSqlCount": {
+            "median": 29,
+            "p95": 29
+          }
+        }
+      },
+      "500/repeated": {
+        "samples": 20,
+        "metrics": {
+          "previewMs": {
+            "median": 8.110125000000153,
+            "p95": 9.384750000000167
+          },
+          "previewSqlCount": {
+            "median": 6,
+            "p95": 6
+          },
+          "finalizeMs": {
+            "median": 50.46456249999983,
+            "p95": 72.57808299999988
+          },
+          "finalizeSqlCount": {
+            "median": 30,
+            "p95": 30
+          }
+        }
+      },
+      "500/distinct": {
+        "samples": 20,
+        "metrics": {
+          "previewMs": {
+            "median": 37.163604000000305,
+            "p95": 101.30295800000022
+          },
+          "previewSqlCount": {
+            "median": 6,
+            "p95": 6
+          },
+          "finalizeMs": {
+            "median": 136.52216650000037,
+            "p95": 253.14658299999974
+          },
+          "finalizeSqlCount": {
+            "median": 30,
+            "p95": 30
+          }
+        }
+      },
+      "1000/repeated": {
+        "samples": 20,
+        "metrics": {
+          "previewMs": {
+            "median": 13.680562500000633,
+            "p95": 14.502042000000074
+          },
+          "previewSqlCount": {
+            "median": 7,
+            "p95": 7
+          },
+          "finalizeMs": {
+            "median": 50.457374999999956,
+            "p95": 52.652333
+          },
+          "finalizeSqlCount": {
+            "median": 32,
+            "p95": 32
+          }
+        }
+      },
+      "1000/distinct": {
+        "samples": 20,
+        "metrics": {
+          "previewMs": {
+            "median": 57.29583300000013,
+            "p95": 58.83691700000054
+          },
+          "previewSqlCount": {
+            "median": 7,
+            "p95": 7
+          },
+          "finalizeMs": {
+            "median": 179.4971044999984,
+            "p95": 192.15245900000082
+          },
+          "finalizeSqlCount": {
+            "median": 36,
+            "p95": 36
+          }
+        }
+      }
+    }
+  },
+  "editor": {
+    "": {
+      "samples": 20,
+      "metrics": {
+        "typingMs": {
+          "median": 53.4059165000217,
+          "p95": 55.505957999965176
+        },
+        "parentRendersDuringTyping": {
+          "median": 0,
+          "p95": 0
+        },
+        "institutionCheckboxes": {
+          "median": 152,
+          "p95": 152
+        }
+      }
+    }
+  }
+}

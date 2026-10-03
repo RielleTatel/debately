@@ -1,8 +1,10 @@
 import Link from 'next/link'
 import { Building2, Upload, Mail, ChevronRight, AlertTriangle, XCircle } from 'lucide-react'
 import { requireTournamentReadable } from '@/features/tournaments/permissions'
-import { getInstitutionsForTournament } from '@/features/institutions/queries'
-import { prisma } from '@/lib/prisma'
+import { getInstitutionPage } from '@/features/institutions/queries/page'
+import { PageNavigation } from '@/components/ui/page-navigation'
+import { readPage, type SearchParams } from '@/lib/pagination'
+import { Suspense } from 'react'
 import { PageHeader } from '@/components/ui/page-header'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { EmptyState } from '@/components/empty-state/empty-state'
@@ -10,39 +12,17 @@ import { validateRegistrations } from '@/features/tournaments/services/validate-
 
 export default async function InstitutionsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ tournamentId: string }>
+  searchParams: Promise<SearchParams>
 }) {
   const { tournamentId } = await params
   await requireTournamentReadable(tournamentId)
 
-  const institutions = await getInstitutionsForTournament(tournamentId)
-  const [claims, teamCounts, adjCounts, flags] = await Promise.all([
-    prisma.institutionClaim.findMany({
-      where: { tournamentInstitutionId: { in: institutions.map((i) => i.id) } },
-      select: { tournamentInstitutionId: true },
-    }),
-    prisma.team.groupBy({
-      by: ['tournamentInstitutionId'],
-      where: { tournamentInstitutionId: { in: institutions.map((i) => i.id) } },
-      _count: { _all: true },
-    }),
-    prisma.adjudicator.groupBy({
-      by: ['tournamentInstitutionId'],
-      where: { tournamentInstitutionId: { in: institutions.map((i) => i.id) } },
-      _count: { _all: true },
-    }),
-    validateRegistrations(tournamentId),
-  ])
-  const claimedSet = new Set(claims.map((c) => c.tournamentInstitutionId))
-  const teamMap = new Map(
-    teamCounts.map((t) => [t.tournamentInstitutionId, t._count._all]),
-  )
-  const adjMap = new Map(
-    adjCounts.map((a) => [a.tournamentInstitutionId, a._count._all]),
-  )
-
-  const claimed = institutions.filter((i) => claimedSet.has(i.id)).length
+  const search = await searchParams
+  const data = await getInstitutionPage(tournamentId, search)
+  const { rows: institutions, claimed } = data
 
   return (
     <div className="space-y-6">
@@ -63,10 +43,7 @@ export default async function InstitutionsPage({
         meta={
           institutions.length > 0 && (
             <span className="flex items-center gap-1.5 text-[12.5px] text-muted-foreground font-normal">
-              <span className="tabular-nums font-medium text-foreground">
-                {institutions.length}
-              </span>{' '}
-              total
+              <span className="tabular-nums font-medium text-foreground">{data.total}</span> total
               <span className="text-muted-foreground/40">·</span>
               <span className="tabular-nums text-success">{claimed}</span> claimed
             </span>
@@ -74,25 +51,16 @@ export default async function InstitutionsPage({
         }
       />
 
-      {flags.length > 0 && (
-        <div className="space-y-2">
-          {flags.map((f, idx) => (
-            <div
-              key={idx}
-              className={`flex items-start gap-2.5 rounded-md border px-3.5 py-2.5 text-sm ${
-                f.severity === 'error'
-                  ? 'border-red-200 bg-red-50 text-red-800'
-                  : 'border-amber-200 bg-amber-50 text-amber-800'
-              }`}
-            >
-              {f.severity === 'error'
-                ? <XCircle className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2} />
-                : <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2} />}
-              <span>{f.message}</span>
-            </div>
-          ))}
-        </div>
-      )}
+      <Suspense
+        fallback={
+          <div
+            aria-label="Checking registration warnings"
+            className="h-12 rounded border bg-muted/50"
+          />
+        }
+      >
+        <RegistrationWarnings tournamentId={tournamentId} search={search} />
+      </Suspense>
 
       {institutions.length === 0 ? (
         <EmptyState
@@ -132,9 +100,9 @@ export default async function InstitutionsPage({
             </thead>
             <tbody className="divide-y divide-border">
               {institutions.map((i) => {
-                const teams = teamMap.get(i.id) ?? 0
-                const adjs = adjMap.get(i.id) ?? 0
-                const claimedInst = claimedSet.has(i.id)
+                const teams = i._count.teams
+                const adjs = i._count.adjudicators
+                const claimedInst = !!i.claim
                 return (
                   <tr key={i.id} className="group transition-colors hover:bg-surface/60">
                     <td className="px-4 py-3">
@@ -162,9 +130,13 @@ export default async function InstitutionsPage({
                     <td className="px-4 py-3 text-right tabular-nums text-foreground">{adjs}</td>
                     <td className="px-4 py-3">
                       {claimedInst ? (
-                        <StatusBadge tone="success" dot>Claimed</StatusBadge>
+                        <StatusBadge tone="success" dot>
+                          Claimed
+                        </StatusBadge>
                       ) : (
-                        <StatusBadge tone="muted" dot>Unclaimed</StatusBadge>
+                        <StatusBadge tone="muted" dot>
+                          Unclaimed
+                        </StatusBadge>
                       )}
                     </td>
                     <td className="px-3 py-3 text-right">
@@ -183,6 +155,59 @@ export default async function InstitutionsPage({
           </table>
         </div>
       )}
+      <PageNavigation
+        pathname={`/tournaments/${tournamentId}/institutions`}
+        params={search}
+        paging={data.paging}
+        total={data.total}
+      />
     </div>
+  )
+}
+
+async function RegistrationWarnings({
+  tournamentId,
+  search,
+}: {
+  tournamentId: string
+  search: SearchParams
+}) {
+  const flags = await validateRegistrations(tournamentId)
+  const paging = readPage({ page: search.warningsPage, pageSize: search.warningsPageSize })
+  return (
+    <details open={search.warningsPage !== undefined} className="rounded border">
+      <summary className="flex h-12 cursor-pointer items-center px-4 text-sm">
+        Registration warnings ({flags.length})
+      </summary>
+      {flags.length > 0 && (
+        <div className="space-y-2">
+          {flags.slice(paging.skip, paging.skip + paging.pageSize).map((f, idx) => (
+            <div
+              key={idx}
+              className={`flex items-start gap-2.5 rounded-md border px-3.5 py-2.5 text-sm ${
+                f.severity === 'error'
+                  ? 'border-red-200 bg-red-50 text-red-800'
+                  : 'border-amber-200 bg-amber-50 text-amber-800'
+              }`}
+            >
+              {f.severity === 'error' ? (
+                <XCircle className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2} />
+              ) : (
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2} />
+              )}
+              <span>{f.message}</span>
+            </div>
+          ))}
+          <PageNavigation
+            pathname={`/tournaments/${tournamentId}/institutions`}
+            params={search}
+            paging={paging}
+            total={flags.length}
+            pageKey="warningsPage"
+            pageSizeKey="warningsPageSize"
+          />
+        </div>
+      )}
+    </details>
   )
 }

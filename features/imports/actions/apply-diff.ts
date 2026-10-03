@@ -1,13 +1,17 @@
 'use server'
+import { invalidateTournamentViews } from '@/features/tournaments/services/invalidate-views'
 
-import { prisma } from '@/lib/prisma'
+import { withImportReview } from '@/features/imports/repositories/review'
 import { toApi, Errors } from '@/lib/errors'
 import { activityLog } from '@/services/activity-log'
 import { requireImportEditor } from '@/features/imports/permissions'
 import { applyDiffSchema } from '@/features/imports/schemas'
 import type { ApiResponse } from '@/types/api'
+import { encodeDiffDecision } from '../services/review-decisions'
 
-export async function applyDiffAction(formData: FormData): Promise<ApiResponse<{ rowIndex: number }>> {
+export async function applyDiffAction(
+  formData: FormData,
+): Promise<ApiResponse<{ rowIndex: number }>> {
   try {
     const parsed = applyDiffSchema.parse({
       importId: formData.get('importId'),
@@ -16,22 +20,31 @@ export async function applyDiffAction(formData: FormData): Promise<ApiResponse<{
       selectedFields: JSON.parse(String(formData.get('selectedFields') ?? '[]')),
     })
     const { tournamentId, meId } = await requireImportEditor(parsed.importId)
-    const row = await prisma.csvImportRow.findFirst({
-      where: { importId: parsed.importId, rowIndex: parsed.rowIndex },
+    await withImportReview(parsed.importId, async (tx) => {
+      const row = await tx.csvImportRow.findFirst({
+        where: { importId: parsed.importId, rowIndex: parsed.rowIndex },
+      })
+      if (!row) throw Errors.notFound('Row not found')
+      const marker = encodeDiffDecision(parsed)
+      await tx.csvImportRow.update({
+        where: { id: row.id },
+        data: {
+          status: parsed.mode === 'keep-existing' ? 'SKIPPED' : 'RESUBMISSION',
+          messages: [...row.messages.filter((m) => !m.startsWith('DIFF_DECISION:')), marker],
+        },
+      })
     })
-    if (!row) throw Errors.notFound('Row not found')
-    const marker = `DIFF_DECISION:${parsed.mode}:${parsed.selectedFields.join(',')}`
-    await prisma.csvImportRow.update({
-      where: { id: row.id },
-      data: {
-        status: parsed.mode === 'keep-existing' ? 'SKIPPED' : 'RESUBMISSION',
-        messages: [...row.messages.filter((m) => !m.startsWith('DIFF_DECISION:')), marker],
-      },
-    })
+    invalidateTournamentViews(tournamentId)
     await activityLog.record({
       code: 'DIFF_DECISION_RECORDED',
-      tournamentId, actorId: meId,
-      data: { importId: parsed.importId, rowIndex: parsed.rowIndex, mode: parsed.mode, fields: parsed.selectedFields },
+      tournamentId,
+      actorId: meId,
+      data: {
+        importId: parsed.importId,
+        rowIndex: parsed.rowIndex,
+        mode: parsed.mode,
+        fields: parsed.selectedFields,
+      },
     })
     return { ok: true, data: { rowIndex: parsed.rowIndex } }
   } catch (e) {

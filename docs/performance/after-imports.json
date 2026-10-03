@@ -1,0 +1,1207 @@
+{
+  "label": "after",
+  "environment": "local PostgreSQL; public Server Action; real transaction; verified Auth SDK adapter; no artificial query delay",
+  "repetitions": 20,
+  "samples": [
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 0,
+      "previewMs": 5.646375000000006,
+      "previewSqlCount": 4,
+      "finalizeMs": 55.793375,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 7
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 1,
+      "previewMs": 2.600666999999987,
+      "previewSqlCount": 5,
+      "finalizeMs": 30.035166000000004,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 4
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 2,
+      "previewMs": 1.7203340000000367,
+      "previewSqlCount": 5,
+      "finalizeMs": 32.67554100000001,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 4
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 3,
+      "previewMs": 1.718667000000039,
+      "previewSqlCount": 5,
+      "finalizeMs": 32.098374999999976,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 4
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 4,
+      "previewMs": 1.5521669999999972,
+      "previewSqlCount": 5,
+      "finalizeMs": 32.606750000000034,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 4
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 5,
+      "previewMs": 1.8419580000000337,
+      "previewSqlCount": 5,
+      "finalizeMs": 37.81904099999997,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 6
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 6,
+      "previewMs": 1.703125,
+      "previewSqlCount": 5,
+      "finalizeMs": 32.47837500000003,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 4
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 7,
+      "previewMs": 1.6486249999999245,
+      "previewSqlCount": 5,
+      "finalizeMs": 39.311874999999986,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 7
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 8,
+      "previewMs": 1.854208999999969,
+      "previewSqlCount": 5,
+      "finalizeMs": 47.277624999999944,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 7
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 9,
+      "previewMs": 1.6473340000000007,
+      "previewSqlCount": 5,
+      "finalizeMs": 32.62662499999999,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 4
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 10,
+      "previewMs": 2.390875000000051,
+      "previewSqlCount": 5,
+      "finalizeMs": 51.49154199999998,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 10
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 11,
+      "previewMs": 2.6650840000000926,
+      "previewSqlCount": 5,
+      "finalizeMs": 38.75800000000004,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 5
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 12,
+      "previewMs": 2.6894999999999527,
+      "previewSqlCount": 5,
+      "finalizeMs": 35.51645899999994,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 4
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 13,
+      "previewMs": 1.9439170000000559,
+      "previewSqlCount": 5,
+      "finalizeMs": 65.15141699999992,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 16
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 14,
+      "previewMs": 8.07083399999999,
+      "previewSqlCount": 5,
+      "finalizeMs": 44.96808299999998,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 6
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 15,
+      "previewMs": 2.972541999999976,
+      "previewSqlCount": 5,
+      "finalizeMs": 95.56095799999991,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 32
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 16,
+      "previewMs": 2.646541999999954,
+      "previewSqlCount": 5,
+      "finalizeMs": 77.54199999999992,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 19
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 17,
+      "previewMs": 4.365040999999792,
+      "previewSqlCount": 5,
+      "finalizeMs": 91.23983399999997,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 30
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 18,
+      "previewMs": 2.1690000000000964,
+      "previewSqlCount": 5,
+      "finalizeMs": 89.11837500000001,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 20
+    },
+    {
+      "size": 50,
+      "names": "repeated",
+      "index": 19,
+      "previewMs": 4.863542000000052,
+      "previewSqlCount": 5,
+      "finalizeMs": 58.75579199999993,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 12
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 0,
+      "previewMs": 11.70637499999998,
+      "previewSqlCount": 5,
+      "finalizeMs": 79.25358400000005,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 26
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 1,
+      "previewMs": 5.742291999999907,
+      "previewSqlCount": 5,
+      "finalizeMs": 64.65991599999984,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 12
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 2,
+      "previewMs": 4.551332999999886,
+      "previewSqlCount": 5,
+      "finalizeMs": 67.55054100000007,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 15
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 3,
+      "previewMs": 4.271875000000136,
+      "previewSqlCount": 5,
+      "finalizeMs": 44.462957999999844,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 6
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 4,
+      "previewMs": 4.585624999999936,
+      "previewSqlCount": 5,
+      "finalizeMs": 49.71216699999991,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 9
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 5,
+      "previewMs": 3.762207999999873,
+      "previewSqlCount": 5,
+      "finalizeMs": 49.36870799999997,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 7
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 6,
+      "previewMs": 4.22483299999999,
+      "previewSqlCount": 5,
+      "finalizeMs": 63.685208999999986,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 14
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 7,
+      "previewMs": 4.422666999999819,
+      "previewSqlCount": 5,
+      "finalizeMs": 416.60879099999966,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 213
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 8,
+      "previewMs": 16.33462499999996,
+      "previewSqlCount": 5,
+      "finalizeMs": 78.53095899999971,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 27
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 9,
+      "previewMs": 118.052459,
+      "previewSqlCount": 5,
+      "finalizeMs": 393.9285829999999,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 250
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 10,
+      "previewMs": 8.402541000000383,
+      "previewSqlCount": 5,
+      "finalizeMs": 61.57458299999962,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 13
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 11,
+      "previewMs": 5.857666999999765,
+      "previewSqlCount": 5,
+      "finalizeMs": 60.268540999999914,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 16
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 12,
+      "previewMs": 4.700792000000092,
+      "previewSqlCount": 5,
+      "finalizeMs": 62.347667,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 14
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 13,
+      "previewMs": 5.634625000000142,
+      "previewSqlCount": 5,
+      "finalizeMs": 67.64254200000005,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 11
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 14,
+      "previewMs": 6.182458000000224,
+      "previewSqlCount": 5,
+      "finalizeMs": 56.56670800000029,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 13
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 15,
+      "previewMs": 4.919875000000047,
+      "previewSqlCount": 5,
+      "finalizeMs": 64.03079200000002,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 14
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 16,
+      "previewMs": 5.939249999999902,
+      "previewSqlCount": 5,
+      "finalizeMs": 44.93595800000003,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 7
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 17,
+      "previewMs": 3.8961249999997563,
+      "previewSqlCount": 5,
+      "finalizeMs": 47.68537500000002,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 8
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 18,
+      "previewMs": 3.9962500000001455,
+      "previewSqlCount": 5,
+      "finalizeMs": 54.27270899999985,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 7
+    },
+    {
+      "size": 50,
+      "names": "distinct",
+      "index": 19,
+      "previewMs": 4.28125,
+      "previewSqlCount": 5,
+      "finalizeMs": 44.60962500000005,
+      "finalizeSqlCount": 29,
+      "sqlDurationMs": 6
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 0,
+      "previewMs": 8.4770410000001,
+      "previewSqlCount": 6,
+      "finalizeMs": 72.57808299999988,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 19
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 1,
+      "previewMs": 12.840624999999818,
+      "previewSqlCount": 6,
+      "finalizeMs": 75.19937500000015,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 18
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 2,
+      "previewMs": 8.186208000000079,
+      "previewSqlCount": 6,
+      "finalizeMs": 50.49766699999964,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 9
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 3,
+      "previewMs": 8.661083999999391,
+      "previewSqlCount": 6,
+      "finalizeMs": 42.56745800000044,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 9
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 4,
+      "previewMs": 8.047749999999724,
+      "previewSqlCount": 6,
+      "finalizeMs": 50.94383400000061,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 12
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 5,
+      "previewMs": 7.994125000000167,
+      "previewSqlCount": 6,
+      "finalizeMs": 51.561000000000604,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 10
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 6,
+      "previewMs": 7.717290999999932,
+      "previewSqlCount": 6,
+      "finalizeMs": 44.617583000000195,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 10
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 7,
+      "previewMs": 8.110125000000153,
+      "previewSqlCount": 6,
+      "finalizeMs": 48.957042,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 9
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 8,
+      "previewMs": 8.110125000000153,
+      "previewSqlCount": 6,
+      "finalizeMs": 45.850790999999845,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 10
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 9,
+      "previewMs": 8.134874999999738,
+      "previewSqlCount": 6,
+      "finalizeMs": 54.45991700000013,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 11
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 10,
+      "previewMs": 7.994542000000365,
+      "previewSqlCount": 6,
+      "finalizeMs": 54.584915999999794,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 14
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 11,
+      "previewMs": 8.102458000000297,
+      "previewSqlCount": 6,
+      "finalizeMs": 41.836083000000144,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 8
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 12,
+      "previewMs": 7.80579200000011,
+      "previewSqlCount": 6,
+      "finalizeMs": 42.7455829999999,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 9
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 13,
+      "previewMs": 7.554500000000189,
+      "previewSqlCount": 6,
+      "finalizeMs": 50.43145800000002,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 10
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 14,
+      "previewMs": 9.384750000000167,
+      "previewSqlCount": 6,
+      "finalizeMs": 49.46033400000033,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 11
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 15,
+      "previewMs": 8.361791999999696,
+      "previewSqlCount": 6,
+      "finalizeMs": 51.41816699999981,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 12
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 16,
+      "previewMs": 7.924291999999696,
+      "previewSqlCount": 6,
+      "finalizeMs": 49.84495799999968,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 10
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 17,
+      "previewMs": 8.096833999999944,
+      "previewSqlCount": 6,
+      "finalizeMs": 47.881250000000364,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 14
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 18,
+      "previewMs": 8.31958300000042,
+      "previewSqlCount": 6,
+      "finalizeMs": 52.979041999999936,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 13
+    },
+    {
+      "size": 500,
+      "names": "repeated",
+      "index": 19,
+      "previewMs": 8.477499999999964,
+      "previewSqlCount": 6,
+      "finalizeMs": 51.31258400000024,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 11
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 0,
+      "previewMs": 46.203207999999904,
+      "previewSqlCount": 6,
+      "finalizeMs": 139.8457499999995,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 42
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 1,
+      "previewMs": 44.00495899999987,
+      "previewSqlCount": 6,
+      "finalizeMs": 151.40241699999933,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 49
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 2,
+      "previewMs": 48.995583000000806,
+      "previewSqlCount": 6,
+      "finalizeMs": 137.23358300000018,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 45
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 3,
+      "previewMs": 31.933583,
+      "previewSqlCount": 6,
+      "finalizeMs": 126.65800000000036,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 38
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 4,
+      "previewMs": 31.50995899999998,
+      "previewSqlCount": 6,
+      "finalizeMs": 173.4041669999997,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 54
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 5,
+      "previewMs": 72.34104200000002,
+      "previewSqlCount": 6,
+      "finalizeMs": 253.14658299999974,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 96
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 6,
+      "previewMs": 131.2940410000001,
+      "previewSqlCount": 6,
+      "finalizeMs": 215.81012499999997,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 74
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 7,
+      "previewMs": 38.39249999999993,
+      "previewSqlCount": 6,
+      "finalizeMs": 135.81075000000055,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 41
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 8,
+      "previewMs": 42.59291699999994,
+      "previewSqlCount": 6,
+      "finalizeMs": 147.15079200000037,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 54
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 9,
+      "previewMs": 30.60095899999942,
+      "previewSqlCount": 6,
+      "finalizeMs": 118.92937499999971,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 37
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 10,
+      "previewMs": 33.23804100000052,
+      "previewSqlCount": 6,
+      "finalizeMs": 117.12312500000007,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 34
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 11,
+      "previewMs": 34.66454199999862,
+      "previewSqlCount": 6,
+      "finalizeMs": 133.82679199999984,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 46
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 12,
+      "previewMs": 31.86791699999958,
+      "previewSqlCount": 6,
+      "finalizeMs": 141.8396249999987,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 55
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 13,
+      "previewMs": 38.31166699999994,
+      "previewSqlCount": 6,
+      "finalizeMs": 118.67612499999996,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 36
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 14,
+      "previewMs": 36.01554100000067,
+      "previewSqlCount": 6,
+      "finalizeMs": 210.89687500000036,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 76
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 15,
+      "previewMs": 77.31820799999878,
+      "previewSqlCount": 6,
+      "finalizeMs": 269.4029160000009,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 88
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 16,
+      "previewMs": 101.30295800000022,
+      "previewSqlCount": 6,
+      "finalizeMs": 125.53754200000003,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 38
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 17,
+      "previewMs": 34.05708300000151,
+      "previewSqlCount": 6,
+      "finalizeMs": 105.60625000000073,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 33
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 18,
+      "previewMs": 29.38929199999984,
+      "previewSqlCount": 6,
+      "finalizeMs": 98.47645900000134,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 28
+    },
+    {
+      "size": 500,
+      "names": "distinct",
+      "index": 19,
+      "previewMs": 28.360208000000057,
+      "previewSqlCount": 6,
+      "finalizeMs": 117.56900000000132,
+      "finalizeSqlCount": 30,
+      "sqlDurationMs": 47
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 0,
+      "previewMs": 13.845666000001074,
+      "previewSqlCount": 7,
+      "finalizeMs": 49.940457999999126,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 11
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 1,
+      "previewMs": 13.573667000000569,
+      "previewSqlCount": 7,
+      "finalizeMs": 48.39979200000016,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 11
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 2,
+      "previewMs": 13.905833000000712,
+      "previewSqlCount": 7,
+      "finalizeMs": 50.705667000000176,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 14
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 3,
+      "previewMs": 13.675000000001091,
+      "previewSqlCount": 7,
+      "finalizeMs": 49.692291999999725,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 12
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 4,
+      "previewMs": 13.699666999998954,
+      "previewSqlCount": 7,
+      "finalizeMs": 51.65029200000026,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 16
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 5,
+      "previewMs": 16.24262500000077,
+      "previewSqlCount": 7,
+      "finalizeMs": 49.78325000000041,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 12
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 6,
+      "previewMs": 13.750291000000288,
+      "previewSqlCount": 7,
+      "finalizeMs": 49.4632500000007,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 12
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 7,
+      "previewMs": 14.047500000000582,
+      "previewSqlCount": 7,
+      "finalizeMs": 52.652333,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 15
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 8,
+      "previewMs": 13.601667000000816,
+      "previewSqlCount": 7,
+      "finalizeMs": 50.34995899999922,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 14
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 9,
+      "previewMs": 13.647374999998647,
+      "previewSqlCount": 7,
+      "finalizeMs": 54.273833000001105,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 13
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 10,
+      "previewMs": 13.549124999999549,
+      "previewSqlCount": 7,
+      "finalizeMs": 50.564791000000696,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 16
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 11,
+      "previewMs": 13.664624999999432,
+      "previewSqlCount": 7,
+      "finalizeMs": 50.73250000000007,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 14
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 12,
+      "previewMs": 14.037749999999505,
+      "previewSqlCount": 7,
+      "finalizeMs": 49.840916999999536,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 14
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 13,
+      "previewMs": 13.628000000000611,
+      "previewSqlCount": 7,
+      "finalizeMs": 50.61720800000148,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 13
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 14,
+      "previewMs": 13.600749999999607,
+      "previewSqlCount": 7,
+      "finalizeMs": 51.80833299999904,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 15
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 15,
+      "previewMs": 13.686125000000175,
+      "previewSqlCount": 7,
+      "finalizeMs": 50.072000000000116,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 13
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 16,
+      "previewMs": 13.609749999999622,
+      "previewSqlCount": 7,
+      "finalizeMs": 52.26916600000004,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 15
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 17,
+      "previewMs": 14.502042000000074,
+      "previewSqlCount": 7,
+      "finalizeMs": 51.53662500000064,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 15
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 18,
+      "previewMs": 13.650583000000552,
+      "previewSqlCount": 7,
+      "finalizeMs": 49.5123339999991,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 13
+    },
+    {
+      "size": 1000,
+      "names": "repeated",
+      "index": 19,
+      "previewMs": 14.025666999999885,
+      "previewSqlCount": 7,
+      "finalizeMs": 49.98091700000077,
+      "finalizeSqlCount": 32,
+      "sqlDurationMs": 15
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 0,
+      "previewMs": 59.48966599999949,
+      "previewSqlCount": 7,
+      "finalizeMs": 175.33479100000113,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 60
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 1,
+      "previewMs": 58.83691700000054,
+      "previewSqlCount": 10,
+      "finalizeMs": 192.46049999999923,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 76
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 2,
+      "previewMs": 56.737583000000086,
+      "previewSqlCount": 7,
+      "finalizeMs": 170.38979199999994,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 54
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 3,
+      "previewMs": 57.49204099999952,
+      "previewSqlCount": 7,
+      "finalizeMs": 172.29391699999906,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 54
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 4,
+      "previewMs": 57.055749999999534,
+      "previewSqlCount": 7,
+      "finalizeMs": 190.39958299999853,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 74
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 5,
+      "previewMs": 56.96379099999831,
+      "previewSqlCount": 7,
+      "finalizeMs": 176.8200829999987,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 58
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 6,
+      "previewMs": 56.77954200000022,
+      "previewSqlCount": 7,
+      "finalizeMs": 182.31233399999837,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 64
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 7,
+      "previewMs": 57.463041999999405,
+      "previewSqlCount": 7,
+      "finalizeMs": 181.52458399999887,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 62
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 8,
+      "previewMs": 57.38508300000103,
+      "previewSqlCount": 7,
+      "finalizeMs": 177.40208300000086,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 58
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 9,
+      "previewMs": 57.42283300000054,
+      "previewSqlCount": 7,
+      "finalizeMs": 177.4696249999979,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 58
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 10,
+      "previewMs": 56.63325000000259,
+      "previewSqlCount": 7,
+      "finalizeMs": 174.32716699999946,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 58
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 11,
+      "previewMs": 57.989667000001646,
+      "previewSqlCount": 7,
+      "finalizeMs": 189.31858300000022,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 71
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 12,
+      "previewMs": 56.78208299999824,
+      "previewSqlCount": 7,
+      "finalizeMs": 173.9778750000005,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 56
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 13,
+      "previewMs": 57.66583299999911,
+      "previewSqlCount": 7,
+      "finalizeMs": 173.59516599999915,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 57
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 14,
+      "previewMs": 56.60029099999883,
+      "previewSqlCount": 7,
+      "finalizeMs": 188.82400000000052,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 74
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 15,
+      "previewMs": 57.976332999998704,
+      "previewSqlCount": 7,
+      "finalizeMs": 175.4067920000016,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 57
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 16,
+      "previewMs": 57.188874999999825,
+      "previewSqlCount": 7,
+      "finalizeMs": 192.15245900000082,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 78
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 17,
+      "previewMs": 57.3403330000001,
+      "previewSqlCount": 7,
+      "finalizeMs": 186.6710839999978,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 69
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 18,
+      "previewMs": 57.25133300000016,
+      "previewSqlCount": 7,
+      "finalizeMs": 188.8101659999993,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 71
+    },
+    {
+      "size": 1000,
+      "names": "distinct",
+      "index": 19,
+      "previewMs": 56.793791000000056,
+      "previewSqlCount": 7,
+      "finalizeMs": 183.73354199999812,
+      "finalizeSqlCount": 36,
+      "sqlDurationMs": 68
+    }
+  ]
+}

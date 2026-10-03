@@ -1,20 +1,24 @@
 import Link from 'next/link'
 import { Upload } from 'lucide-react'
 import { requireTournamentDirector } from '@/features/tournaments/permissions'
-import { getAdjudicatorsForTournament } from '@/features/adjudicators/queries'
+import { getAdjudicatorPage } from '@/features/adjudicators/queries/page'
+import { PageNavigation } from '@/components/ui/page-navigation'
+import type { SearchParams } from '@/lib/pagination'
 import { AdjudicatorList } from '@/features/adjudicators/components/adjudicator-list'
 import { PageHeader } from '@/components/ui/page-header'
 
 export default async function AdjudicatorsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ tournamentId: string }>
+  searchParams: Promise<SearchParams>
 }) {
   const { tournamentId } = await params
   await requireTournamentDirector(tournamentId)
-  const adjudicators = await getAdjudicatorsForTournament(tournamentId)
-  const active = adjudicators.filter((a) => a.status !== 'WITHDRAWN').length
-  const withdrawn = adjudicators.length - active
+  const search = await searchParams
+  const data = await getAdjudicatorPage({ tournamentId }, search)
+  const { rows: adjudicators, active, withdrawn } = data
 
   return (
     <div className="space-y-6">
@@ -47,7 +51,29 @@ export default async function AdjudicatorsPage({
         }
       />
 
+      <form className="flex items-center gap-2" method="get">
+        <label htmlFor="status">Status</label>
+        <select
+          id="status"
+          name="status"
+          defaultValue={typeof search.status === 'string' ? search.status : ''}
+          className="rounded border p-2"
+        >
+          <option value="">All</option>
+          <option value="ACTIVE">Active</option>
+          <option value="WITHDRAWN">Withdrawn</option>
+        </select>
+        <button type="submit" className="underline">
+          Filter
+        </button>
+      </form>
       <AdjudicatorList adjudicators={adjudicators} />
+      <PageNavigation
+        pathname={`/tournaments/${tournamentId}/adjudicators`}
+        params={search}
+        paging={data.paging}
+        total={data.total}
+      />
     </div>
   )
 }

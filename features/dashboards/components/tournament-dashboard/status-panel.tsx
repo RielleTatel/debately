@@ -1,4 +1,4 @@
-import { getRegistrationAnalytics } from '@/features/analytics/services/registration'
+import { getRegistrationSummary } from '@/features/analytics/services/registration'
 import { StatusIndicators } from '@/features/dashboards/components/status-indicators'
 
 export async function StatusPanel({
@@ -8,7 +8,7 @@ export async function StatusPanel({
   tournamentId: string
   tournament: { status: string; registrationOpen: boolean }
 }) {
-  const registration = await getRegistrationAnalytics(tournamentId)
+  const registration = await getRegistrationSummary(tournamentId)
   return (
     <StatusIndicators
       tournament={tournament}

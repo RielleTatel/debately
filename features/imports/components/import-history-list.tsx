@@ -1,11 +1,12 @@
-'use client'
-
 import Link from 'next/link'
+import { formatDateTimeUTC } from '@/lib/dates'
 import { Badge } from '@/components/ui/badge'
 import { ROUTES } from '@/lib/constants'
 import type { CsvImport } from '@prisma/client'
 
-type Item = CsvImport & { uploaderName: string | null }
+type Item = Pick<CsvImport, 'id' | 'phaseLabel' | 'status' | 'createdAt'> & {
+  uploaderName: string | null
+}
 
 const STATUS_LABEL: Record<CsvImport['status'], string> = {
   STAGING: 'Staging',
@@ -18,8 +19,12 @@ const linkClasses =
   'inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
 
 export function ImportHistoryList({
-  tournamentId, imports,
-}: { tournamentId: string; imports: Item[] }) {
+  tournamentId,
+  imports,
+}: {
+  tournamentId: string
+  imports: Item[]
+}) {
   if (imports.length === 0) {
     return (
       <div className="rounded-lg border p-8 text-center">
@@ -43,7 +48,7 @@ export function ImportHistoryList({
               <Badge variant="outline">{STATUS_LABEL[imp.status]}</Badge>
             </div>
             <p className="text-xs text-muted-foreground">
-              Uploaded {new Date(imp.createdAt).toLocaleString()} by {imp.uploaderName ?? 'Unknown'}
+              Uploaded {formatDateTimeUTC(imp.createdAt)} by {imp.uploaderName ?? 'Unknown'}
             </p>
           </div>
           <div className="flex gap-2">

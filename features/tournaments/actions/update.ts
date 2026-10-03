@@ -1,7 +1,11 @@
 'use server'
+import { invalidateTournamentViews } from '@/features/tournaments/services/invalidate-views'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { prisma } from '@/lib/prisma'
-import { requireTournamentDirector, assertTournamentEditable } from '@/features/tournaments/permissions'
+import {
+  requireTournamentDirector,
+  assertTournamentEditable,
+} from '@/features/tournaments/permissions'
 import { notifyIfSensitiveChanged } from '@/features/tournaments/services'
 import { TOURNAMENT_TAG } from '@/features/tournaments/queries/tournaments'
 import {
@@ -17,12 +21,15 @@ import { err, ok, type ActionResult } from '@/types/api'
 import { isAppError } from '@/lib/errors'
 
 function revalidate(id: string) {
+  invalidateTournamentViews(id)
   revalidatePath(`/tournaments/${id}`)
   revalidatePath(`/tournaments/${id}/settings`)
   revalidateTag(TOURNAMENT_TAG(id))
 }
 
-export async function updateTournamentBasicAction(fd: FormData): Promise<ActionResult<{ slug: string }>> {
+export async function updateTournamentBasicAction(
+  fd: FormData,
+): Promise<ActionResult<{ slug: string }>> {
   const tournamentId = String(fd.get('tournamentId') ?? '')
   if (!tournamentId) return err('Missing tournament id', 'VALIDATION_ERROR')
   const parsed = updateTournamentBasicSchema.safeParse({
@@ -41,18 +48,22 @@ export async function updateTournamentBasicAction(fd: FormData): Promise<ActionR
     const { name, slug, description, venue, address, startDate, endDate } = parsed.data
     if (slug !== tournament.slug) {
       assertSlugAllowed(slug)
-      const conflict = await prisma.tournament.findFirst({ where: { orgId: org.id, slug, NOT: { id: tournamentId } } })
-      if (conflict) return err('A tournament with this slug already exists in this organization.', 'CONFLICT')
+      const conflict = await prisma.tournament.findFirst({
+        where: { orgId: org.id, slug, NOT: { id: tournamentId } },
+      })
+      if (conflict)
+        return err('A tournament with this slug already exists in this organization.', 'CONFLICT')
     }
     const next = await prisma.tournament.update({
       where: { id: tournamentId },
       data: { name, slug, description: description || null, venue, address, startDate, endDate },
     })
-    await notifyIfSensitiveChanged(tournament, next)
     revalidate(tournamentId)
+    await notifyIfSensitiveChanged(tournament, next)
     return ok({ slug: next.slug })
   } catch (e) {
-    if (isAppError(e)) return err(e.message, e.code); throw e
+    if (isAppError(e)) return err(e.message, e.code)
+    throw e
   }
 }
 
@@ -80,17 +91,24 @@ export async function updateRegistrationSettingsAction(fd: FormData): Promise<Ac
         registrationDeadline: parsed.data.registrationDeadline,
       },
     })
-    await notifyIfSensitiveChanged(tournament, next)
     revalidate(tournamentId)
+    await notifyIfSensitiveChanged(tournament, next)
     return ok(undefined)
-  } catch (e) { if (isAppError(e)) return err(e.message, e.code); throw e }
+  } catch (e) {
+    if (isAppError(e)) return err(e.message, e.code)
+    throw e
+  }
 }
 
 export async function updateFinanceSettingsAction(fd: FormData): Promise<ActionResult<void>> {
   const tournamentId = String(fd.get('tournamentId') ?? '')
   if (!tournamentId) return err('Missing tournament id', 'VALIDATION_ERROR')
   let feeStructureJson: unknown
-  try { feeStructureJson = JSON.parse(String(fd.get('feeStructure') ?? '{}')) } catch { return err('Invalid feeStructure JSON', 'VALIDATION_ERROR') }
+  try {
+    feeStructureJson = JSON.parse(String(fd.get('feeStructure') ?? '{}'))
+  } catch {
+    return err('Invalid feeStructure JSON', 'VALIDATION_ERROR')
+  }
   const parsed = updateFinanceSettingsSchema.safeParse({
     currency: fd.get('currency'),
     feeStructure: feeStructureJson,
@@ -108,10 +126,13 @@ export async function updateFinanceSettingsAction(fd: FormData): Promise<ActionR
         paymentDeadline: parsed.data.paymentDeadline ?? null,
       },
     })
-    await notifyIfSensitiveChanged(tournament, next)
     revalidate(tournamentId)
+    await notifyIfSensitiveChanged(tournament, next)
     return ok(undefined)
-  } catch (e) { if (isAppError(e)) return err(e.message, e.code); throw e }
+  } catch (e) {
+    if (isAppError(e)) return err(e.message, e.code)
+    throw e
+  }
 }
 
 export async function updatePortalSettingsAction(fd: FormData): Promise<ActionResult<void>> {
@@ -130,7 +151,10 @@ export async function updatePortalSettingsAction(fd: FormData): Promise<ActionRe
     })
     revalidate(tournamentId)
     return ok(undefined)
-  } catch (e) { if (isAppError(e)) return err(e.message, e.code); throw e }
+  } catch (e) {
+    if (isAppError(e)) return err(e.message, e.code)
+    throw e
+  }
 }
 
 export async function updateJudgeRuleAction(fd: FormData): Promise<ActionResult<void>> {
@@ -153,14 +177,21 @@ export async function updateJudgeRuleAction(fd: FormData): Promise<ActionResult<
     })
     revalidate(tournamentId)
     return ok(undefined)
-  } catch (e) { if (isAppError(e)) return err(e.message, e.code); throw e }
+  } catch (e) {
+    if (isAppError(e)) return err(e.message, e.code)
+    throw e
+  }
 }
 
 export async function updateFormatSettingsAction(fd: FormData): Promise<ActionResult<void>> {
   const tournamentId = String(fd.get('tournamentId') ?? '')
   if (!tournamentId) return err('Missing tournament id', 'VALIDATION_ERROR')
   let formatConfigJson: unknown
-  try { formatConfigJson = JSON.parse(String(fd.get('formatConfig') ?? '{}')) } catch { return err('Invalid formatConfig JSON', 'VALIDATION_ERROR') }
+  try {
+    formatConfigJson = JSON.parse(String(fd.get('formatConfig') ?? '{}'))
+  } catch {
+    return err('Invalid formatConfig JSON', 'VALIDATION_ERROR')
+  }
   const parsed = updateFormatSettingsSchema.safeParse({
     format: fd.get('format'),
     formatConfig: formatConfigJson,
@@ -175,5 +206,8 @@ export async function updateFormatSettingsAction(fd: FormData): Promise<ActionRe
     })
     revalidate(tournamentId)
     return ok(undefined)
-  } catch (e) { if (isAppError(e)) return err(e.message, e.code); throw e }
+  } catch (e) {
+    if (isAppError(e)) return err(e.message, e.code)
+    throw e
+  }
 }

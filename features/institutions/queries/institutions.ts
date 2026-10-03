@@ -1,7 +1,9 @@
 import { prisma } from '@/lib/prisma'
 import type { TournamentInstitution } from '@prisma/client'
 
-export async function getInstitutionsForTournament(tournamentId: string): Promise<TournamentInstitution[]> {
+export async function getInstitutionsForTournament(
+  tournamentId: string,
+): Promise<TournamentInstitution[]> {
   return prisma.tournamentInstitution.findMany({
     where: { tournamentId },
     orderBy: { name: 'asc' },
@@ -10,6 +12,13 @@ export async function getInstitutionsForTournament(tournamentId: string): Promis
 
 export async function getInstitutionById(id: string): Promise<TournamentInstitution | null> {
   return prisma.tournamentInstitution.findUnique({ where: { id } })
+}
+
+export async function getInstitutionWithRosterCountsById(id: string) {
+  return prisma.tournamentInstitution.findUnique({
+    where: { id },
+    include: { _count: { select: { teams: true, participants: true, adjudicators: true } } },
+  })
 }
 
 export async function resolveInstitutionByName(

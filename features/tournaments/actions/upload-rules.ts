@@ -1,7 +1,11 @@
 'use server'
+import { invalidateTournamentViews } from '@/features/tournaments/services/invalidate-views'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { prisma } from '@/lib/prisma'
-import { requireTournamentDirector, assertTournamentEditable } from '@/features/tournaments/permissions'
+import {
+  requireTournamentDirector,
+  assertTournamentEditable,
+} from '@/features/tournaments/permissions'
 import { TOURNAMENT_TAG } from '@/features/tournaments/queries/tournaments'
 import { tournamentRulesStorage } from '@/services/storage/tournament-rules'
 import { err, ok, type ActionResult } from '@/types/api'
@@ -12,7 +16,8 @@ export async function uploadRulesPdfAction(fd: FormData): Promise<ActionResult<{
   const file = fd.get('file')
   if (!tournamentId) return err('Missing tournament id', 'VALIDATION_ERROR')
   if (!(file instanceof File)) return err('No file provided', 'VALIDATION_ERROR')
-  const v = tournamentRulesStorage.validate(file); if (!v.ok) return err(v.message, 'VALIDATION_ERROR')
+  const v = tournamentRulesStorage.validate(file)
+  if (!v.ok) return err(v.message, 'VALIDATION_ERROR')
   try {
     const { tournament } = await requireTournamentDirector(tournamentId)
     assertTournamentEditable(tournament)
@@ -20,7 +25,11 @@ export async function uploadRulesPdfAction(fd: FormData): Promise<ActionResult<{
     await prisma.tournament.update({ where: { id: tournament.id }, data: { rulesUrl: url } })
     revalidatePath(`/tournaments/${tournamentId}`)
     revalidatePath(`/tournaments/${tournamentId}/settings`)
+    invalidateTournamentViews(tournamentId)
     revalidateTag(TOURNAMENT_TAG(tournamentId))
     return ok({ url })
-  } catch (e) { if (isAppError(e)) return err(e.message, e.code); throw e }
+  } catch (e) {
+    if (isAppError(e)) return err(e.message, e.code)
+    throw e
+  }
 }

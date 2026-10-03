@@ -1,10 +1,14 @@
 import { headers } from 'next/headers'
 import { requireTournamentDirector } from '@/features/tournaments/permissions'
-import { getInstitutionById } from '@/features/institutions/queries'
+import { getInstitutionWithRosterCountsById } from '@/features/institutions/queries'
 import { getPortalTokenByInstitution } from '@/features/portal/queries'
-import { getTeamsForInstitution } from '@/features/teams/queries'
-import { getParticipantsForInstitution } from '@/features/participants/queries'
-import { getAdjudicatorsForInstitution } from '@/features/adjudicators/queries'
+import { getTeamPage } from '@/features/teams/queries/page'
+import { PageNavigation } from '@/components/ui/page-navigation'
+import { pageRowCount, readPage, type SearchParams } from '@/lib/pagination'
+import { RosterSkeleton } from '@/components/ui/roster-skeleton'
+import { Suspense } from 'react'
+import { getParticipantPage } from '@/features/participants/queries/page'
+import { getAdjudicatorPage } from '@/features/adjudicators/queries/page'
 import { prisma } from '@/lib/prisma'
 import { PortalControlsPanel } from '@/features/portal/components/portal-controls-panel'
 import { TeamList } from '@/features/teams/components/team-list'
@@ -14,32 +18,22 @@ import { notFound } from 'next/navigation'
 
 export default async function InstitutionDetailPage({
   params,
-}: { params: Promise<{ tournamentId: string; institutionId: string }> }) {
+  searchParams,
+}: {
+  params: Promise<{ tournamentId: string; institutionId: string }>
+  searchParams: Promise<SearchParams>
+}) {
   const { tournamentId, institutionId } = await params
   await requireTournamentDirector(tournamentId)
-  const institution = await getInstitutionById(institutionId)
-  if (!institution) notFound()
+  const institution = await getInstitutionWithRosterCountsById(institutionId)
+  if (!institution || institution.tournamentId !== tournamentId) notFound()
+  const search = await searchParams
 
-  const [token, claim, teams, participants, adjudicators, headersList] = await Promise.all([
+  const [token, claim, headersList] = await Promise.all([
     getPortalTokenByInstitution(institutionId),
     prisma.institutionClaim.findUnique({ where: { tournamentInstitutionId: institutionId } }),
-    getTeamsForInstitution(institutionId),
-    getParticipantsForInstitution(institutionId),
-    getAdjudicatorsForInstitution(institutionId),
     headers(),
   ])
-  const flags = await prisma.teamValidationFlag.findMany({
-    where: { teamId: { in: teams.map((t) => t.id) } },
-  })
-  const flagsByTeam = new Map<string, typeof flags>()
-  for (const f of flags) {
-    const arr = flagsByTeam.get(f.teamId) ?? []
-    arr.push(f); flagsByTeam.set(f.teamId, arr)
-  }
-  const participantCountByTeam = new Map<string, number>()
-  for (const p of participants) {
-    if (p.teamId) participantCountByTeam.set(p.teamId, (participantCountByTeam.get(p.teamId) ?? 0) + 1)
-  }
   const proto = headersList.get('x-forwarded-proto') ?? 'http'
   const host = headersList.get('host') ?? 'localhost:3000'
   const appOrigin = `${proto}://${host}`
@@ -51,9 +45,15 @@ export default async function InstitutionDetailPage({
         <p className="text-sm text-muted-foreground">Director controls</p>
       </div>
 
-      {(institution.teamsIntended != null || institution.adjudicatorsIntended != null || institution.contactName || institution.contactEmail || institution.contactPhone) && (
+      {(institution.teamsIntended != null ||
+        institution.adjudicatorsIntended != null ||
+        institution.contactName ||
+        institution.contactEmail ||
+        institution.contactPhone) && (
         <div className="rounded-lg border border-border bg-card px-5 py-4 shadow-xs">
-          <h2 className="mb-3 text-[13px] font-semibold uppercase tracking-wide text-muted-foreground">Registration details</h2>
+          <h2 className="mb-3 text-[13px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Registration details
+          </h2>
           <dl className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm sm:grid-cols-3">
             {institution.teamsIntended != null && (
               <>
@@ -76,7 +76,14 @@ export default async function InstitutionDetailPage({
             {institution.contactEmail && (
               <>
                 <dt className="text-muted-foreground">Email</dt>
-                <dd><a href={`mailto:${institution.contactEmail}`} className="font-medium text-primary hover:underline">{institution.contactEmail}</a></dd>
+                <dd>
+                  <a
+                    href={`mailto:${institution.contactEmail}`}
+                    className="font-medium text-primary hover:underline"
+                  >
+                    {institution.contactEmail}
+                  </a>
+                </dd>
               </>
             )}
             {institution.contactPhone && (
@@ -95,18 +102,84 @@ export default async function InstitutionDetailPage({
         claim={claim}
         appOrigin={appOrigin}
       />
-      <section className="space-y-2">
-        <h2 className="text-lg font-medium">Teams</h2>
-        <TeamList teams={teams.map((t) => ({ ...t, validationFlags: flagsByTeam.get(t.id) ?? [], participantCount: participantCountByTeam.get(t.id) ?? 0 }))} />
-      </section>
-      <section className="space-y-2">
-        <h2 className="text-lg font-medium">Participants</h2>
-        <ParticipantList participants={participants} />
-      </section>
-      <section className="space-y-2">
-        <h2 className="text-lg font-medium">Adjudicators</h2>
-        <AdjudicatorList adjudicators={adjudicators.map((a) => ({ ...a, institution }))} />
-      </section>
+      {(['teams', 'participants', 'adjudicators'] as const).map((kind) => (
+        <section key={kind} className="space-y-2">
+          <h2 className="text-lg font-medium capitalize">{kind}</h2>
+          <Suspense
+            fallback={
+              <RosterSkeleton
+                kind={kind}
+                rows={pageRowCount(
+                  institution._count[kind],
+                  readPage({
+                    page: search[`${kind}Page`],
+                    pageSize: search[`${kind}PageSize`],
+                  }),
+                )}
+              />
+            }
+          >
+            <Roster
+              kind={kind}
+              institutionId={institutionId}
+              tournamentId={tournamentId}
+              search={search}
+            />
+          </Suspense>
+        </section>
+      ))}
+    </div>
+  )
+}
+
+async function Roster({
+  kind,
+  institutionId,
+  tournamentId,
+  search,
+}: {
+  kind: 'teams' | 'participants' | 'adjudicators'
+  institutionId: string
+  tournamentId: string
+  search: SearchParams
+}) {
+  const params = { ...search, page: search[`${kind}Page`], pageSize: search[`${kind}PageSize`] }
+  const pathname = `/tournaments/${tournamentId}/institutions/${institutionId}`
+  const navigation = (data: { total: number; paging: import('@/lib/pagination').PageInput }) => (
+    <PageNavigation
+      pathname={pathname}
+      params={search}
+      paging={data.paging}
+      total={data.total}
+      pageKey={`${kind}Page`}
+      pageSizeKey={`${kind}PageSize`}
+    />
+  )
+  if (kind === 'teams') {
+    const data = await getTeamPage({ institutionId }, params)
+    return (
+      <div className="space-y-2">
+        <TeamList
+          teams={data.rows.map((t) => ({ ...t, participantCount: t._count.participants }))}
+        />
+        {navigation(data)}
+      </div>
+    )
+  }
+  if (kind === 'participants') {
+    const data = await getParticipantPage(institutionId, params)
+    return (
+      <div className="space-y-2">
+        <ParticipantList participants={data.rows} />
+        {navigation(data)}
+      </div>
+    )
+  }
+  const data = await getAdjudicatorPage({ institutionId }, params)
+  return (
+    <div className="space-y-2">
+      <AdjudicatorList adjudicators={data.rows} />
+      {navigation(data)}
     </div>
   )
 }

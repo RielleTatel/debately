@@ -1,4 +1,5 @@
 'use server'
+import { invalidateTournamentViews } from '@/features/tournaments/services/invalidate-views'
 
 import { prisma } from '@/lib/prisma'
 import { toApi } from '@/lib/errors'
@@ -30,10 +31,15 @@ export async function updateAdjudicatorAction(
         availabilityNotes: parsed.availabilityNotes ?? undefined,
       },
     })
+    invalidateTournamentViews(ctx.tournament.id, ctx.institution ? [ctx.institution.id] : [])
     await activityLog.record({
-      code: 'ADJUDICATOR_UPDATED', tournamentId: ctx.tournament.id, actorId: ctx.meId,
+      code: 'ADJUDICATOR_UPDATED',
+      tournamentId: ctx.tournament.id,
+      actorId: ctx.meId,
       data: { adjudicatorId: ctx.adjudicator.id, mode: ctx.mode },
     })
     return { ok: true, data: { adjudicatorId: ctx.adjudicator.id } }
-  } catch (e) { return toApi(e) }
+  } catch (e) {
+    return toApi(e)
+  }
 }

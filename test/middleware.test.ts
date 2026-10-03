@@ -6,13 +6,21 @@ vi.mock('@supabase/ssr', () => ({
   createServerClient: () => ({ auth: { getUser } }),
 }))
 
-beforeEach(() => { getUser.mockReset() })
+beforeEach(() => {
+  getUser.mockReset()
+})
 
 function req(path: string) {
   return new NextRequest(new URL(`http://localhost${path}`))
 }
 
 describe('middleware', () => {
+  it('serves a public tournament when the authentication service is unavailable', async () => {
+    getUser.mockRejectedValue(new Error('Authentication unavailable'))
+    const { middleware } = await import('@/middleware')
+    const res = await middleware(req('/t/open-tournament'))
+    expect(res.headers.get('location')).toBeNull()
+  })
   it('redirects unauthenticated /dashboard to /login', async () => {
     getUser.mockResolvedValue({ data: { user: null } })
     const { middleware } = await import('@/middleware')
