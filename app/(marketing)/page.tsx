@@ -1,41 +1,99 @@
 import Link from 'next/link'
-import {
-  ArrowRight,
-  Bell,
-  CheckCircle2,
-  ClipboardCheck,
-  FileSpreadsheet,
-  Github,
-  Heart,
-  History,
-  Link2,
-  MessageSquareText,
-  Receipt,
-  Server,
-  Sparkles,
-  Wallet,
-  XCircle,
-} from 'lucide-react'
+import { ArrowRight, ArrowUpRight, Github } from 'lucide-react'
+import { GITHUB_REPOSITORY_URL } from '@/components/marketing/urls'
 
-// TODO: replace with the real GitHub URL once the repo is public.
-const GITHUB_URL = '#'
-import { Button } from '@/components/ui/button'
-import { DashboardPreview } from '@/components/marketing/bracket-preview'
-import { MappingPreview } from '@/components/marketing/logo-marks'
-import { PortalPreview } from '@/components/marketing/portal-preview'
+const workflow = [
+  {
+    number: '01',
+    title: 'Register',
+  },
+  {
+    number: '02',
+    title: 'Coordinate',
+  },
+  {
+    number: '03',
+    title: 'Reconcile',
+  },
+  {
+    number: '04',
+    title: 'Keep a record',
+  },
+]
+
+const features = [
+  {
+    index: '01',
+    title: 'Registration imports',
+    description:
+      'Map CSV columns to tournament fields, review the imported data, and save mappings for future uploads.',
+  },
+  {
+    index: '02',
+    title: 'Institution portals',
+    description:
+      'Give each school a private place to verify rosters, upload receipts and send requests.',
+  },
+  {
+    index: '03',
+    title: 'Finance tracking',
+    description:
+      'Keep invoices, receipt review and outstanding balances together for the organizing team.',
+  },
+  {
+    index: '04',
+    title: 'Requests and activity',
+    description:
+      'Review roster changes and eligibility questions, then trace updates in the activity log.',
+  },
+]
+
+const importActions = [
+  {
+    number: '01',
+    title: 'Map',
+    description: 'Match the headers in your file to the fields Debately uses.',
+  },
+  {
+    number: '02',
+    title: 'Review',
+    description: 'Check the incoming information before applying the changes.',
+  },
+  {
+    number: '03',
+    title: 'Reuse',
+    description: 'Save a mapping template for the next registration phase.',
+  },
+]
+
+const portalTasks = [
+  'Check and update team rosters',
+  'Upload receipts for review',
+  'Send changes and eligibility requests',
+  'Read tournament announcements',
+]
+
+const debatelyHandles = [
+  'Registration and institution details',
+  'Receipts, balances and requests',
+  'Announcements and activity records',
+]
+
+const tabSoftwareHandles = [
+  'Pairings and bracket generation',
+  'Ballot entry and speaker scoring',
+  'Judge allocation and motion release',
+]
 
 export default function MarketingHomePage() {
   return (
     <>
       <Hero />
-      <ProblemBand />
-      <FeatureBento />
-      <ImportDeepDive />
-      <PortalDeepDive />
-      <TabbycatBand />
-      <HowItWorks />
-      <Testimonial />
-      <OpenSource />
+      <FeatureOverview />
+      <ImportSection />
+      <InstitutionSection />
+      <TabbycatBoundary />
+      <RepositorySection />
       <FinalCTA />
     </>
   )
@@ -43,124 +101,148 @@ export default function MarketingHomePage() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden border-b border-slate-200 bg-white">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          backgroundImage:
-            'radial-gradient(circle at 15% 0%, rgba(29,78,216,0.08), transparent 45%), radial-gradient(circle at 85% 30%, rgba(29,78,216,0.05), transparent 55%)',
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.35]"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(15,23,42,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,0.06) 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-          maskImage:
-            'radial-gradient(ellipse at top, black 30%, transparent 70%)',
-        }}
-      />
+    <section className="bg-[#e9ebee] px-3 pb-3 pt-1 sm:px-5 sm:pb-5">
+      <div className="relative mx-auto min-h-[640px] max-w-[1520px] overflow-hidden rounded-[1.75rem] border border-slate-200 bg-[#fcfcfb] shadow-sm sm:min-h-[700px] xl:min-h-[calc(100svh-7.5rem)]">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-60"
+          style={{
+            backgroundImage:
+              'radial-gradient(circle, rgba(100,116,139,0.2) 0.8px, transparent 0.9px)',
+            backgroundSize: '17px 17px',
+            maskImage:
+              'radial-gradient(ellipse at center, black 48%, transparent 100%)',
+          }}
+        />
 
-      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-16 px-6 pt-20 pb-24 lg:grid-cols-12 lg:gap-12 lg:px-8">
-        <div className="lg:col-span-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-800">
-            <Sparkles className="h-3.5 w-3.5" strokeWidth={2} />
-            Free and open source · MIT licensed
-          </div>
-
-          <h1 className="mt-6 text-4xl font-semibold tracking-tight text-slate-900 md:text-5xl lg:text-6xl lg:leading-[1.05]">
-            The administrative backbone for debate tournaments.
+        <div className="relative z-10 mx-auto flex min-h-[640px] max-w-5xl flex-col items-center justify-center px-6 py-24 text-center sm:min-h-[700px] sm:px-10 xl:min-h-[calc(100svh-7.5rem)]">
+          <p className="mb-6 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600">
+            <span aria-hidden="true" className="h-2 w-2 rounded-full bg-blue-600" />
+            Tournament administration
+          </p>
+          <h1 className="max-w-5xl text-balance text-[2.75rem] font-semibold leading-[0.98] tracking-[-0.065em] text-slate-950 sm:text-6xl lg:text-[5.4rem]">
+            Tournament work,
+            <span className="block text-slate-400">one clear place.</span>
           </h1>
-
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
-            Registration, institution portals, finance, and audit trails in one
-            place — free to use, free to self-host, built in the open so the
-            debate community owns it.
+          <p className="mt-7 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
+            Registration, institution updates, receipts and approvals in one
+            workflow for the team behind the tournament.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link href="/register">
-              <Button
-                size="lg"
-                className="h-12 bg-blue-700 px-6 text-[15px] text-white hover:bg-blue-800"
-              >
-                Get started free
-                <ArrowRight className="ml-2 h-4 w-4" strokeWidth={2.25} />
-              </Button>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/register"
+              className="inline-flex h-12 items-center justify-center gap-1.5 whitespace-nowrap rounded-md bg-blue-600 px-6 text-[15px] font-medium tracking-tight text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
+            >
+              Get started
+              <ArrowRight className="ml-1 h-4 w-4" strokeWidth={2.25} />
             </Link>
-            <Link href={GITHUB_URL} target="_blank" rel="noreferrer">
-              <Button
-                variant="ghost"
-                size="lg"
-                className="h-12 px-5 text-[15px] text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-              >
-                <Github className="mr-2 h-4 w-4" strokeWidth={2} />
-                Star on GitHub
-              </Button>
+            <Link
+              href={GITHUB_REPOSITORY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-12 items-center gap-2 rounded-md px-4 text-sm font-medium text-slate-700 transition-colors hover:bg-white/80 hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
+            >
+              <Github className="h-4 w-4" strokeWidth={2} />
+              Explore the repository
+              <ArrowUpRight className="h-3.5 w-3.5 text-slate-400" />
             </Link>
           </div>
+
+          <ol
+            id="how-it-works"
+            className="mt-9 scroll-mt-32 flex flex-wrap justify-center gap-x-5 gap-y-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500 sm:gap-x-7 sm:text-[11px]"
+          >
+            {workflow.map((item) => (
+              <li key={item.number} className="flex items-center gap-2">
+                <span className="font-mono text-blue-700">{item.number}</span>
+                {item.title}
+              </li>
+            ))}
+          </ol>
         </div>
 
-        <div className="relative lg:col-span-6">
-          <div
-            aria-hidden
-            className="absolute -inset-6 -z-10 rounded-3xl bg-gradient-to-tr from-blue-100/60 via-transparent to-transparent blur-2xl"
-          />
-          <DashboardPreview />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 hidden lg:block">
+          <div className="absolute left-[5%] top-[9%] w-56 -rotate-3 rounded-sm bg-[#fff0a8] px-5 pb-5 pt-6 shadow-[0_12px_28px_rgba(15,23,42,0.10)]">
+            <span className="absolute -top-2 left-1/2 h-4 w-4 -translate-x-1/2 rounded-full border-2 border-white bg-rose-500 shadow-sm" />
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-amber-900/70">
+              Field note
+            </p>
+            <p className="mt-3 text-[17px] font-medium italic leading-6 tracking-tight text-slate-800">
+              Keep the details out of a dozen different places.
+            </p>
+          </div>
+
+          <div className="absolute right-[5%] top-[11%] w-52 rotate-3 rounded-xl border border-slate-200 bg-white/95 p-5 shadow-[0_14px_34px_rgba(15,23,42,0.10)]">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-500">
+              On the organizer&apos;s list
+            </p>
+            <div className="mt-4 space-y-3 text-sm font-medium text-slate-800">
+              <p className="border-b border-slate-100 pb-2">Roster checks</p>
+              <p className="border-b border-slate-100 pb-2">Receipt review</p>
+              <p>Requests and approvals</p>
+            </div>
+          </div>
+
+          <div className="absolute bottom-[8%] left-[7%] w-56 rotate-2 rounded-xl border border-slate-200 bg-white/95 p-5 shadow-[0_14px_34px_rgba(15,23,42,0.10)]">
+            <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-blue-700">
+              Registration files
+            </p>
+            <p className="mt-3 text-3xl font-semibold tracking-[-0.06em] text-slate-900">
+              CSV
+            </p>
+            <p className="mt-1 text-xs leading-5 text-slate-500">
+              Map&nbsp;&nbsp;·&nbsp;&nbsp;Review&nbsp;&nbsp;·&nbsp;&nbsp;Reuse
+            </p>
+          </div>
+
+          <div className="absolute bottom-[9%] right-[6%] w-56 -rotate-2 rounded-sm bg-[#e6efff] p-5 shadow-[0_12px_28px_rgba(15,23,42,0.09)]">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-blue-700">
+              Keep the work connected
+            </p>
+            <p className="mt-3 text-lg font-medium leading-6 tracking-tight text-slate-800">
+              Changes, decisions and records in view.
+            </p>
+          </div>
         </div>
       </div>
     </section>
   )
 }
 
-function ProblemBand() {
-  const items = [
-    {
-      title: 'Registration in Google Sheets',
-      body: 'Freeform names, duplicate institutions, no validation. Data quality collapses by Phase 2.',
-    },
-    {
-      title: 'Receipts in email threads',
-      body: 'Screenshots buried in inboxes, no reconciliation, no way to prove who approved what.',
-    },
-    {
-      title: 'Announcements in WhatsApp',
-      body: 'Messages missed, requests untracked, and no audit trail when disputes surface.',
-    },
-  ]
-
+function FeatureOverview() {
   return (
-    <section className="border-b border-slate-200 bg-slate-50">
-      <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-        <div className="max-w-2xl">
-          <h2 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-            Tournament ops shouldn&rsquo;t live in ten different tools.
+    <section id="features" className="scroll-mt-24 border-b border-slate-200 bg-white">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-6 py-20 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20 lg:px-8 lg:py-24">
+        <div className="max-w-md">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-blue-700">
+            The organizing layer
+          </p>
+          <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.04em] text-slate-950 sm:text-4xl">
+            The work around the rounds deserves a system of its own.
           </h2>
-          <p className="mt-4 text-slate-600">
-            Most directors juggle Google Forms, spreadsheets, email, and group
-            chats. Debately replaces that with one auditable workflow.
+          <p className="mt-5 leading-7 text-slate-600">
+            Bring the details organizers handle before, between and after
+            rounds into a shared place.
           </p>
         </div>
 
-        <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
-          {items.map((item) => (
-            <div
-              key={item.title}
-              className="rounded-xl border border-slate-200 bg-white p-6"
+        <div className="divide-y divide-slate-200 border-y border-slate-200">
+          {features.map((feature) => (
+            <article
+              key={feature.index}
+              className="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-x-4 py-6 sm:grid-cols-[3rem_minmax(10rem,0.8fr)_1.2fr] sm:gap-x-5 sm:py-7"
             >
-              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-slate-100 text-slate-500">
-                <XCircle className="h-4 w-4" strokeWidth={2} />
-              </div>
-              <h3 className="mt-4 text-base font-semibold tracking-tight text-slate-900">
-                {item.title}
+              <span className="pt-1 font-mono text-xs text-blue-700">
+                {feature.index}
+              </span>
+              <h3 className="text-lg font-medium tracking-tight text-slate-900">
+                {feature.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                {item.body}
+              <p className="col-start-2 mt-2 text-sm leading-6 text-slate-600 sm:col-start-auto sm:mt-0">
+                {feature.description}
               </p>
-            </div>
+            </article>
           ))}
         </div>
       </div>
@@ -168,320 +250,39 @@ function ProblemBand() {
   )
 }
 
-function FeatureBento() {
+function ImportSection() {
   return (
-    <section className="border-b border-slate-200 bg-white">
-      <div className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-medium uppercase tracking-widest text-blue-700">
-            The platform
-          </p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-            Everything the tab room already needed.
-          </h2>
-          <p className="mt-4 text-slate-600">
-            Purpose-built for organizers running British Parliamentary, Asian
-            Parliamentary, World Schools, and custom formats.
-          </p>
-        </div>
-
-        <div className="mt-16 grid grid-cols-1 gap-4 md:grid-cols-6">
-          <FeatureCard
-            className="md:col-span-4"
-            icon={<FileSpreadsheet className="h-5 w-5" />}
-            title="CSV import with column mapping"
-            body="Upload any Google Form export. Map columns to system fields, save the mapping as a reusable template, and finalize when the summary looks right."
-            preview={
-              <div className="mt-6 flex flex-wrap gap-1.5">
-                {[
-                  'Phase 1 · Intent',
-                  'Phase 2 · Registration',
-                  'Phase 3 · Corrections',
-                  'Repeating groups',
-                  'Fuzzy institution match',
-                ].map((chip) => (
-                  <span
-                    key={chip}
-                    className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] text-slate-600"
-                  >
-                    {chip}
-                  </span>
-                ))}
-              </div>
-            }
-          />
-          <FeatureCard
-            className="md:col-span-2"
-            icon={<Link2 className="h-5 w-5" />}
-            title="Institution portals"
-            body="Every school gets a private, tokenized URL. They claim it, manage rosters, and upload receipts."
-          />
-
-          <FeatureCard
-            className="md:col-span-2"
-            icon={<Wallet className="h-5 w-5" />}
-            title="Finance tracking"
-            body="Auto-generated invoices, receipt uploads, and outstanding balance reconciliation — without a payment gateway."
-          />
-          <FeatureCard
-            className="md:col-span-2"
-            icon={<ClipboardCheck className="h-5 w-5" />}
-            title="Requests workflow"
-            body="Every roster change, name correction, and eligibility dispute becomes an auditable, approvable request."
-          />
-          <FeatureCard
-            className="md:col-span-2"
-            icon={<History className="h-5 w-5" />}
-            title="Immutable activity log"
-            body="Every approval, override, and edit is recorded with a before-and-after snapshot. Filterable, exportable, tamper-proof."
-          />
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function FeatureCard({
-  icon,
-  title,
-  body,
-  preview,
-  className = '',
-}: {
-  icon: React.ReactNode
-  title: string
-  body: string
-  preview?: React.ReactNode
-  className?: string
-}) {
-  return (
-    <div
-      className={`group relative flex flex-col rounded-xl border border-slate-200 bg-white p-6 transition-colors hover:border-slate-300 ${className}`}
-    >
-      <div className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
-        {icon}
-      </div>
-      <h3 className="text-[15px] font-semibold tracking-tight text-slate-900">
-        {title}
-      </h3>
-      <p className="mt-2 text-sm leading-relaxed text-slate-600">{body}</p>
-      {preview}
-    </div>
-  )
-}
-
-function ImportDeepDive() {
-  const bullets = [
-    'Save mappings as templates and reuse them across tournaments',
-    'Fuzzy-match institution names so "SPC" and "San Pedro College" merge',
-    'Side-by-side diff review when Phase 3 corrections land',
-  ]
-  return (
-    <section className="border-b border-slate-200 bg-slate-50">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-6 py-24 lg:grid-cols-2 lg:gap-16 lg:px-8">
-        <div>
-          <h2 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-            Import the messy CSV. Keep the clean data.
-          </h2>
-          <p className="mt-4 max-w-lg text-slate-600">
-            Your Google Form headers change every year. Debately parses whatever
-            you upload, lets you map it to system fields, and remembers the
-            mapping so next time is one click.
-          </p>
-          <ul className="mt-8 space-y-3">
-            {bullets.map((b) => (
-              <li key={b} className="flex items-start gap-3">
-                <CheckCircle2
-                  className="mt-0.5 h-5 w-5 shrink-0 text-blue-700"
-                  strokeWidth={2}
-                />
-                <span className="text-sm leading-relaxed text-slate-700">{b}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="relative">
-          <div
-            aria-hidden
-            className="absolute -inset-4 -z-10 rounded-3xl bg-gradient-to-tr from-blue-100/60 via-transparent to-transparent blur-2xl"
-          />
-          <MappingPreview />
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function PortalDeepDive() {
-  return (
-    <section className="border-b border-slate-200 bg-white">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-6 py-24 lg:grid-cols-2 lg:gap-16 lg:px-8">
-        <div className="order-2 lg:order-1">
-          <PortalPreview />
-        </div>
-
-        <div className="order-1 lg:order-2">
-          <h2 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-            One private link per institution.
-          </h2>
-          <p className="mt-4 max-w-lg text-slate-600">
-            Every school you import gets a secure onboarding URL. They claim it,
-            verify their roster, upload receipts, and see announcements &mdash;
-            all scoped to their institution.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-2">
-            {[
-              'Tokenized URLs',
-              'Roster verification',
-              'Receipt uploads',
-              'Targeted announcements',
-              'In-portal requests',
-            ].map((chip) => (
-              <span
-                key={chip}
-                className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-700"
-              >
-                {chip}
-              </span>
-            ))}
+    <section className="border-b border-slate-200 bg-[#f3f6fc]">
+      <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8 lg:py-24">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end lg:gap-16">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-blue-700">
+              Registration data
+            </p>
+            <h2 className="mt-4 max-w-xl text-3xl font-semibold leading-tight tracking-[-0.04em] text-slate-950 sm:text-4xl">
+              Work with the CSV you have.
+            </h2>
           </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function TabbycatBand() {
-  const does = [
-    'Registration & institution portals',
-    'Finance tracking & receipt verification',
-    'Announcements & audit trail',
-    'Requests & approvals',
-    'CSV exports & analytics',
-  ]
-  const doesnt = [
-    'Pairings & bracket generation',
-    'Ballot entry & speaker scoring',
-    'Judge allocation & motion release',
-    'Team rankings',
-  ]
-
-  return (
-    <section
-      id="tabbycat"
-      className="border-b border-slate-200 bg-blue-50/50"
-    >
-      <div className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-            Runs alongside your tab software.
-          </h2>
-          <p className="mt-4 text-slate-600">
-            Debately handles administration &mdash; not adjudication. Keep using
-            Tabbycat (or whatever you tab with) for the rounds themselves.
+          <p className="max-w-2xl text-lg leading-8 text-slate-600">
+            Match incoming columns to tournament fields, check the imported
+            information, and keep a mapping template for the next phase.
           </p>
         </div>
 
-        <div className="mx-auto mt-14 grid max-w-4xl grid-cols-1 gap-6 md:grid-cols-2">
-          <div className="rounded-2xl border border-blue-200 bg-white p-6">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-700 text-white">
-                <CheckCircle2 className="h-4 w-4" strokeWidth={2.25} />
-              </div>
-              <h3 className="text-base font-semibold tracking-tight text-slate-900">
-                What Debately does
-              </h3>
-            </div>
-            <ul className="mt-4 space-y-2.5">
-              {does.map((item) => (
-                <li key={item} className="flex items-start gap-2.5">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-700" />
-                  <span className="text-sm text-slate-700">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-white p-6">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-slate-100 text-slate-500">
-                <XCircle className="h-4 w-4" strokeWidth={2.25} />
-              </div>
-              <h3 className="text-base font-semibold tracking-tight text-slate-900">
-                What stays with Tabbycat
-              </h3>
-            </div>
-            <ul className="mt-4 space-y-2.5">
-              {doesnt.map((item) => (
-                <li key={item} className="flex items-start gap-2.5">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-300" />
-                  <span className="text-sm text-slate-600">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function HowItWorks() {
-  const steps = [
-    {
-      icon: <FileSpreadsheet className="h-5 w-5" />,
-      title: 'Import',
-      body: 'Upload CSVs from every registration phase. Map columns, save the template, review the diff.',
-    },
-    {
-      icon: <Link2 className="h-5 w-5" />,
-      title: 'Portal',
-      body: 'Every imported institution gets a private URL. Share it once, they take it from there.',
-    },
-    {
-      icon: <Receipt className="h-5 w-5" />,
-      title: 'Reconcile',
-      body: 'Approve receipts, resolve requests, and publish announcements from one queue.',
-    },
-    {
-      icon: <Bell className="h-5 w-5" />,
-      title: 'Export',
-      body: 'Analytics, CSV exports, and a filterable activity log ready before the closing ceremony.',
-    },
-  ]
-
-  return (
-    <section
-      id="how-it-works"
-      className="border-b border-slate-200 bg-white"
-    >
-      <div className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
-        <div className="max-w-2xl">
-          <h2 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-            From messy spreadsheets to closing ceremony &mdash; in four beats.
-          </h2>
-        </div>
-
-        <ol className="mt-16 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {steps.map((step, i) => (
+        <ol className="mt-14 grid grid-cols-1 border-y border-slate-300 sm:grid-cols-3">
+          {importActions.map((action, index) => (
             <li
-              key={step.title}
-              className="relative rounded-xl border border-slate-200 bg-white p-6"
+              key={action.number}
+              className={`py-6 sm:py-7 ${index > 0 ? 'border-t border-slate-300 sm:border-l sm:border-t-0 sm:pl-7' : ''} ${index < importActions.length - 1 ? 'sm:pr-7' : ''}`}
             >
-              <div className="flex items-center gap-3">
-                <div className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
-                  {step.icon}
-                </div>
-                <span className="font-mono text-[11px] uppercase tracking-wider text-slate-500">
-                  Step {String(i + 1).padStart(2, '0')}
-                </span>
-              </div>
-              <h3 className="mt-5 text-lg font-semibold tracking-tight text-slate-900">
-                {step.title}
+              <span className="font-mono text-xs text-blue-700">
+                {action.number}
+              </span>
+              <h3 className="mt-5 text-xl font-medium tracking-tight text-slate-900">
+                {action.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                {step.body}
+              <p className="mt-2 max-w-sm text-sm leading-6 text-slate-600">
+                {action.description}
               </p>
             </li>
           ))}
@@ -491,137 +292,116 @@ function HowItWorks() {
   )
 }
 
-function Testimonial() {
+function InstitutionSection() {
   return (
-    <section className="border-b border-slate-200 bg-slate-50">
-      <div className="mx-auto max-w-4xl px-6 py-24 text-center lg:px-8">
-        <MessageSquareText
-          className="mx-auto h-8 w-8 text-blue-700"
-          strokeWidth={1.75}
-        />
-        <figure className="mt-8">
-          <blockquote className="text-2xl font-medium leading-relaxed tracking-tight text-slate-900 md:text-3xl md:leading-[1.35]">
-            &ldquo;Our 42-school invitational used to eat two coaches for a week
-            of pre-tournament ops. This year one of us handled it in an
-            afternoon, and every approval was auditable.&rdquo;
-          </blockquote>
-          <figcaption className="mt-8 flex flex-col items-center gap-1">
-            <span className="text-sm font-medium text-slate-900">
-              Priya Anand
-            </span>
-            <span className="text-sm text-slate-500">
-              Tournament Director, Ateneo Debate Society
-            </span>
-          </figcaption>
-        </figure>
+    <section className="border-b border-slate-200 bg-white">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-6 py-20 lg:grid-cols-[1fr_1fr] lg:gap-24 lg:px-8 lg:py-24">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-blue-700">
+            Institution portals
+          </p>
+          <h2 className="mt-4 max-w-xl text-3xl font-semibold leading-tight tracking-[-0.04em] text-slate-950 sm:text-4xl">
+            One place for each school to keep things up to date.
+          </h2>
+          <p className="mt-5 max-w-lg leading-7 text-slate-600">
+            Give institutions a private portal for the details and follow-up
+            that would otherwise scatter across messages and files.
+          </p>
+        </div>
+
+        <ul className="grid grid-cols-1 content-center divide-y divide-slate-200 border-y border-slate-200 sm:grid-cols-2 sm:divide-y-0">
+          {portalTasks.map((task, index) => (
+            <li
+              key={task}
+              className={`py-5 text-base font-medium leading-6 text-slate-800 ${index % 2 === 1 ? 'sm:border-l sm:border-slate-200 sm:pl-6' : 'sm:pr-6'} ${index > 1 ? 'sm:border-t sm:border-slate-200' : ''}`}
+            >
+              <span className="mb-3 block font-mono text-[11px] text-blue-700">
+                0{index + 1}
+              </span>
+              {task}
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   )
 }
 
-function OpenSource() {
-  const options = [
-    {
-      icon: <Heart className="h-5 w-5" strokeWidth={2} />,
-      name: 'Hosted, free forever',
-      description:
-        'The fastest path. We run the servers, you run tournaments. No card, no seat limits, no upgrade prompts.',
-      features: [
-        'Unlimited tournaments & institutions',
-        'CSV import with saved mapping templates',
-        'Institution portals, finance, and activity log',
-        'Community support on GitHub Discussions',
-      ],
-      cta: { label: 'Get started free', href: '/register', primary: true, external: false },
-    },
-    {
-      icon: <Server className="h-5 w-5" strokeWidth={2} />,
-      name: 'Self-host',
-      description:
-        'Fork the repo and run Debately on your own infrastructure. MIT licensed — use it, modify it, ship it.',
-      features: [
-        'Full source on GitHub, MIT licensed',
-        'Docker Compose for one-command local runs',
-        'Bring your own Supabase / Postgres',
-        'PRs, issues, and roadmap discussion welcome',
-      ],
-      cta: { label: 'View on GitHub', href: GITHUB_URL, primary: false, external: true },
-    },
-  ]
-
+function TabbycatBoundary() {
   return (
-    <section id="open-source" className="border-b border-slate-200 bg-white">
-      <div className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-medium uppercase tracking-widest text-blue-700">
-            Open source
+    <section
+      id="tabbycat"
+      className="scroll-mt-24 border-b border-blue-200 bg-blue-50/70"
+    >
+      <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8 lg:py-24">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-blue-700">
+              A clear division of work
+            </p>
+            <h2 className="mt-4 max-w-lg text-3xl font-semibold leading-tight tracking-[-0.04em] text-slate-950 sm:text-4xl">
+              Administration here. The rounds stay with your tab software.
+            </h2>
+            <p className="mt-5 max-w-lg leading-7 text-slate-600">
+              Debately is designed to sit alongside Tabbycat or the tab system
+              your tournament already uses.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-x-10 gap-y-8 sm:grid-cols-2">
+            <ScopeList title="Debately handles" items={debatelyHandles} />
+            <ScopeList title="Your tab software handles" items={tabSoftwareHandles} />
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function ScopeList({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div className="border-t border-blue-200 pt-4">
+      <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
+      <ul className="mt-4 space-y-3">
+        {items.map((item) => (
+          <li key={item} className="text-sm leading-6 text-slate-700">
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function RepositorySection() {
+  return (
+    <section
+      id="open-source"
+      className="scroll-mt-24 border-b border-slate-200 bg-[#fbfaf8]"
+    >
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-8 px-6 py-16 lg:grid-cols-[1fr_auto] lg:px-8 lg:py-20">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-blue-700">
+            The project
           </p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-            Free to use. Free to fork.
+          <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-[-0.04em] text-slate-950 sm:text-4xl">
+            See how Debately is put together.
           </h2>
-          <p className="mt-4 text-slate-600">
-            Debately is built in the open under the MIT license. Use the hosted
-            version at no cost, or run your own copy on your own infrastructure.
+          <p className="mt-4 max-w-2xl leading-7 text-slate-600">
+            Browse the repository to review the code and follow the project as
+            it develops.
           </p>
         </div>
-
-        <div className="mx-auto mt-16 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2">
-          {options.map((opt) => (
-            <div
-              key={opt.name}
-              className={`relative flex flex-col rounded-2xl border p-6 ${
-                opt.cta.primary
-                  ? 'border-blue-700 bg-gradient-to-b from-blue-50/60 to-white shadow-lg shadow-blue-950/10'
-                  : 'border-slate-200 bg-white'
-              }`}
-            >
-              <div className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
-                {opt.icon}
-              </div>
-              <h3 className="text-lg font-semibold tracking-tight text-slate-900">
-                {opt.name}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                {opt.description}
-              </p>
-              <ul className="mt-6 space-y-2.5">
-                {opt.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2.5">
-                    <CheckCircle2
-                      className="mt-0.5 h-4 w-4 shrink-0 text-blue-700"
-                      strokeWidth={2.25}
-                    />
-                    <span className="text-sm text-slate-700">{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-8">
-                <Link
-                  href={opt.cta.href}
-                  {...(opt.cta.external ? { target: '_blank', rel: 'noreferrer' } : {})}
-                >
-                  <Button
-                    className={`w-full ${
-                      opt.cta.primary
-                        ? 'bg-blue-700 text-white hover:bg-blue-800'
-                        : 'bg-slate-900 text-white hover:bg-slate-800'
-                    }`}
-                  >
-                    {opt.cta.external && (
-                      <Github className="mr-2 h-4 w-4" strokeWidth={2} />
-                    )}
-                    {opt.cta.label}
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <p className="mx-auto mt-12 max-w-xl text-center text-sm text-slate-500">
-          Built by the debate community, for the debate community. Every
-          approval, override, and mapping template is code you can read.
-        </p>
+        <Link
+          href={GITHUB_REPOSITORY_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex h-12 w-fit items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-5 text-sm font-medium text-slate-800 transition-colors hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
+        >
+          <Github className="h-4 w-4" strokeWidth={2} />
+          Visit the repository
+          <ArrowUpRight className="h-3.5 w-3.5 text-slate-400" />
+        </Link>
       </div>
     </section>
   )
@@ -629,44 +409,23 @@ function OpenSource() {
 
 function FinalCTA() {
   return (
-    <section className="relative overflow-hidden bg-slate-50">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          backgroundImage:
-            'radial-gradient(ellipse at 50% 100%, rgba(29,78,216,0.14), transparent 60%)',
-        }}
-      />
-      <div className="mx-auto max-w-4xl px-6 py-24 text-center lg:px-8">
-        <h2 className="text-4xl font-semibold tracking-tight text-slate-900 md:text-5xl">
-          Give your tab room its week back.
-        </h2>
-        <p className="mx-auto mt-4 max-w-xl text-slate-600">
-          Free, open source, and set up in under ten minutes. No card, no seat
-          limits — just software the debate community owns.
-        </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link href="/register">
-            <Button
-              size="lg"
-              className="h-12 bg-blue-700 px-6 text-[15px] text-white hover:bg-blue-800"
-            >
-              Get started free
-              <ArrowRight className="ml-2 h-4 w-4" strokeWidth={2.25} />
-            </Button>
-          </Link>
-          <Link href={GITHUB_URL} target="_blank" rel="noreferrer">
-            <Button
-              variant="ghost"
-              size="lg"
-              className="h-12 px-5 text-[15px] text-slate-700 hover:bg-white hover:text-slate-900"
-            >
-              <Github className="mr-2 h-4 w-4" strokeWidth={2} />
-              Star on GitHub
-            </Button>
-          </Link>
+    <section className="bg-white">
+      <div className="mx-auto flex max-w-7xl flex-col gap-7 px-6 py-20 sm:flex-row sm:items-end sm:justify-between lg:px-8 lg:py-24">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-blue-700">
+            Ready for the next tournament?
+          </p>
+          <h2 className="mt-4 max-w-2xl text-3xl font-semibold leading-tight tracking-[-0.04em] text-slate-950 sm:text-4xl">
+            Give the organizing team a clearer way to work.
+          </h2>
         </div>
+        <Link
+          href="/register"
+          className="inline-flex h-12 w-fit shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-md bg-blue-700 px-6 text-[15px] font-medium tracking-tight text-white transition-colors hover:bg-blue-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
+        >
+          Get started
+          <ArrowRight className="ml-1 h-4 w-4" strokeWidth={2.25} />
+        </Link>
       </div>
     </section>
   )
