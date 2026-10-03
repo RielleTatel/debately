@@ -1,6 +1,10 @@
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
-import { FlatCompat } from '@eslint/eslintrc'
+import { createRequire } from 'node:module'
+
+// Next.js 15's resolver patch needs the CommonJS compatibility entry point.
+const require = createRequire(import.meta.url)
+const { FlatCompat } = require('@eslint/eslintrc')
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
