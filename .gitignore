@@ -28,8 +28,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# markdown docs
+# documentation (keep the root README)
 *.md
+!/README.md
+
+# generated performance reports
+/docs/performance/
 
 # browser test artifacts
 /test-results/
