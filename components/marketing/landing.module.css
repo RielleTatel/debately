@@ -1,0 +1,332 @@
+.content {
+  --paper: #fcfcfb;
+  --canvas: #e9ebee;
+  --ink: #15233b;
+  --blue: #2563eb;
+  --mist: #eef3ff;
+  --green: #16775f;
+  --muted: #5e6b7e;
+  --line: #e1e6ed;
+  color: var(--ink);
+  background: white;
+}
+
+.content section[id] { scroll-margin-top: 112px; }
+.shell { width: min(1200px, calc(100% - 64px)); margin-inline: auto; }
+.section { padding-block: clamp(72px, 7.5vw, 112px); }
+.heading { font-size: clamp(2.15rem, 3.6vw, 3.125rem); font-weight: 550; line-height: 1.1; letter-spacing: -.052em; text-wrap: balance; }
+.description { max-width: 43ch; color: var(--muted); font-size: 17px; line-height: 1.75; }
+.sectionHeader { display: grid; grid-template-columns: 1.05fr 1fr; align-items: end; gap: 96px; }
+.sectionHeader .description { padding-bottom: 3px; }
+.split { display: grid; align-items: center; gap: 80px; }
+.sectionCopy > .description { margin-top: 24px; }
+
+/* A tournament workspace is the organizing spine of the page. */
+.overview { padding-bottom: 88px; }
+.workspaceFigure { margin-top: 44px; }
+.workspaceBackdrop { padding: 24px; border-radius: 24px; background: var(--mist); }
+.workspace { overflow: hidden; border: 1px solid #dce3ef; border-radius: 13px; background: white; box-shadow: 0 12px 32px -16px rgb(21 35 59 / 12%); }
+.workspaceTopbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px; border-bottom: 1px solid var(--line); }
+.tournamentIdentity { display: flex; align-items: center; gap: 12px; }
+.tournamentMark { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 9px; background: var(--ink); color: white; font-size: 19px; font-weight: 550; }
+.tournamentIdentity p { font-size: 14px; font-weight: 600; letter-spacing: -.025em; }
+.tournamentIdentity > div > span { color: var(--muted); font-size: 12px; }
+.registrationStatus { display: flex; align-items: center; gap: 7px; color: var(--green); font-size: 12px; font-weight: 500; }
+.registrationStatus > span { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+.workspaceBody { display: flex; min-height: 375px; }
+.workspaceSidebar { display: flex; flex: 0 0 185px; flex-direction: column; justify-content: space-between; padding: 24px 14px 22px; border-right: 1px solid var(--line); background: #fafbfc; }
+.workspaceTabs { display: grid; gap: 5px; }
+.workspaceTab { display: flex; align-items: center; gap: 10px; min-height: 42px; padding: 10px 12px; border-radius: 7px; color: var(--muted); text-align: left; font-size: 13px; cursor: pointer; }
+.workspaceTab:hover { background: #f0f3f7; color: var(--ink); }
+.workspaceTab[aria-selected="true"] { background: #e8efff; color: #2456bf; font-weight: 550; }
+.requestCount { display: grid; width: 20px; height: 20px; margin-left: auto; place-items: center; border-radius: 5px; background: white; color: var(--muted); font-size: 11px; }
+.sidebarNote { padding: 20px 12px 0; color: #65768a; }
+.sidebarNote p { margin-top: 8px; font-size: 11px; line-height: 1.6; }
+.workspacePanel { flex: 1; min-width: 0; padding: 28px 28px 18px; }
+.workspacePanel[hidden] { display: none; }
+.workspaceStats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding-bottom: 25px; }
+.workspaceStats dt { color: var(--muted); font-size: 12px; }
+.workspaceStats dd { margin-top: 5px; font-size: clamp(23px, 2.3vw, 30px); font-weight: 550; line-height: 1.25; letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
+.workspaceStats p { margin-top: 3px; color: var(--muted); font-size: 11px; }
+.tableTitle { display: flex; align-items: center; justify-content: space-between; padding-block: 16px 12px; border-top: 1px solid var(--line); }
+.tableTitle h3 { font-size: 13px; font-weight: 600; }
+.tableTitle > span { color: var(--muted); font-size: 11px; }
+.tableScroll { overflow-x: auto; scrollbar-width: thin; }
+.workspaceTable { width: 100%; border-collapse: collapse; white-space: nowrap; text-align: left; font-size: 12px; }
+.workspaceTable thead th { padding: 9px 12px; background: #f6f8fa; color: var(--muted); font-size: 11px; font-weight: 500; }
+.workspaceTable thead th:first-child { border-radius: 5px 0 0 5px; }
+.workspaceTable thead th:last-child { border-radius: 0 5px 5px 0; }
+.workspaceTable tbody th, .workspaceTable td { padding: 14px 12px; border-bottom: 1px solid #edf0f4; font-weight: 400; }
+.workspaceTable tbody th { font-weight: 500; }
+.workspaceTable tbody tr:last-child th, .workspaceTable tbody tr:last-child td { border-bottom: 0; }
+.status { display: inline-flex; align-items: center; padding: 3px 7px; border-radius: 4px; font-size: 10px; font-weight: 500; line-height: 1.5; white-space: nowrap; }
+.status_green { background: #eaf5ef; color: #167052; }
+.status_blue { background: #edf2ff; color: #2c58ae; }
+.status_amber { background: #fff4df; color: #906315; }
+.status_slate { background: #f0f2f5; color: #5b6678; }
+.tableNote { margin-top: 9px; color: var(--muted); font-size: 10px; }
+.caption { display: flex; justify-content: space-between; gap: 20px; padding: 16px 4px 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+.caption > span { flex-shrink: 0; color: #6c7787; }
+.capabilities { display: grid; grid-template-columns: repeat(4, 1fr); gap: 36px; margin-top: 42px; }
+.capability > svg { color: #46669b; }
+.capability h3 { margin-top: 14px; font-size: 14px; font-weight: 550; letter-spacing: -.025em; }
+.capability p { max-width: 28ch; margin-top: 8px; color: var(--muted); font-size: 13px; line-height: 1.8; }
+
+/* Column mapping makes the registration workflow concrete. */
+.importSection { border-top: 1px solid #edf0f4; background: var(--paper); }
+.importSplit { grid-template-columns: 1.1fr 1fr; }
+.importFigure { padding: 48px 32px 24px; border-radius: 24px; background: #edf1f8; }
+.importDemo { max-width: 500px; margin-inline: auto; }
+.importFile { display: flex; align-items: center; gap: 12px; padding: 0 4px 26px; }
+.fileIcon { display: grid; width: 44px; height: 50px; flex-shrink: 0; place-items: center; border: 1px solid #bcd8cc; border-radius: 6px; background: #f6fcf9; color: var(--green); }
+.importFile p { font-size: 15px; font-weight: 550; letter-spacing: -.025em; }
+.importFile > div > span { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; }
+.fileExtension { margin-left: auto; color: #64748b; font-size: 10px; font-weight: 500; }
+.mappingSheet { overflow: hidden; border: 1px solid #dce3ee; border-radius: 12px; background: white; box-shadow: 0 10px 28px -18px rgb(21 35 59 / 18%); }
+.mappingHeader { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding: 15px 20px; border-bottom: 1px solid var(--line); background: #f9fafc; color: var(--muted); font-size: 11px; }
+.mappingRow { display: grid; grid-template-columns: minmax(0, 1fr) 16px minmax(0, 1fr); align-items: center; gap: 14px; padding: 24px 20px; border-bottom: 1px solid #edf0f4; }
+.mappingRow > svg { color: #91a0b5; }
+.mappingRow p { font-size: 13px; font-weight: 500; }
+.mappingRow > div > span { display: block; margin-top: 5px; color: var(--muted); font-size: 10px; }
+.mappingSelect { position: relative; min-width: 0; }
+.mappingSelect select { width: 100%; height: 38px; padding: 0 28px 0 10px; appearance: none; border: 1px solid #d8dfeb; border-radius: 6px; background: white; color: var(--ink); font-family: inherit; font-size: 11px; cursor: pointer; }
+.mappingSelect select:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+.mappingSelect > svg { position: absolute; top: 12px; right: 9px; pointer-events: none; color: #627087; }
+.mappingResult { display: flex; align-items: center; gap: 8px; min-height: 52px; padding: 15px 20px; color: #64748b; font-size: 11px; }
+.mappingComplete { color: var(--green); }
+.readyLabel { margin-left: auto; font-size: 10px; }
+.mappingReuse { display: flex; align-items: center; gap: 12px; padding: 24px 4px 4px; }
+.mappingReuse > svg { flex-shrink: 0; color: #5b7199; }
+.mappingReuse p { font-size: 12px; font-weight: 500; }
+.mappingReuse span { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; line-height: 1.6; }
+.demoCaption { margin-top: 20px; color: var(--muted); text-align: center; font-size: 11px; line-height: 1.65; }
+.steps { display: grid; gap: 25px; margin-top: 34px; }
+.steps li { display: flex; align-items: flex-start; gap: 15px; }
+.stepNumber { display: grid; width: 29px; height: 29px; flex-shrink: 0; place-items: center; border: 1px solid #dbe4f6; border-radius: 50%; color: #3867bd; font-size: 12px; }
+.steps h3 { margin-top: 3px; font-size: 14px; font-weight: 550; letter-spacing: -.015em; }
+.steps p { max-width: 38ch; margin-top: 6px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+
+/* The institution's view complements the organizer's view. */
+.institutionSection { border-top: 1px solid #edf0f4; }
+.portalSplit { grid-template-columns: 1fr 1.1fr; }
+.taskList { display: grid; gap: 18px; margin-top: 32px; font-size: 14px; }
+.taskList li { display: flex; align-items: center; gap: 11px; }
+.taskList svg { flex-shrink: 0; color: var(--green); }
+.portalNote { display: flex; align-items: flex-start; gap: 12px; max-width: 350px; margin-top: 32px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--muted); }
+.portalNote svg { flex-shrink: 0; margin-top: 1px; }
+.portalNote p { font-size: 12px; line-height: 1.7; }
+.portalFigure { padding: 32px 32px 20px; border-radius: 24px; background: #edf2f2; }
+.institutionDemo { overflow: hidden; border: 1px solid #dce5e5; border-radius: 13px; background: white; box-shadow: 0 12px 32px -22px rgb(21 35 59 / 20%); }
+.portalTopbar { display: flex; align-items: center; gap: 7px; padding: 14px 20px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 10px; }
+.portalTopbar > span:last-child { margin-left: auto; }
+.portalMain { padding: 25px 24px 22px; }
+.schoolIdentity { display: flex; align-items: center; gap: 12px; }
+.schoolMark { display: grid; width: 42px; height: 48px; flex-shrink: 0; place-items: center; border-radius: 5px 5px 15px 15px; background: #214d52; color: white; font-size: 21px; font-weight: 500; }
+.schoolIdentity h3 { font-size: 14px; font-weight: 550; letter-spacing: -.03em; }
+.schoolIdentity p { margin-top: 4px; color: var(--muted); font-size: 11px; }
+.schoolVerified { flex-shrink: 0; margin-left: auto; color: var(--green); }
+.delegationStats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 27px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.delegationStats dt { color: var(--muted); font-size: 11px; }
+.delegationStats dd { margin-top: 5px; font-size: 26px; font-weight: 500; line-height: 1.2; letter-spacing: -.04em; }
+.portalRoster { margin-top: 20px; }
+.portalRosterHeading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.portalRosterHeading h4 { font-size: 12px; font-weight: 550; }
+.portalRoster ul { display: grid; margin-top: 9px; }
+.portalRoster li { display: flex; align-items: center; gap: 10px; padding-block: 14px; border-bottom: 1px solid #edf0f4; }
+.teamMark { display: grid; width: 28px; height: 28px; flex-shrink: 0; place-items: center; border-radius: 5px; background: #f1f4f6; color: #55697c; font-size: 11px; font-weight: 500; }
+.portalRoster li p { font-size: 12px; font-weight: 500; }
+.portalRoster li > div > span { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; line-height: 1.6; }
+.portalRoster li > svg { flex-shrink: 0; margin-left: auto; color: var(--green); }
+.portalReceipt { display: flex; align-items: center; gap: 10px; margin-top: 20px; padding: 14px 12px; border-radius: 7px; background: #f6f8fb; }
+.portalReceipt > svg { flex-shrink: 0; color: #6580a0; }
+.portalReceipt p { font-size: 11px; font-weight: 500; }
+.portalReceipt > div > span { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
+.portalReceipt > span { flex-shrink: 0; margin-left: auto; font-size: 12px; font-weight: 550; font-variant-numeric: tabular-nums; }
+.portalAnnouncement { display: flex; align-items: flex-start; gap: 9px; padding: 14px 20px; border-top: 1px solid var(--line); background: #fbfcfd; color: var(--muted); }
+.portalAnnouncement svg { flex-shrink: 0; color: #68839c; }
+.portalAnnouncement p { font-size: 10px; line-height: 1.6; }
+
+/* Give each system a clear, parallel role. */
+.tabSection { padding-top: 80px; background: var(--paper); }
+.tabHeading { max-width: 800px; margin-inline: auto; text-align: center; }
+.tabHeading .description { max-width: 58ch; margin: 24px auto 0; }
+.scopeBoard { display: grid; grid-template-columns: 1fr 76px 1fr; margin-top: 46px; padding: 40px 48px; border: 1px solid #e1e6ed; border-radius: 20px; background: white; }
+.scopeColumn { min-width: 0; }
+.scopeColumn:last-child { padding-left: 22px; }
+.scopeTitle { display: flex; align-items: center; gap: 14px; }
+.scopeTitle h3 { font-size: 20px; font-weight: 550; letter-spacing: -.035em; }
+.scopeTitle p { margin-top: 3px; color: var(--muted); font-size: 12px; }
+.scopeList { display: grid; gap: 19px; margin-top: 28px; }
+.scopeList li { display: flex; align-items: flex-start; gap: 11px; color: #4f5e72; font-size: 13px; line-height: 1.6; }
+.scopeList svg { width: 17px; height: 17px; flex-shrink: 0; margin-top: 2px; color: #7186a6; stroke-width: 1.6; }
+.scopeColumn:last-child .scopeList svg { color: #81919e; }
+.scopeConnection { display: flex; align-items: center; justify-content: center; }
+.scopeConnection > span { display: grid; width: 36px; height: 36px; place-items: center; border: 1px solid #e2e7ef; border-radius: 50%; background: #f9fafc; color: #758396; font-size: 22px; font-weight: 300; }
+.roundsMark { display: grid; width: 36px; height: 36px; flex-shrink: 0; grid-template-columns: repeat(2, 10px); align-content: center; justify-content: center; gap: 4px; border: 1px solid #dce2e9; border-radius: 9px; background: #f6f8fb; }
+.roundsMark span { width: 10px; height: 6px; border: 1px solid #8797ab; border-radius: 2px; }
+.scopeFootnote { margin-top: 20px; color: var(--muted); text-align: center; font-size: 12px; }
+
+.repositorySection { padding-block: 48px; border-top: 1px solid #edf0f4; }
+.repositoryRow { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
+.repositoryCopy { display: flex; align-items: center; gap: 22px; }
+.repositoryCopy > svg { flex-shrink: 0; color: #53627a; }
+.repositoryCopy h2 { font-size: 21px; font-weight: 550; letter-spacing: -.035em; }
+.repositoryCopy p { max-width: 55ch; margin-top: 7px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+.repositoryLink { display: inline-flex; flex-shrink: 0; align-items: center; gap: 8px; padding: 10px 0; color: #2b579f; font-size: 13px; font-weight: 500; text-underline-offset: 5px; }
+.repositoryLink:hover { text-decoration: underline; }
+.ctaSection { padding: 0 0 64px; }
+.ctaPanel { display: flex; align-items: center; justify-content: space-between; gap: 48px; padding: 64px 72px; border-radius: 24px; background: var(--blue); color: white; }
+.ctaCopy h2 { font-size: clamp(2rem, 3.7vw, 3.2rem); font-weight: 500; line-height: 1.1; letter-spacing: -.052em; }
+.ctaCopy p { max-width: 40ch; margin-top: 22px; color: #e0eaff; font-size: 15px; line-height: 1.7; }
+.ctaActions { display: flex; flex: 0 0 175px; flex-direction: column; align-items: center; gap: 16px; }
+.ctaButton { display: flex; width: 100%; min-height: 48px; align-items: center; justify-content: center; border-radius: 7px; background: white; color: #245ac7; font-size: 14px; font-weight: 600; }
+.ctaButton:hover { background: #edf3ff; }
+.ctaContact { padding: 3px 8px; color: white; font-size: 13px; text-underline-offset: 5px; }
+.ctaContact:hover { text-decoration: underline; }
+.content :is(a, button, [tabindex]):focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
+.ctaPanel a:focus-visible { outline-color: white; }
+
+@media (min-width: 1440px) {
+  .heading { font-size: 52px; }
+}
+
+@media (max-width: 1100px) {
+  .split { gap: 48px; }
+  .sectionHeader { gap: 64px; }
+  .workspaceSidebar { flex-basis: 164px; }
+  .workspacePanel { padding-inline: 20px; }
+  .importFigure, .portalFigure { padding-inline: 24px; }
+  .mappingRow { gap: 10px; padding-inline: 16px; }
+  .mappingRow > div > span { font-size: 9px; }
+  .scopeBoard { padding-inline: 36px; }
+  .ctaPanel { padding-inline: 48px; }
+}
+
+@media (max-width: 900px) {
+  .sectionHeader { grid-template-columns: 1fr; gap: 24px; }
+  .sectionHeader .description { max-width: 52ch; }
+  .workspaceBackdrop { padding: 16px; }
+  .capabilities { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+  .capability p { max-width: 35ch; }
+  .split { grid-template-columns: 1fr; gap: 40px; }
+  .sectionCopy { max-width: 600px; }
+  .sectionCopy > .description { max-width: 52ch; }
+  .importSplit .sectionCopy { grid-row: 1; }
+  .importFigure { padding: 40px 40px 24px; }
+  .importDemo { max-width: 560px; }
+  .mappingRow { padding: 24px; gap: 24px; }
+  .mappingRow > div > span { font-size: 11px; }
+  .mappingHeader { padding-inline: 24px; }
+  .mappingSelect select { font-size: 12px; }
+  .portalFigure { padding: 32px 40px 24px; }
+  .institutionDemo { max-width: 560px; margin-inline: auto; }
+  .scopeBoard { grid-template-columns: 1fr 52px 1fr; padding: 32px 28px; }
+  .scopeColumn:last-child { padding-left: 4px; }
+  .scopeTitle h3 { font-size: 18px; }
+  .scopeList li { font-size: 12px; }
+  .ctaPanel { padding: 48px 40px; }
+  .ctaActions { flex-basis: 145px; }
+}
+
+@media (max-width: 640px) {
+  .shell { width: calc(100% - 40px); }
+  .section { padding-block: 64px; }
+  .heading { font-size: clamp(30px, 8.5vw, 40px); }
+  .description { font-size: 15px; line-height: 1.8; }
+  .sectionHeader { gap: 20px; }
+  .workspaceFigure { margin-top: 32px; }
+  .workspaceBackdrop { margin-inline: -6px; padding: 10px; border-radius: 17px; }
+  .workspaceTopbar { padding: 15px 14px; }
+  .tournamentMark { width: 31px; height: 31px; font-size: 16px; }
+  .tournamentIdentity { gap: 9px; }
+  .tournamentIdentity p { font-size: 12px; }
+  .tournamentIdentity > div > span { font-size: 10px; }
+  .registrationStatus { gap: 5px; font-size: 9px; }
+  .registrationStatus > span { width: 5px; height: 5px; }
+  .workspaceBody { flex-direction: column; min-height: 0; }
+  .workspaceSidebar { flex-basis: auto; padding: 10px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .workspaceTabs { display: flex; gap: 4px; }
+  .workspaceTab { flex: 1; justify-content: center; gap: 5px; min-height: 40px; padding: 10px 6px; font-size: 11px; }
+  .workspaceTab svg { width: 14px; height: 14px; }
+  .requestCount, .sidebarNote { display: none; }
+  .workspacePanel { padding: 22px 14px 18px; }
+  .workspaceStats { gap: 8px; padding-bottom: 22px; }
+  .workspaceStats dt { font-size: 10px; }
+  .workspaceStats dd { margin-top: 6px; font-size: clamp(19px, 5.4vw, 27px); }
+  .workspaceStats p { max-width: 15ch; margin-top: 4px; font-size: 9px; line-height: 1.6; }
+  .tableTitle { padding-block: 15px 12px; }
+  .workspaceTable { min-width: 555px; }
+  .workspaceTable tbody th, .workspaceTable td { padding-block: 16px; }
+  .tableNote { margin-top: 14px; font-size: 10px; }
+  .caption { flex-direction: column; gap: 5px; padding-top: 15px; font-size: 11px; }
+  .caption > span { font-size: 10px; }
+  .capabilities { gap: 28px 20px; margin-top: 34px; }
+  .capability h3 { font-size: 13px; line-height: 1.5; }
+  .capability p { font-size: 12px; line-height: 1.75; }
+  .sectionCopy > .description { margin-top: 20px; }
+  .steps { gap: 22px; margin-top: 28px; }
+  .steps h3 { font-size: 14px; }
+  .importFigure { padding: 28px 16px 20px; border-radius: 18px; }
+  .importFile { gap: 9px; padding-bottom: 22px; }
+  .fileIcon { width: 36px; height: 43px; }
+  .fileIcon svg { width: 22px; }
+  .importFile p { font-size: 13px; }
+  .importFile > div > span { font-size: 10px; }
+  .fileExtension { display: none; }
+  .mappingHeader { gap: 28px; padding-inline: 14px; font-size: 10px; }
+  .mappingRow { gap: 8px; padding: 22px 14px; }
+  .mappingRow p { font-size: 11px; }
+  .mappingRow > div > span { font-size: 9px; line-height: 1.6; }
+  .mappingSelect select { height: 39px; padding-inline: 8px 23px; font-size: 10px; }
+  .mappingSelect > svg { right: 7px; }
+  .mappingResult { gap: 6px; padding-inline: 14px; font-size: 10px; }
+  .readyLabel { font-size: 9px; }
+  .mappingReuse { align-items: flex-start; padding-top: 23px; }
+  .mappingReuse > svg { margin-top: 1px; }
+  .mappingReuse p { font-size: 11px; line-height: 1.6; }
+  .mappingReuse span { font-size: 10px; }
+  .demoCaption { font-size: 10px; }
+  .portalFigure { padding: 18px 14px; border-radius: 18px; }
+  .portalMain { padding: 23px 16px 20px; }
+  .portalTopbar { gap: 5px; padding-inline: 14px; font-size: 9px; }
+  .portalTopbar svg { width: 13px; }
+  .schoolIdentity { gap: 9px; }
+  .schoolMark { width: 34px; height: 42px; font-size: 18px; }
+  .schoolIdentity h3 { font-size: 12px; }
+  .schoolIdentity p { font-size: 10px; }
+  .schoolVerified { width: 17px; }
+  .delegationStats { gap: 14px; margin-top: 24px; }
+  .delegationStats dt { font-size: 10px; }
+  .delegationStats dd { font-size: 24px; }
+  .portalRoster li > div > span { font-size: 9px; }
+  .portalReceipt { gap: 8px; padding: 13px 10px; }
+  .portalReceipt > svg { width: 18px; }
+  .portalReceipt p, .portalReceipt > span { font-size: 10px; }
+  .portalReceipt > div > span { font-size: 9px; }
+  .portalAnnouncement { padding-inline: 16px; }
+  .portalAnnouncement p { font-size: 9px; }
+  .tabHeading { text-align: left; }
+  .tabHeading .description { margin-top: 20px; }
+  .scopeBoard { grid-template-columns: 1fr; margin-top: 32px; padding: 28px; border-radius: 18px; }
+  .scopeColumn:last-child { padding-left: 0; }
+  .scopeTitle h3 { font-size: 19px; }
+  .scopeList { gap: 17px; margin-top: 23px; }
+  .scopeList li { font-size: 13px; }
+  .scopeConnection { justify-content: flex-start; padding-block: 23px; }
+  .scopeConnection > span { width: 30px; height: 30px; font-size: 19px; }
+  .scopeFootnote { max-width: 32ch; margin-inline: auto; font-size: 11px; line-height: 1.7; }
+  .repositorySection { padding-block: 36px; }
+  .repositoryRow { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .repositoryCopy { align-items: flex-start; gap: 15px; }
+  .repositoryCopy > svg { width: 24px; height: 24px; margin-top: 3px; }
+  .repositoryCopy h2 { font-size: 20px; }
+  .repositoryCopy p { font-size: 12px; }
+  .repositoryLink { margin-left: 39px; font-size: 12px; }
+  .ctaSection { padding-bottom: 40px; }
+  .ctaPanel { flex-direction: column; align-items: flex-start; gap: 32px; padding: 38px 28px; border-radius: 18px; }
+  .ctaCopy h2 { font-size: clamp(29px, 7.8vw, 38px); }
+  .ctaCopy p { max-width: 28ch; margin-top: 18px; font-size: 13px; }
+  .ctaActions { width: 100%; flex-basis: auto; flex-direction: row; justify-content: flex-start; gap: 22px; }
+  .ctaButton { width: 145px; min-height: 46px; font-size: 13px; }
+  .ctaContact { font-size: 12px; }
+}
